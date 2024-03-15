@@ -19,12 +19,12 @@ class DatabaseSeeder extends Seeder
         'petugas piket',
         'kesiswaan',
         'koordinator',
-        'kepala sekolah',
     ];
 
     private $permissions = [
         'manage sistem',
-        'manage laporan',
+        'manage report',
+        'manage attendance',
     ];
 
     public function run(): void

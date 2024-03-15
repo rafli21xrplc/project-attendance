@@ -14,7 +14,7 @@
                 <p class="mb-4">Please sign-in to your account</p>
 
                 <form id="formAuthentication" class="mb-3"
-                    action="https://demos.pixinvent.com/vuexy-html-laravel-admin-template/demo-1" method="GET">
+                    action="{{ route('login') }}" method="POST">
                     <div class="mb-3">
                         <label for="email" class="form-label">Email or Username</label>
                         <input type="text" class="form-control" id="email" name="email-username"
@@ -23,7 +23,7 @@
                     <div class="mb-3 form-password-toggle">
                         <div class="d-flex justify-content-between">
                             <label class="form-label" for="password">Password</label>
-                            <a href="forgot-password-cover.html">
+                            <a href="{{ route('password.request') }}">
                                 <small>Forgot Password?</small>
                             </a>
                         </div>
@@ -42,17 +42,17 @@
                             </label>
                         </div>
                     </div>
-                    <button class="btn btn-primary d-grid w-100">
+                    <button type="submit" class="btn btn-primary d-grid w-100">
                         Sign in
                     </button>
                 </form>
 
-                <p class="text-center">
+                {{-- <p class="text-center">
                     <span>New on our platform?</span>
                     <a href="{{ route('register') }}">
                         <span>Create an account</span>
                     </a>
-                </p>
+                </p> --}}
 
             </div>
         </div>
