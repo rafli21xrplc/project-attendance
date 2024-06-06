@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->index()->primary();
             $table->integer('teaching_hours_id');
             $table->foreignUuid('teacher_id')->constrained('teacher')->onDelete('cascade');
-            $table->foreignUuid('student_id')->constrained('student')->onDelete('cascade');
+            $table->foreignUuid('classroom_id')->constrained('class_room')->onDelete('cascade');
             $table->foreignUuid('course_id')->constrained('course')->onDelete('cascade');
             $table->integer('hour');
             $table->timestamps();

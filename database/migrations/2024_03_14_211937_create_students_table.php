@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('student', function (Blueprint $table) {
             $table->uuid('id')->index()->primary();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->integer('student_id');
             $table->string('name');
             $table->enum('gender', ['L', 'P']);
-            $table->longText('address');
-            $table->string('born_at');
             $table->date('day_of_birth');
             $table->string('telp');
             $table->timestamps();

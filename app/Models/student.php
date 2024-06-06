@@ -15,13 +15,33 @@ class student extends Model
         'student_id',
         'name',
         'gender',
-        'address',
         'classroom_id',
-        'born_at',
         'day_of_birth',
         'telp',
+        'user_id',
     ];
 
     protected $primaryKey = 'id';
-    protected $incrementing = false;
+    public $incrementing = false;
+
+    public function attendance()
+    {
+        return $this->hasMany(attendance::class, 'student_id');
+    }
+
+    public function religion()
+    {
+        return $this->belongsTo(religion::class, 'religion_id', 'id');
+    }
+
+    public function classroom()
+    {
+        return $this->belongsTo(classroom::class, 'classroom_id', 'id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(user::class, 'user_id', 'id');
+    }
+
 }

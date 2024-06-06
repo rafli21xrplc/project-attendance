@@ -16,5 +16,5 @@ class religion extends Model
     ];
 
     protected $primaryKey = 'id';
-    protected $incrementing = false;
+    public $incrementing = false;
 }

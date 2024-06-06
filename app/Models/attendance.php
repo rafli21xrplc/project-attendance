@@ -13,12 +13,23 @@ class attendance extends Model
     protected $fillable = [
         'id',
         'student_id',
-        'course_id',
-        'classroom_id',
+        'schedule_id`',
+        'hours',
+        'note',
         'time',
         'status',
     ];
 
     protected $primaryKey = 'id';
-    protected $incrementing = false;
+    public $incrementing = false;
+
+    public function student()
+    {
+        return $this->belongsTo(student::class);
+    }
+
+    public function schedule()
+    {
+        return $this->belongsTo(schedule::class);
+    }
 }
