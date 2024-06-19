@@ -19,10 +19,17 @@
                 <div>
                     <h3>Biodata Siswa</h3>
                 </div>
-                <div>
-                    <button type="button" class="btn btn-label-primary me-2" style="color: blue">
-                        <i class="ti ti-printer me-1"></i> <span class="d-none d-sm-inline-block">Export</span>
-                    </button>
+                <div style="display: flex; align-items: center;">
+                    <form id="importForm" action="{{ route('admin.student.import') }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group d-none">
+                            <input type="file" name="file" id="fileInput" class="form-control" required>
+                        </div>
+                        <button type="button" class="btn btn-label-primary me-2" id="importButton" style="color: blue">
+                            <i class="ti ti-printer me-1"></i> <span class="d-none d-sm-inline-block">Import</span>
+                        </button>
+                    </form>
                     <button data-bs-toggle="modal" data-bs-target="#modal-student" type="button"
                         class="btn btn-label-success"><i class="ti ti-plus me-sm-1"></i> <span
                             class="d-none d-sm-inline-block">Add New Record</span></button>
@@ -38,7 +45,6 @@
                                     <tr class="text-center">
                                         <th>NO</th>
                                         <th>NAMA</th>
-                                        <th>EMAIL</th>
                                         <th>GENDER</th>
                                         <th>TANGGAL LAHIR</th>
                                         <th>TELP</th>
@@ -50,23 +56,15 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $item->name }}</td>
-                                            <td>{{ $item->user->email }}</td>
                                             <td>{{ $item->gender }}</td>
                                             <td>{{ \Carbon\Carbon::parse($item->day_of_birth)->formatLocalized('%d %B %Y') }}
                                             </td>
                                             <td>{{ $item->telp }}</td>
                                             <td>
-                                                <button data-name="{{ $item->name }}" data-gender="{{ $item->gender }}"
-                                                    data-telp="{{ $item->telp }}" data-email="{{ $item->user->email }}"
-                                                    data-classroom="{{ $item->classroom->name }}"
-                                                    data-day_of_birth="{{ \Carbon\Carbon::parse($item->day_of_birth)->formatLocalized('%d %B %Y') }}"
-                                                    class="btn btn-label-primary btn-view"><i
-                                                        class="fa-solid fa-eye"></i></button>
                                                 <button data-id="{{ $item->id }}" data-name="{{ $item->name }}"
-                                                    data-gender="{{ $item->gender }}" data-telp="{{ $item->telp }}"
+                                                    data-gender="{{ $item->gender }}" data-telp="{{ $item->telp }}" data-username="{{ $item->user->username }}"
                                                     data-classroom_id="{{ $item->classroom_id }}"
-                                                    data-day_of_birth="{{ $item->day_of_birth }}"
-                                                    data-email="{{ $item->user->email }}" type="button"
+                                                    data-day_of_birth="{{ $item->day_of_birth }}" type="button"
                                                     class="btn btn-label-warning btn-update"><i
                                                         class="fa-solid fa-pen"></i></button>
                                                 <button data-id="{{ $item->id }}" type="button"
@@ -77,78 +75,6 @@
                                     @endforeach
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                    <div class="offcanvas offcanvas-end" id="add-new-record">
-                        <div class="offcanvas-header border-bottom">
-                            <h5 class="offcanvas-title" id="exampleModalLabel">
-                                New Record
-                            </h5>
-                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="offcanvas-body flex-grow-1">
-                            <form class="add-new-record pt-0 row g-2" id="form-add-new-record" onsubmit="return false">
-                                <div class="col-sm-12">
-                                    <label class="form-label" for="basicFullname">Full Name</label>
-                                    <div class="input-group input-group-merge">
-                                        <span id="basicFullname2" class="input-group-text"><i class="ti ti-user"></i></span>
-                                        <input type="text" id="basicFullname" class="form-control dt-full-name"
-                                            name="basicFullname" placeholder="John Doe" aria-label="John Doe"
-                                            aria-describedby="basicFullname2" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <label class="form-label" for="basicPost">Post</label>
-                                    <div class="input-group input-group-merge">
-                                        <span id="basicPost2" class="input-group-text"><i
-                                                class="ti ti-briefcase"></i></span>
-                                        <input type="text" id="basicPost" name="basicPost" class="form-control dt-post"
-                                            placeholder="Web Developer" aria-label="Web Developer"
-                                            aria-describedby="basicPost2" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <label class="form-label" for="basicEmail">Email</label>
-                                    <div class="input-group input-group-merge">
-                                        <span class="input-group-text"><i class="ti ti-mail"></i></span>
-                                        <input type="text" id="basicEmail" name="basicEmail"
-                                            class="form-control dt-email" placeholder="john.doe@example.com"
-                                            aria-label="john.doe@example.com" />
-                                    </div>
-                                    <div class="form-text">
-                                        You can use letters, numbers & periods
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <label class="form-label" for="basicDate">Joining Date</label>
-                                    <div class="input-group input-group-merge">
-                                        <span id="basicDate2" class="input-group-text"><i
-                                                class="ti ti-calendar"></i></span>
-                                        <input type="text" class="form-control dt-date" id="basicDate"
-                                            name="basicDate" aria-describedby="basicDate2" placeholder="MM/DD/YYYY"
-                                            aria-label="MM/DD/YYYY" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <label class="form-label" for="basicSalary">Salary</label>
-                                    <div class="input-group input-group-merge">
-                                        <span id="basicSalary2" class="input-group-text"><i
-                                                class="ti ti-currency-dollar"></i></span>
-                                        <input type="number" id="basicSalary" name="basicSalary"
-                                            class="form-control dt-salary" placeholder="12000" aria-label="12000"
-                                            aria-describedby="basicSalary2" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <button type="submit" class="btn btn-danger data-submit me-sm-3 me-1">
-                                        Submit
-                                    </button>
-                                    <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">
-                                        Cancel
-                                    </button>
-                                </div>
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -190,14 +116,14 @@
                             <input class="form-control" type="date" value="2021-06-18" id="html5-date-input"
                                 name="day_of_birth" value="{{ old('day_of_birth') }}" />
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-md-4 mb-2">
                             <label class="form-label" for="classroom_id">Kelas</label>
                             <select id="classroom_id" name="classroom_id" class="select2 form-select"
                                 aria-label="Default select example">
                                 <option selected disabled>Kelas</option>
                                 @foreach ($class_room as $item)
                                     <option value="{{ $item->id }}"
-                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>{{ $item->typeClass->category }} {{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -229,69 +155,6 @@
         </div>
     </div>
 
-    {{-- modal view --}}
-    <div class="modal fade" id="modal-student-view" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header mb-2 py-3" style="background: rgba(56, 42, 214, 0.9);">
-                    <h5 class="modal-title mx-auto" style="color: rgb(246, 246, 246);" id="exampleModalLabel1">BIODATA
-                        SISWA</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body row py-0" id="div-view">
-                    <div class="col-12 mb-1">
-                        <label class="form-label" for="basic-default-email">Email</label>
-                        <input type="email" class="form-control" id="basic-default-email" name="email-view"disabled
-                            placeholder="your email" required value="{{ old('email') }}" />
-                    </div>
-                    <div class="col-12 col-md-6 mb-1">
-                        <label class="form-label" for="basic-default-name">Name</label>
-                        <input type="text" class="form-control" id="basic-default-name" name="name-view"disabled
-                            placeholder="your name" required value="{{ old('name') }}" />
-                    </div>
-                    <div class="col-12 col-md-6 mb-1">
-                        <label class="form-label" for="basic-default-status">Kelas</label>
-                        <input type="text" class="form-control" id="basic-default-classroom"
-                            name="classroom-view"disabled placeholder="PNS" required value="{{ old('classroom') }}" />
-                    </div>
-                    <div class="col-12 col-md-4 mb-1">
-                        <label class="form-label" for="basic-default-status">Agama</label>
-                        <input type="text" class="form-control" id="basic-default-agama" name="religion-view"disabled
-                            placeholder="PNS" required value="{{ old('agama') }}" />
-                    </div>
-                    <div class="col-12 col-md-4 mb-1">
-                        <label for="form-label-Telefon" class="form-label">Telefon</label>
-                        <input class="form-control" type="number" id="form-label-Telefon" name="telp-view"disabled
-                            placeholder="00392002911" value="{{ old('telp') }}" />
-                    </div>
-                    <div class="col-12 col-md-4 mb-1">
-                        <label class="form-label" for="basic-default-status">Gender</label>
-                        <input type="text" class="form-control" id="basic-default-gender" name="gender-view"disabled
-                            placeholder="PNS" required value="{{ old('gender') }}" />
-                    </div>
-                    <div class="col-12 col-md-6 mb-1">
-                        <label class="form-label" for="basic-default-born-at">Tempat Lahir</label>
-                        <input type="text" class="form-control" id="basic-default-born-at"
-                            name="born_at-view"disabled placeholder="Malang" required value="{{ old('born_at') }}" />
-                    </div>
-                    <div class="col-12 col-md-6 mb-1">
-                        <label class="form-label" for="basic-default-day-of-birth">TANGGAL LAHIR</label>
-                        <input type="text" class="form-control" id="basic-default-day-of-birth"
-                            name="day_of_birth-view"disabled placeholder="Malang" required
-                            value="{{ old('day_of_birth') }}" />
-                    </div>
-                    <div class="">
-                        <label class="form-label" for="basic-default-bio">Alamat</label>
-                        <textarea class="form-control" id="basic-default-bio" name="address-view" rows="3" required disabled></textarea>
-                    </div>
-                </div>
-                </form>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-label-danger" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     {{-- modal update --}}
     <div class="modal fade" id="modal-student-update" tabindex="-1" aria-hidden="true">
@@ -307,9 +170,9 @@
                     @method('PUT')
                     <div class="modal-body row py-0" id="div-update">
                         <div class="col-12 col-md-6 mb-2">
-                            <label class="form-label" for="basic-default-email-update">Email</label>
-                            <input type="email" class="form-control" id="basic-default-email-update" name="email"
-                                placeholder="your email" required value="{{ old('email') }}" />
+                            <label class="form-label" for="basic-default-username-update">username</label>
+                            <input type="text" class="form-control" id="basic-default-username-update" name="username"
+                                placeholder="your username" required value="{{ old('username') }}" />
                         </div>
                         <div class="col-12 col-md-6 mb-2">
                             <label class="form-label" for="basic-default-password-update">Password Baru</label>
@@ -328,14 +191,14 @@
                             <input class="form-control" type="date" value="2021-06-18" id="html5-date-input-update"
                                 name="day_of_birth" value="{{ old('day_of_birth') }}" />
                         </div>
-                        <div class="col-12 col-md-6 mb-2">
+                        <div class="col-12 col-md-4 mb-2">
                             <label class="form-label" for="classroom_id-update">Kelas</label>
                             <select id="classroom_id-update" name="classroom_id" class="select2 form-select"
                                 aria-label="Default select example">
                                 <option selected disabled>Kelas</option>
                                 @foreach ($class_room as $item)
                                     <option value="{{ $item->id }}"
-                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>{{ $item->typeClass->category }} {{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -374,37 +237,29 @@
 
 @section('js')
     <script>
+        document.getElementById('importButton').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', function() {
+            if (this.files.length > 0) {
+                document.getElementById('importForm').submit();
+            }
+        });
+    </script>
+    <script>
         new DataTable('#table-content', {
             pagingType: 'simple_numbers'
         });
     </script>
     <script>
-        $('.btn-view').click(function() {
-            var name = $(this).data('name');
-            var email = $(this).data('email');
-            var gender = $(this).data('gender');
-            var classroom = $(this).data('classroom');
-            var day_of_birth = $(this).data('day_of_birth');
-            var telp = $(this).data('telp');
-
-            var formUpdate = $('#modal-student-view #div-view');
-
-            formUpdate.find('input[name="email-view"]').val(email);
-            formUpdate.find('input[name="name-view"]').val(name);
-            formUpdate.find('input[name="gender-view"]').val(gender);
-            formUpdate.find('input[name="classroom-view"]').val(classroom);
-            formUpdate.find('input[name="day_of_birth-view"]').val(day_of_birth);
-            formUpdate.find('input[name="telp-view"]').val(telp);
-
-            $('#modal-student-view').modal('show');
-        });
 
         $('.btn-update').click(function() {
             var id = $(this).data('id');
             var actionUrl = `student/${id}`;
             $('#form-update').attr('action', actionUrl);
 
-            var email = $(this).data('email');
+            var username = $(this).data('username');
             var name = $(this).data('name');
             var gender = $(this).data('gender');
             var day_of_birth = $(this).data('day_of_birth');
@@ -413,7 +268,7 @@
 
             var formUpdate = $('#modal-student-update #div-update');
 
-            formUpdate.find('#basic-default-email-update').val(email);
+            formUpdate.find('#basic-default-username-update').val(username);
             formUpdate.find('#basic-default-name-update').val(name);
             formUpdate.find('#html5-date-input-update').val(day_of_birth);
             formUpdate.find('#form-label-Telefon-update').val(telp);

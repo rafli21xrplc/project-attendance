@@ -80,10 +80,6 @@
                                             <p class="d-flex align-items-center">
                                                 <i class="ti ti-clock me-2 mt-n1"></i>30 minutes
                                             </p>
-                                            {{-- <div class="progress mb-4" style="height: 8px">
-                                                <div class="progress-bar w-100" role="progressbar" 
-                                                    aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div> --}}
                                             <div class="d-flex flex-column flex-md-row text-nowrap justify-content-end">
                                                 <a class="btn btn-label-primary d-flex align-items-center"
                                                     href="{{ route('teacher.attendance', ['classroomid' => $item->classroom->id, 'scheduleId' => $item->id]) }}">
@@ -99,7 +95,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
         </div>

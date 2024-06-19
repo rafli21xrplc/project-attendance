@@ -25,13 +25,10 @@ class UpdateRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|min:2',
             'gender' => 'required|in:L,P',
-            // 'address' => 'required|string|max:255|min:5',
             'day_of_birth' => 'required|date',
             'telp' => 'required|string|max:20|min:11',
             'classroom_id' => 'required',
-            // 'religion_id' => 'required',
-            // 'born_at' => 'required|string|max:255|min:2',
-            'email' => ['required', 'email', 'max:255'],
+            'username' => ['required', 'string', 'max:255'],
             'password' => 'nullable|string|min:8',
         ];
     }
@@ -61,12 +58,12 @@ class UpdateRequest extends FormRequest
             'telp.max' => 'Telepon cannot exceed :max characters',
             'classroom_id.required' => 'Kelas harus dipilih',
             'religion_id.required' => 'Agama harus dipilih',
-            'email.required' => 'Email is required',
-            'email.email' => 'Email must be a valid email address',
-            'email.max' => 'Email cannot exceed :max characters',
+            'username.required' => 'username is required',
+            'username.username' => 'username must be a valid username address',
+            'username.max' => 'username cannot exceed :max characters',
             'password.string' => 'Password must be a string',
             'password.min' => 'Password must be at least :min characters',
-            'email.exists' => 'Email must exist in the users table',
+            'username.exists' => 'username must exist in the users table',
             // 'religi.in' => 'Agama yang dipilih tidak valid',
         ];
     }

@@ -4,14 +4,18 @@ namespace App\Http\Controllers\admin;
 
 use App\Contracts\Interfaces\StudentInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\student\importRequest;
 use App\Http\Requests\Student\StoreRequest;
 use App\Http\Requests\Student\UpdateRequest;
 use App\Models\student;
 use App\Models\User;
+use App\Traits\StudentTrait;
 use Illuminate\Http\Request;
 
 class studentController extends Controller
 {
+    use StudentTrait;
+
     private StudentInterface $student;
 
     public function __construct(StudentInterface $student)
@@ -22,6 +26,17 @@ class studentController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function import(importRequest $request)
+    {
+        try {
+            $this->importStudents($request->validated());
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'failed created');
+        }
+        return redirect()->back()->with('success', 'success created');
+    }
+
     public function index()
     {
         $student = $this->student->get();

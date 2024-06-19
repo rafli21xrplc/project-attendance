@@ -21,8 +21,8 @@ class AttendanceStudentController extends Controller
      */
     public function index()
     {
-        $classroom = $this->getClassrooms();
         $attendance = $this->getAttendance();
+        $classroom = $this->getClassrooms();
         $schedules = null;
 
         return view('admin.attendance_student', compact('attendance', 'classroom', 'schedules'));
@@ -94,13 +94,12 @@ class AttendanceStudentController extends Controller
                     $attendanceBySchedule[$schedule->id][$student->id] = [
                         'student_id' => $student->id,
                         'name' => $student->name,
-                        'attendance_status' => [], // Initialize attendance_status array
+                        'attendance_status' => [],
                     ];
                 }
 
                 $attendance = $schedule->attendances->firstWhere('student_id', $student->id);
 
-                // Push attendance status to the array
                 $attendanceBySchedule[$schedule->id][$student->id]['attendance_status'][] = $attendance ? $attendance->status : null;
             }
         }

@@ -78,7 +78,7 @@
 
         .table-custom thead th {
             border: none;
-            /* background-color: #f2f2f2; */
+            background-color: #f2f2f2;
         }
 
         .table-custom thead tr {
@@ -129,80 +129,88 @@
                             <span class="d-none d-sm-inline-block">Simpan</span>
                         </button>
                     </div>
-                    <div class="card">
-                        <div class="card-datatable table-responsive px-4">
-                            <div class="my-4">
-                                <div class="my-4 d-flex flex-wrap justify-content-between gap-3">
-                                    <div class="card-title mb-0">
-                                        <h5 class="mb-1">{{ $classroom->name }}</h5>
-                                        <p class="text-muted mb-0">Total 6 course you have purchased</p>
+                    @isset($classroom)
+                        <div class="card">
+                            <div class="card-datatable table-responsive px-4">
+                                <div class="my-4">
+                                    <div class="my-4 d-flex flex-wrap justify-content-between gap-3">
+                                        <div class="card-title mb-0">
+                                            <h5 class="mb-1">{{ $classroom->name }}</h5>
+                                            <p class="text-muted mb-0">Total 6 course you have purchased</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="table-responsive text-nowrap custom-border">
-                                    <form id="attendanceForm"
-                                        action="{{ route('teacher.attendance.store', $schedule->id) }}" method="post">
-                                        @csrf
-                                        @method('POST')
-                                        <table class="table table-custom" style="border: 1px solid black">
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-center">STUDENT ID</th>
-                                                    <th>NAMA</th>
-                                                    <th class="text-center">PRESENSI</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse ($student as $index => $item)
-                                                    <tr>
-                                                        <td class="text-center">{{ $item->student_id }}</td>
-                                                        <td>{{ $item->name }}</td>
-                                                        <td>
-                                                            <div
-                                                                class="col-md d-flex align-items-center flex-wrap gap-2 justify-content-center">
-                                                                {{-- <div class="form-check form-check-success">
-                                                                    <input name="attendance[{{ $item->id }}]"
-                                                                        class="form-check-input" type="radio"
-                                                                        value="present" id="hadir_{{ $item->id }}"
-                                                                        required />
-                                                                    <label class="form-check-label"
-                                                                        for="hadir_{{ $item->id }}"> Hadir </label>
-                                                                </div> --}}
-                                                                <div class="form-check form-check-danger">
-                                                                    <input name="attendance[{{ $item->id }}]"
-                                                                        class="form-check-input" type="radio"
-                                                                        value="alpha" id="alpha_{{ $item->id }}" />
-                                                                    <label class="form-check-label"
-                                                                        for="alpha_{{ $item->id }}"> Alpha </label>
-                                                                </div>
-                                                                <div class="form-check form-check-warning">
-                                                                    <input name="attendance[{{ $item->id }}]"
-                                                                        class="form-check-input" type="radio"
-                                                                        value="permission" id="izin_{{ $item->id }}" />
-                                                                    <label class="form-check-label"
-                                                                        for="izin_{{ $item->id }}"> Izin </label>
-                                                                </div>
-                                                                <div class="form-check form-check-alpha">
-                                                                    <input name="attendance[{{ $item->id }}]"
-                                                                        class="form-check-input" type="radio"
-                                                                        value="sick" id="sakit_{{ $item->id }}" />
-                                                                    <label class="form-check-label"
-                                                                        for="sakit_{{ $item->id }}"> Sakit </label>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="3" class="text-center">No students found</td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </form>
+                                    <div class="table-responsive text-nowrap custom-border">
+                                        @if ($student->isNotEmpty())
+                                            <form id="attendanceForm"
+                                                action="{{ route('teacher.attendance.store', $schedule->id) }}" method="post">
+                                                @csrf
+                                                @method('POST')
+                                                <table class="table table-custom" style="border: 1px solid black">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center">STUDENT ID</th>
+                                                            <th>NAMA</th>
+                                                            <th class="text-center">PRESENSI</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @forelse ($student as $index => $item)
+                                                            <tr>
+                                                                <td class="text-center">{{ $item->student_id }}</td>
+                                                                <td>{{ $item->name }}</td>
+                                                                <td>
+                                                                    <div
+                                                                        class="col-md d-flex align-items-center flex-wrap gap-2 justify-content-center">
+                                                                        <input type="hidden"
+                                                                            name="attendance[{{ $item->id }}]"
+                                                                            value="present">
+                                                                        <div class="form-check form-check-danger">
+                                                                            <input name="attendance[{{ $item->id }}]"
+                                                                                class="form-check-input" type="radio"
+                                                                                value="alpha"
+                                                                                id="alpha_{{ $item->id }}" />
+                                                                            <label class="form-check-label"
+                                                                                for="alpha_{{ $item->id }}"> Alpha </label>
+                                                                        </div>
+                                                                        <div class="form-check form-check-warning">
+                                                                            <input name="attendance[{{ $item->id }}]"
+                                                                                class="form-check-input" type="radio"
+                                                                                value="permission"
+                                                                                id="izin_{{ $item->id }}" />
+                                                                            <label class="form-check-label"
+                                                                                for="izin_{{ $item->id }}"> Izin </label>
+                                                                        </div>
+                                                                        <div class="form-check form-check-alpha">
+                                                                            <input name="attendance[{{ $item->id }}]"
+                                                                                class="form-check-input" type="radio"
+                                                                                value="sick"
+                                                                                id="sakit_{{ $item->id }}" />
+                                                                            <label class="form-check-label"
+                                                                                for="sakit_{{ $item->id }}"> Sakit </label>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        @empty
+                                                            <tr>
+                                                                <td colspan="3" class="text-center">No students found</td>
+                                                            </tr>
+                                                        @endforelse
+                                                    </tbody>
+                                                </table>
+                                            </form>
+                                        @else
+                                            <div class="text-center my-4">
+                                                <img src="{{ asset('assets/images/no-data.png') }}" alt="No data illustration"
+                                                    class="img-fluid" style="max-width: 300px;">
+                                                <p class="text-muted mt-3">No students found for this classroom.</p>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    @endisset
                 </div>
             </div>
         </div>
@@ -213,25 +221,9 @@
 @section('js')
     <script>
         document.getElementById('saveButton').addEventListener('click', function() {
-            var form = document.getElementById('attendanceForm');
-            var allChecked = true;
-            var students = @json($student);
-
-            students.forEach(function(student) {
-                var radios = form.querySelectorAll('input[name="attendance[' + student.id + ']"]:checked');
-                if (radios.length === 0) {
-                    allChecked = false;
-                }
-            });
-
-            if (!allChecked) {
-                alert('Please select attendance status for all students.');
-            } else {
-                form.submit();
-            }
+            document.getElementById('attendanceForm').submit();
         });
     </script>
-
     <script src="{{ asset('assets/vendor/libs/moment/moment.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/%40form-validation/umd/bundle/popular.min.js') }}"></script>

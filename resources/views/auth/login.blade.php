@@ -4,7 +4,7 @@
     <div class="authentication-inner row">
         <div class="d-none d-lg-flex col-lg-7 p-0">
             <div class="auth-cover-bg auth-cover-bg-color d-flex justify-content-center align-items-center">
-                <img width="500" src="{{ asset('assets/img/content/icon-login.png') }}" alt="LOGO" srcset="">
+                <img width="500" src="{{ asset('assets/content/icon.png') }}" alt="LOGO" srcset="">
             </div>
         </div>
 
@@ -17,9 +17,9 @@
                     action="{{ route('login') }}" method="POST">
                     @csrf
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email or Username</label>
-                        <input type="text" class="form-control" id="email" name="email"
-                            placeholder="Enter your email" autofocus>
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username"
+                            placeholder="Enter your username" autofocus>
                     </div>
                     <div class="mb-3 form-password-toggle">
                         <div class="d-flex justify-content-between">
@@ -47,14 +47,6 @@
                         Sign in
                     </button>
                 </form>
-
-                {{-- <p class="text-center">
-                    <span>New on our platform?</span>
-                    <a href="{{ route('register') }}">
-                        <span>Create an account</span>
-                    </a>
-                </p> --}}
-
             </div>
         </div>
     </div>

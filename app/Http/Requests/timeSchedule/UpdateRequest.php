@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\timeSchedule;
 
+use App\Rules\ValidTime;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRequest extends FormRequest
@@ -22,9 +23,9 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'time_number' => 'required|integer',
-            'start_time_schedule' => 'required|date_format:H:i',
-            'end_time_schedule' => 'required|date_format:H:i|after:start_time_schedule'
+            'time_number' => 'required|integer|min:1|max:10',
+            'start_time_schedule' => ['required', new ValidTime()],
+            'end_time_schedule' => ['required', 'after:start_time_schedule', new ValidTime()]
         ];
     }
 

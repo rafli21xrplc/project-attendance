@@ -24,11 +24,9 @@ class StoreRequest extends FormRequest
     {
         return [
             'time_number' => 'required|integer|min:1|max:10',
-            'start_time_schedule' => ['required', 'date_format:H:i', new ValidTime()],
-            'end_time_schedule' => ['required', 'date_format:H:i', 'after:start_time_schedule', new ValidTime()]
+            'start_time_schedule' => ['required', new ValidTime()],
+            'end_time_schedule' => ['required', 'after:start_time_schedule', new ValidTime()]
         ];
-        // 'time_number' => 'required|integer|min:1|max:10', // Adjust min and max based on your logic
-        //     'time_schedule' => 'required|date_format:H:i', 
     }
 
     /**

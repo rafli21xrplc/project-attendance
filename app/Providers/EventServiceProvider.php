@@ -2,12 +2,15 @@
 
 namespace App\Providers;
 
+use App\Models\absence_point;
 use App\Models\attendanceTeacher;
 use App\Models\classRoom;
 use App\Models\classroom_teacher;
 use App\Models\course;
+use App\Models\kbm_period;
 use App\Models\payment;
 use App\Models\schedule;
+use App\Models\setting;
 use App\Models\student;
 use App\Models\student_payment;
 use App\Models\teacher;
@@ -15,12 +18,15 @@ use App\Models\teaching_hour;
 use App\Models\time_schedule;
 use App\Models\type_class;
 use App\Models\User;
+use App\Observers\absence_pointObserver;
 use App\Observers\AttendanceTeacherObserver;
 use App\Observers\ClassroomObserver;
 use App\Observers\ClassroomTeacherObserver;
 use App\Observers\CourseObserver;
+use App\Observers\kbmPeriodObserver;
 use App\Observers\PaymentObserver;
 use App\Observers\ScheduleObserver;
+use App\Observers\settingObserver;
 use App\Observers\StudentObserver;
 use App\Observers\StudentPaymentObserver;
 use App\Observers\TeacherObserver;
@@ -64,6 +70,9 @@ class EventServiceProvider extends ServiceProvider
         type_class::observe(TypeClassObserver::class);
         payment::observe(PaymentObserver::class);
         student_payment::observe(StudentPaymentObserver::class);
+        setting::observe(settingObserver::class);
+        kbm_period::observe(kbmPeriodObserver::class);
+        absence_point::observe(absence_pointObserver::class);
     }
 
     /**

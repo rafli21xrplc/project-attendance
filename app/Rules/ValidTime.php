@@ -10,18 +10,19 @@ class ValidTime implements Rule
 {
     public function passes($attribute, $value)
     {
+        // Check for both formats: HH:mm and HH:mm:ss
         if (preg_match('/^\d{1,2}:\d{2}(:\d{2})?$/', $value)) {
-            return true;
-        }
-        
-        try {
-            $date = \DateTime::createFromFormat('H:i', $value);
-            dd($value);
-            if ($date && $date->format('H:i') === $value) {
-                return true;
+            try {
+                // Handle time with optional seconds
+                $date = \DateTime::createFromFormat('H:i:s', $value) ?: \DateTime::createFromFormat('H:i', $value);
+
+                // Ensure the time format matches the input exactly
+                if ($date && ($date->format('H:i') === $value || $date->format('H:i:s') === $value)) {
+                    return true;
+                }
+            } catch (\Exception $e) {
+                return false;
             }
-        } catch (\Exception $e) {
-            return false;
         }
 
         return false;

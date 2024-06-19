@@ -78,7 +78,7 @@
 
         .table-custom thead th {
             border: none;
-            /* background-color: #f2f2f2; */
+            background-color: #f2f2f2;
         }
 
         .table-custom thead tr {
@@ -140,7 +140,8 @@
                                 </div>
                                 <div class="table-responsive text-nowrap custom-border">
                                     <form id="attendanceForm"
-                                        action="{{ route('teacher.attendance.update.history', $schedule->id) }}" method="post">
+                                        action="{{ route('teacher.attendance.update.history', $schedule->id) }}"
+                                        method="post">
                                         @csrf
                                         @method('POST')
                                         <table class="table table-custom" style="border: 1px solid black">
@@ -156,6 +157,12 @@
                                                     @php
                                                         $attendance = $attendanceData[$item->id] ?? null;
                                                         $status = $attendance ? $attendance->status : '';
+                                                        $fileUrl =
+                                                            $attendance &&
+                                                            $attendance->permission &&
+                                                            ($status == 'permission' || $status == 'sick')
+                                                                ? Storage::url($attendance->permission->file)
+                                                                : null;
                                                     @endphp
                                                     <tr>
                                                         <td class="text-center">{{ $item->student_id }}</td>
@@ -195,6 +202,17 @@
                                                                         {{ $status == 'sick' ? 'checked' : '' }} />
                                                                     <label class="form-check-label"
                                                                         for="sakit_{{ $item->id }}"> Sakit </label>
+                                                                </div>
+                                                                <div class="d-flex align-items-center mx-2">
+                                                                    @if ($status == 'permission' && $fileUrl)
+                                                                        <a href="{{ $fileUrl }}" target="_blank"
+                                                                            class="ml-2"><i class="fa fa-eye fs-5"></i></a>
+                                                                    @endif
+                                                                    @if ($status == 'sick' && $fileUrl)
+                                                                        <a href="{{ $fileUrl }}" target="_blank"
+                                                                            class="ml-2"><i
+                                                                                class="fa fa-file-medical-alt fs-5"></i></a>
+                                                                    @endif
                                                                 </div>
                                                             </div>
                                                         </td>

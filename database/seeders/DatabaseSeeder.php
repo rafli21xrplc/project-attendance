@@ -59,8 +59,7 @@ class DatabaseSeeder extends Seeder
 
         User::create([
             'uuid' => Str::uuid(),
-            'name' => 'root',
-            'email' => 'admin@gmail.com',
+            'username' => '1234567899',
             'password' => Hash::make('password')
         ])->assignRole('admin');
 

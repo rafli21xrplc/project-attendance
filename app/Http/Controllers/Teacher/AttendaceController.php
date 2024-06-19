@@ -20,7 +20,11 @@ class AttendaceController extends Controller
     public function index()
     {
         $schedule = $this->attendanceInterface->getClassroom();
-        return view('teacher.attendance', compact('schedule'));
+        return view('teacher.attendance_student')->with([
+            'schedule' => $schedule['schedule'] ?? null,
+            'classroom' => $schedule['classroom'] ?? null,
+            'student' => $schedule['student'] ?? null
+        ]);
     }
 
     /**

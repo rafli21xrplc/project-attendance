@@ -4,21 +4,36 @@ namespace App\Http\Controllers\admin;
 
 use App\Contracts\Interfaces\TeacherInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\teacher\importRequest;
 use App\Http\Requests\Teacher\StoreRequest as storeTeacher;
 use App\Http\Requests\Teacher\UpdateRequest as updateTeacher;
 use App\Http\Requests\teacherRequest;
 use App\Models\religion;
 use App\Models\teacher;
+use App\Traits\TeacherTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class teacherController extends Controller
 {
+
+    use TeacherTrait;
+
     private TeacherInterface $teacher;
 
     public function __construct(TeacherInterface $teacher)
     {
         $this->teacher = $teacher;
+    }
+
+    public function import(importRequest $request)
+    {
+        try {
+            $this->importTeachers($request->validated());
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'failed created');
+        }
+        return redirect()->back()->with('success', 'success created');
     }
 
     /**

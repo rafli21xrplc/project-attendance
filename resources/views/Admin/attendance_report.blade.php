@@ -16,58 +16,66 @@
         href="{{ asset('assets/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/jquery-timepicker/jquery-timepicker.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/pickr/pickr-themes.css') }}" />
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <link href="https://raw.githack.com/ttskch/select2-bootstrap4-theme/master/dist/select2-bootstrap4.css"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
-        #table-content {
-            border-collapse: collapse;
+        select {
             width: 100%;
+            min-height: 100px;
+            border-radius: 3px;
+            border: 1px solid #444;
+            padding: 10px;
+            color: #444444;
+            font-size: 14px;
         }
 
-        #table-content th,
-        #table-content td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
+        .table-custom {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
         }
 
-        #table-content th {
-            background-color: #f0f0f0;
-        }
-
-        #table-content tbody tr:nth-child(odd) {
-            background-color: #f9f9f9;
-        }
-
-        #table-content tbody tr:hover {
-            background-color: #e9e9e9;
-        }
-
-        .flatpickr-calendar {
-            background: white;
-        }
-
-        #info-table {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        #info-table th,
-        #info-table td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 0px solid #ddd;
-        }
-
-        #info-table th {
+        .table-custom thead th {
+            border: none;
             background-color: #f2f2f2;
         }
 
-        #info-table td:first-child {
-            font-weight: bold;
+        .table-custom thead tr {
+            border: 1px solid #ddd;
         }
 
-        #info-table td:last-child {
-            font-style: italic;
+        .table-custom tbody tr,
+        .table-custom tbody td {
+            border: none;
+        }
+
+        .table-custom th,
+        .table-custom td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table-custom th {
+            text-align: left;
+        }
+
+        .form-check-label {
+            font-size: 14px;
+        }
+
+        .custom-border {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        .table-custom tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .table-custom tbody tr:nth-child(even) {
+            background-color: #ffffff;
         }
     </style>
 @endsection
@@ -75,121 +83,87 @@
 @section('content')
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
-            <div class="row">
-                <div class="col-12 order-5">
-                    <form action="{{ route('admin.report.attendance_student.search') }}" method="post">
-                        @csrf
-                        <div class="row ">
-                            <div class="row justify-content-end">
-                                <div class="col-md-3">
-                                    <input type="text" class="form-control" placeholder="YYYY-MM-DD to YYYY-MM-DD"
-                                        name="range-date" id="flatpickr-range" />
-                                </div>
-                                <div class="col-md-3">
-                                    <select class="form-select" name="classroom_id">
-                                        <option selected disabled>pilih kelas</option>
-                                        @foreach ($classrooms as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-1">
-                                    <button data-bs-toggle="modal" data-bs-target="#modal-admin" type="submit"
-                                        class="btn btn-label-success"><span
-                                            class="d-none d-sm-inline-block">Search</span></button>
-                                </div>
+            <div class="row mt-4">
+                <div class="col-12 order-5 ">
+                    <div class="col-md-2 align-items-center">
+                        <a href="{{ route('admin.export.attendance_report') }}">
+                            <button type="submit" class="btn btn-success mt-2">Export to Excel</button>
+                        </a>
+                    </div>
+                    <form action="{{ route('admin.report.attendance_student.search') }}" method="get">
+                        <div class="row justify-content-end align-items-center">
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" placeholder="YYYY-MM-DD to YYYY-MM-DD"
+                                    name="range-date" id="flatpickr-range" />
+                            </div>
+                            <div class="col-md-3">
+                                <select class="js-example-basic-multiple" name="states[]" multiple="multiple"
+                                    style="width: 100%;">
+                                    @foreach ($classrooms as $item)
+                                        <option value="{{ $item->id }}">{{ $item->typeClass->category }}
+                                            {{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <span class="d-none d-sm-inline-block">Search</span>
+                                </button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
 
+
             <div class="row my-5">
                 <div class="col-12 order-5">
-                    <div class="card py-3 ">
+                    <div class="card py-3">
+                        @if ($report != null)
+                            <div class="container">
+                                <h1 class="text-center">Monthly Attendance Report</h1>
+                                <p class="text-center">From: {{ $startDate }} To: {{ $endDate }}</p>
 
-                           @if ($report != null)
-                           <div class="container">
-                            <h1>Monthly Attendance Report for Selected Classes</h1>
-                            <p>From: {{ $startDate }} To: {{ $endDate }}</p>
-                            
-                            @foreach ($classrooms as $classroom)
-                                <h2>Class: {{ $classroom->name }}</h2>
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Student Name</th>
-                                            @foreach (Carbon\CarbonPeriod::create($startDate, $endDate) as $date)
-                                                <th>{{ $date->format('d M') }}</th>
-                                            @endforeach
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($report as $studentId => $studentReport)
-                                            @if ($studentReport['class'] == $classroom->name)
+                                @foreach ($classroom as $class)
+                                    <h2 class="mt-4">Kelas: {{ $class->typeClass->category }} {{ $class->name }}</h2>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead class="thead-dark">
                                                 <tr>
-                                                    <td>{{ $studentReport['name'] }}</td>
-                                                    @foreach ($studentReport['attendance'] as $date => $summary)
-                                                        <td>{{ $summary }}</td>
+                                                    <th>Student Name</th>
+                                                    @foreach (Carbon\CarbonPeriod::create($startDate, $endDate) as $date)
+                                                        <th>{{ $date->format('d M') }}</th>
                                                     @endforeach
                                                 </tr>
-                                            @endif
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            @endforeach
-                        </div>
-                            
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($report as $studentId => $studentReport)
+                                                    @if ($studentReport['class'] == $class->typeClass->category . ' ' . $class->name)
+                                                        <tr>
+                                                            <td>{{ $studentReport['name'] }}</td>
+                                                            @foreach ($studentReport['attendance'] as $date => $attendance)
+                                                                <td class="editable" data-student-id="{{ $studentId }}"
+                                                                    data-date="{{ $date }}"
+                                                                    data-times="{{ json_encode($attendance['times']) }}">
+                                                                    {{ $attendance['status'] }}
+                                                                </td>
+                                                            @endforeach
+                                                        </tr>
+                                                    @endif
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endforeach
+
+                            </div>
                         @else
-                            
+                            <div class="d-flex justify-content-center align-items-center my-5">
+                                <img src="{{ asset('assets/content/empty.svg') }}" width="300" alt="No Data Available">
+                            </div>
                         @endif
-
-
-                        <form action="{{ route('admin.export.attendance_report') }}" method="get">
-                            @csrf
-                            {{-- <input type="hidden" name="classroom_ids[]" value="{{ implode(',', $classrooms->pluck('id')->toArray()) }}">
-                            <input type="hidden" name="start_date" value="{{ $startDate }}">
-                            <input type="hidden" name="end_date" value="{{ $endDate }}"> --}}
-                            <button type="submit" class="btn btn-success mt-2">Export to Excel</button>
-                        </form>
-                        
-
-                        {{-- @if ($report != null)
-                        <div class="container table-responsive">
-                            <h1>Monthly Attendance Report for Class: {{ $classroom->name }}</h1>
-                            <p>From: {{ $startDate }} To: {{ $endDate }}</p>
-
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Student Name</th>
-                                        @foreach (Carbon\CarbonPeriod::create($startDate, $endDate) as $date)
-                                            <th>{{ $date->format('d M') }}</th>
-                                        @endforeach
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($report as $studentId => $studentReport)
-                                        <tr>
-                                            <td>{{ $studentReport['name'] }}</td>
-                                            @foreach ($studentReport['attendance'] as $date => $summary)
-                                                <td>{{ $summary }}</td>
-                                            @endforeach
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                            
-                        @else
-                            
-                        @endif --}}
-
-                        
-
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -198,35 +172,78 @@
 @endsection
 
 @section('js')
-    {{-- <script>
-        new DataTable('#table-content', {
-            pagingType: 'simple_numbers'
+    <script>
+        $(document).ready(function() {
+            $('.editable').on('click', function() {
+                var currentElement = $(this);
+                var originalContent = currentElement.text();
+                var studentId = currentElement.data('student-id');
+                var date = currentElement.data('date');
+                var attendances = currentElement.data('times');
+
+                var input = $('<input>', {
+                    type: 'text',
+                    value: originalContent,
+                    blur: function() {
+                        var newContent = input.val();
+                        currentElement.text(newContent);
+                        saveChanges(studentId, date, newContent, attendances);
+                    },
+                    keyup: function(e) {
+                        if (e.which === 13) {
+                            input.blur();
+                        }
+                    }
+                }).appendTo(currentElement.empty()).focus();
+            });
+
+            function saveChanges(studentId, date, content, attendances) {
+                console.log(studentId, date, content, attendances);
+                axios.post("{{ route('admin.report.attendance_student.update') }}", {
+                        student_id: studentId,
+                        date: date,
+                        content: content,
+                        attendances: attendances,
+                        _token: '{{ csrf_token() }}'
+                    })
+                    .then(function(response) {
+                        console.log('Response:', response);
+                        console.log('Response:', response.data);
+                        if (response.data.success) {
+                            console.log('Response:', response);
+                            alert('Kehadiran berhasil diperbarui!');
+                        }
+                    })
+                    .catch(function(error) {
+                        console.log('Response:', error);
+                        console.error('Error updating attendance:', error);
+                    });
+            }
         });
     </script>
+
     <script>
-        $('.btn-update').click(function() {
-            var id = $(this).data('id');
-            var name = $(this).data('name');
-            var email = $(this).data('email');
-            var actionUrl = `user_admin/${id}`;
-            $('#form-update').attr('action', actionUrl);
-
-            var formUpdate = $('#modal-admin-update #div-update');
-            formUpdate.find('#basic-default-name-update').val(name);
-            formUpdate.find('#basic-default-email-update').val(email);
-
-            $('#modal-admin-update').modal('show');
+        $(function() {
+            $('select').each(function() {
+                $(this).select2({
+                    theme: 'bootstrap4',
+                    width: 'style',
+                    placeholder: $(this).attr('placeholder'),
+                    allowClear: Boolean($(this).data('allow-clear')),
+                });
+            });
         });
-
-        $('.btn-delete').click(function() {
-            id = $(this).data('id')
-            var actionUrl = `user_admin/${id}`;
-            console.log(actionUrl);
-            console.log(id);
-            $('#form-delete').attr('action', actionUrl);
-            $('#modal-delete').modal('show')
-        });
-    </script> --}}
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <script src="{{ asset('assets/vendor/libs/moment/moment.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/%40form-validation/umd/bundle/popular.min.js') }}"></script>

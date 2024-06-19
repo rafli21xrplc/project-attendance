@@ -226,7 +226,7 @@
                                 <option selected disabled>Pilih Kelas</option>
                                 @foreach ($classroom as $item)
                                     <option value="{{ $item->id }}"
-                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>{{ $item->typeClass->category }} {{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>

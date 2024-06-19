@@ -16,5 +16,5 @@ class status extends Model
     ];
 
     protected $primaryKey = 'id';
-    protected $incrementing = false;
+    public $incrementing = false;
 }

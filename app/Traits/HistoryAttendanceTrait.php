@@ -15,12 +15,31 @@ trait HistoryAttendanceTrait
 
         public function getClassroom($classroom_id)
         {
-                return classRoom::find($classroom_id);
+                return classRoom::findOrFail($classroom_id);
         }
 
-        public function getschedule($schedule_id)
+        public function getSchedule($schedule_id)
         {
-                return schedule::find($schedule_id);
+                return schedule::findOrFail($schedule_id);
+        }
+
+        public function getAttendaence($classroom_id, $schedule_id)
+        {
+                $classroom = $this->getClassroom($classroom_id);
+                $schedule = $this->getSchedule($schedule_id);
+                $student = $classroom->students;
+                $attendanceData = attendance::where('schedule_id', $schedule_id)
+                ->with(['student', 'schedule', 'permission']) 
+                        ->whereIn('student_id', $student->pluck('id'))
+                        ->get()
+                        ->keyBy('student_id');
+
+                return [
+                        'classroom' => $classroom,
+                        'schedule' => $schedule,
+                        'student' => $student,
+                        'attendanceData' => $attendanceData,
+                ];
         }
 
         public function getScheduleClassroomHistory()
@@ -59,20 +78,5 @@ trait HistoryAttendanceTrait
                 }
 
                 return collect();
-        }
-
-        public function getStudentClassroom($classroom_id, $schedule_id)
-        {
-                $classroom = classRoom::findOrFail($classroom_id);
-                $schedule = schedule::findOrFail($schedule_id);
-                $students = $classroom->students;
-
-                $attendanceData = attendance::where('schedule_id', $schedule_id)
-                        ->with(['student', 'schedule'])
-                        ->whereIn('student_id', $students->pluck('id'))
-                        ->get()
-                        ->keyBy('student_id');
-
-                return $attendanceData;
         }
 }

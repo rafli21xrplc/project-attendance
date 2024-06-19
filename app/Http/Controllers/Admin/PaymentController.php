@@ -42,7 +42,6 @@ class PaymentController extends Controller
     // public function store(StoreRequest $request)
     public function store(Request $request)
     {
-        dd($request->all());
         try {
             $this->payment->store($request->validated());
         } catch (\Throwable $th) {

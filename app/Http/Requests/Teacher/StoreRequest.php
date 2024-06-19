@@ -34,7 +34,7 @@ class StoreRequest extends FormRequest
             // 'address' => 'required|string|max:255|min:5',
             'telp' => 'required|string|max:20|min:11',
             // 'religion_id' => 'required',
-            'email' => 'required|email|max:255|unique:users,email',
+            'username' => 'required|string|max:255|unique:users,username',
             'password' => 'required|string|min:8',
         ];
     }
@@ -81,10 +81,9 @@ class StoreRequest extends FormRequest
             'telp.min' => 'Telepon must be at least :min characters',
             'telp.max' => 'Telepon cannot exceed :max characters',
             'religion_id.required' => 'Agama harus dipilih',
-            'email.required' => 'Email is required',
-            'email.email' => 'Email must be a valid email address',
-            'email.unique' => 'Email is already taken',
-            'email.max' => 'Email cannot exceed :max characters',
+            'username.required' => 'username is required',
+            'username.unique' => 'username is already taken',
+            'username.max' => 'username cannot exceed :max characters',
             'password.required' => 'Password is required',
             'password.string' => 'Password must be a string',   
             'password.min' => 'Password must be at least :min characters',

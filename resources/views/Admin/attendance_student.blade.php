@@ -17,113 +17,7 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/jquery-timepicker/jquery-timepicker.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/pickr/pickr-themes.css') }}" />
 
-    {{-- <style>
-        #table-content {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        #table-content th,
-        #table-content td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-
-        #table-content th {
-            background-color: #f0f0f0;
-        }
-
-        #table-content tbody tr:nth-child(odd) {
-            background-color: #f9f9f9;
-        }
-
-        #table-content tbody tr:hover {
-            background-color: #e9e9e9;
-        }
-
-        .flatpickr-calendar {
-            background: white;
-        }
-
-        #info-table {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        #info-table th,
-        #info-table td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 0px solid #ddd;
-        }
-
-        #info-table th {
-            background-color: #f2f2f2;
-        }
-
-        #info-table td:first-child {
-            font-weight: bold;
-        }
-
-        #info-table td:last-child {
-            font-style: italic;
-        }
-    </style> --}}
-
     <style>
-        #table-content {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        #table-content th,
-        #table-content td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-
-        #table-content th {
-            background-color: #f0f0f0;
-        }
-
-        #table-content tbody tr:nth-child(odd) {
-            background-color: #f9f9f9;
-        }
-
-        #table-content tbody tr:hover {
-            background-color: #e9e9e9;
-        }
-
-        .flatpickr-calendar {
-            background: white;
-        }
-
-        #info-table {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        #info-table th,
-        #info-table td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 0px solid #ddd;
-        }
-
-        #info-table th {
-            background-color: #f2f2f2;
-        }
-
-        #info-table td:first-child {
-            font-weight: bold;
-        }
-
-        #info-table td:last-child {
-            font-style: italic;
-        }
-
         .table-custom {
             border: 1px solid #ddd;
             border-radius: 10px;
@@ -132,7 +26,7 @@
 
         .table-custom thead th {
             border: none;
-            /* background-color: #f2f2f2; */
+            background-color: #f2f2f2;
         }
 
         .table-custom thead tr {
@@ -175,7 +69,7 @@
 
 @section('content')
     <div class="content-wrapper">
-        <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="container-xl flex-grow-1 container-p-y">
             <div class="container">
                 <div class="row justify-content-end">
                     <div class="col-md-6">
@@ -183,13 +77,14 @@
                             @csrf
                             <div class="flex-grow-1">
                                 <input class="form-control" type="date" value="2021-06-18" id="html5-date-input"
-                                    name="date" />
+                                    name="range-date" />
                             </div>
                             <div class="flex-grow-1">
                                 <select class="form-select" name="classroom_id">
                                     <option value="12 RPL C" disabled selected>Pilih kelas</option>
                                     @foreach ($classroom as $item)
-                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        <option value="{{ $item->id }}">{{ $item->typeClass->category }}
+                                            {{ $item->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -228,8 +123,8 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-12 card">
-                                        <div class="tab-content">
-                                            @foreach ($schedules as $index => $item)
+                                        @forelse ($schedules as $index => $item)
+                                            <div class="tab-content p-3">
                                                 @if ($item)
                                                     <div class="tab-pane fade {{ $index == 0 ? 'active show' : '' }}"
                                                         id="form-tabs-{{ $item->id }}" role="tabpanel">
@@ -241,12 +136,11 @@
                                                                 @method('PUT')
                                                                 <div class="d-flex justify-content-end mb-4">
                                                                     <button id="saveButton" type="submit"
-                                                                        class="btn btn-label-success">
+                                                                        class="btn btn-success">
                                                                         <span class="d-none d-sm-inline-block">Simpan</span>
                                                                     </button>
                                                                 </div>
-                                                                <table class="table table-custom"
-                                                                    style="border: 1px solid black">
+                                                                <table class="table table-custom">
                                                                     <thead>
                                                                         <tr>
                                                                             <th class="text-center">STUDENT ID</th>
@@ -262,10 +156,10 @@
                                                                                 <td>{{ $student->name }}</td>
                                                                                 <td>
                                                                                     <div
-                                                                                        class="col-md d-flex align-items-center flex-wrap gap-2 justify-content-center">
+                                                                                        class="d-flex justify-content-center align-items-center gap-2">
                                                                                         @foreach (['present' => 'Hadir', 'alpha' => 'Alpha', 'permission' => 'Izin', 'sick' => 'Sakit'] as $value => $label)
                                                                                             <div
-                                                                                                class="form-check form-check-{{ $value }}">
+                                                                                                class="form-check form-check-inline">
                                                                                                 <input
                                                                                                     name="attendance[{{ $student->id }}]"
                                                                                                     class="form-check-input"
@@ -286,21 +180,33 @@
                                                                         @endforeach
                                                                     </tbody>
                                                                 </table>
+
                                                             </form>
                                                         </div>
                                                     </div>
+                                                @else
+                                                    <div class="d-flex justify-content-center align-items-center my-5">
+                                                        <img src="{{ asset('assets/content/empty.svg') }}" width="300"
+                                                            alt="No Data Available">
+                                                    </div>
                                                 @endif
-                                            @endforeach
-                                        </div>
+                                            </div>
+                                        @empty
+                                            <div class="d-flex justify-content-center align-items-center my-5">
+                                                <img src="{{ asset('assets/content/empty.svg') }}" width="300"
+                                                    alt="No Data Available">
+                                            </div>
+                                        @endforelse
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 @else
-                    <p>No schedules found.</p>
+                    <div class="d-flex justify-content-center align-items-center my-5">
+                        <img src="{{ asset('assets/content/empty.svg') }}" width="300" alt="No Data Available">
+                    </div>
                 @endif
-
 
 
                 <div class="offcanvas offcanvas-end" id="add-new-record">

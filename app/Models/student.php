@@ -12,7 +12,6 @@ class student extends Model
     protected $guarded = [];
     protected $fillable = [
         'id',
-        'student_id',
         'name',
         'gender',
         'classroom_id',

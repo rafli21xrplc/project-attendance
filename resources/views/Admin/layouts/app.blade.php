@@ -7,6 +7,7 @@
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link
         href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;display=swap"
         rel="stylesheet">
@@ -31,11 +32,8 @@
     <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('assets/vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('assets/js/config.js') }}"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ asset('assets/css/datatable.css') }}">
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * {
             font-size: 12px;
@@ -219,29 +217,63 @@
                             <div> Jadwal Waktu Pelajaran</div>
                         </a>
                     </li>
-
-                    <li class="menu-header small text-uppercase">
-                        <span class="menu-header-text">Absensi</span>
-                    </li>
-
-                    {{-- <li class="menu-item">
-                        <a href="{{ route('admin.attendance_classroom.index') }}" class="menu-link">
+                    <li class="menu-item">
+                        <a href="{{ route('admin.kbm_period.index') }}" class="menu-link ">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-presentation">
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-clock-hour-5">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M3 4l18 0" />
-                                    <path d="M4 4v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-10" />
-                                    <path d="M12 16l0 4" />
-                                    <path d="M9 20l6 0" />
-                                    <path d="M8 12l3 -3l2 2l3 -3" />
+                                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                                    <path d="M12 12l2 3" />
+                                    <path d="M12 7v5" />
                                 </svg>
                             </div>
-                            <div>Absensi Jam Mengajar</div>
+                            <div> Periode KBM</div>
                         </a>
-                    </li> --}}
+                    </li>
+                    <li class="menu-item">
+                        <a href="{{ route('admin.absence_point.index') }}" class="menu-link ">
+                            <div class="menu-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-clock-hour-5">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                                    <path d="M12 12l2 3" />
+                                    <path d="M12 7v5" />
+                                </svg>
+                            </div>
+                            <div> Absensi Point Pelanggaran</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-header small text-uppercase">
+                        <span class="menu-header-text">Report</span>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="{{ route('admin.SIA.index') }}" class="menu-link ">
+                            <div class="menu-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-clock-hour-5">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                                    <path d="M12 12l2 3" />
+                                    <path d="M12 7v5" />
+                                </svg>
+                            </div>
+                            <div> Absensi Point Pelanggaran</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-header small text-uppercase">
+                        <span class="menu-header-text">Absensi</span>
+                    </li>
 
                     <li class="menu-item">
                         <a href="{{ route('admin.attendance_student.index') }}" class="menu-link">
@@ -334,6 +366,31 @@
                         </a>
                     </li>
 
+                    <li class="menu-header small text-uppercase">
+                        <span class="menu-header-text">Setting</span>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="{{ route('admin.setting.index') }}" class="menu-link">
+                            <div class="menu-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-clipboard-data">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                                    <path
+                                        d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                                    <path d="M9 17v-4" />
+                                    <path d="M12 17v-1" />
+                                    <path d="M15 17v-2" />
+                                    <path d="M12 17v-1" />
+                                </svg>
+                            </div>
+                            <div> Setting</div>
+                        </a>
+                    </li>
                 </ul>
             </aside>
 

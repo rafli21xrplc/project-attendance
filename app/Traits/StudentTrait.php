@@ -3,15 +3,106 @@
 
 namespace App\Traits;
 
+use App\Models\classRoom;
 use App\Models\permission;
 use App\Models\schedule;
+use App\Models\student;
+use App\Models\type_class;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 trait StudentTrait
 {
+
+        public function importStudents(array $excel)
+        {
+                $data = Excel::toArray([], $excel['file']);
+                DB::transaction(function () use ($data) {
+                        foreach ($data[0] as $row) {
+                                $this->processRow($row);
+                        }
+                });
+
+                return back();
+        }
+
+        public function processRow($row)
+        {
+                $dayOfBirth = $this->convertExcelDate($row[2]);
+
+                list($typeClass, $className) = explode(' ', $row[1], 2);
+
+                $typeClassModel = $this->findOrCreateTypeClass($typeClass);
+
+                $classroom = $this->findOrCreateClassroom($className, $typeClassModel->id);
+
+                $user = $this->createUser($row[3]);
+
+                $this->createStudent($row, $classroom->id, $user->id, $dayOfBirth);
+        }
+
+        public function convertExcelDate($excelDate)
+        {
+                return Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($excelDate))->format('Y-m-d');
+        }
+
+        public function findOrCreateTypeClass($typeClass)
+        {
+                $typeClassModel = type_class::where('category', $typeClass)->first();
+
+                if (!$typeClassModel) {
+                        $typeClassModel = type_class::create([
+                                'id' => Str::uuid(),
+                                'category' => $typeClass
+                        ]);
+                }
+
+                return $typeClassModel;
+        }
+
+        public function findOrCreateClassroom($className, $typeClassId)
+        {
+                $classroom = Classroom::where('name', $className)
+                        ->where('type_class_id', $typeClassId)
+                        ->first();
+
+                if (!$classroom) {
+                        $classroom = Classroom::create([
+                                'name' => $className,
+                                'type_class_id' => $typeClassId
+                        ]);
+                }
+
+                return $classroom;
+        }
+
+        public function createUser($username)
+        {
+                return User::create([
+                        'uuid' => Str::uuid(),
+                        'username' => $username,
+                        'password' => Hash::make('password')
+                ])->assignRole('student');
+        }
+
+        public function createStudent($row, $classroomId, $userId, $dayOfBirth)
+        {
+                Student::create([
+                        'id' => Str::uuid(),
+                        'name' => $row[6],
+                        'gender' => $row[4],
+                        'classroom_id' => $classroomId,
+                        'day_of_birth' => $dayOfBirth,
+                        'telp' => $row[5],
+                        'user_id' => $userId,
+                ]);
+        }
+
 
         public function getSchedule()
         {

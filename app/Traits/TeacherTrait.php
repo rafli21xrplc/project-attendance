@@ -4,10 +4,15 @@ namespace App\Traits;
 
 use App\Models\attendance;
 use App\Models\classRoom;
+use App\Models\kbm_period;
 use App\Models\schedule;
+use App\Models\teacher;
 use App\Models\time_schedule;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 trait TeacherTrait
 {
@@ -31,9 +36,40 @@ trait TeacherTrait
                 return classRoom::findOrFail($id);
         }
 
+        public function importTeachers(array $data)
+        {
+
+                $data = Excel::toArray([], $data['file']);
+
+                DB::transaction(function () use ($data) {
+                        foreach ($data[0] as $row) {
+
+                                $user = User::create([
+                                        'uuid' => Str::uuid(),
+                                        'username' => $row['3'],
+                                        'password' => Hash::make('password')
+                                ])->assignRole('teacher');
+
+                                teacher::create([
+                                        'id' => Str::uuid(),
+                                        'nip' => $row['1'],
+                                        'nuptk' => $row['2'],
+                                        'name' => $row['6'],
+                                        'gender' => $row['4'],
+                                        'telp' => $row['5'],
+                                        'user_id' => $user->id,
+                                ]);
+                        }
+                });
+
+                return back();
+        }
+
         public function storeAttendanceStudent(array $attendances, $id)
         {
                 try {
+                        $currentPeriod = kbm_period::getCurrentPeriod();
+
                         $schedule = schedule::findOrFail($id);
 
                         $startSchedule = time_schedule::findOrFail($schedule->start_time_schedule_id);
@@ -47,30 +83,15 @@ trait TeacherTrait
                                         'id' => Str::uuid(),
                                         'student_id' => $studentId,
                                         'schedule_id' => $id,
+                                        'kbm_period_id' => $currentPeriod->id,
                                         'time' => now()->format('Y-m-d H:i:s'),
                                         'status' => $status,
                                         'hours' => $hours,
                                         'created_at' => now(),
                                 ];
-
-                                // dd($id);
-
-                                // attendance::create([
-                                //         'id' => Str::uuid(),
-                                //         'student_id' => $studentId,
-                                //         'schedule_id' => $id,
-                                //         'time' => now()->format('Y-m-d H:i:s'),
-                                //         'status' => $status,
-                                //         'hours' => $hours,
-                                //         'created_at' => now(),
-                                // ]);
                         }
 
                         attendance::insert($dataToInsert);
-
-                        $schedule->update([
-                                'completed' => true
-                        ]);
 
                         return true;
                 } catch (\Throwable $th) {

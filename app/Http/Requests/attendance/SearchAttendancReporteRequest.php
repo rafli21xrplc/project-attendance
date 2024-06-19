@@ -23,7 +23,8 @@ class SearchAttendancReporteRequest extends FormRequest
     {
         return [
             'range-date' => ['required', 'regex:/^\d{4}-\d{2}-\d{2}\sto\s\d{4}-\d{2}-\d{2}$/'],
-            'classroom_id' => ['required', 'uuid']
+            'states' => ['required', 'array'],
+            'states.*' => ['uuid']
         ];
     }
 
@@ -32,8 +33,8 @@ class SearchAttendancReporteRequest extends FormRequest
         return [
             'range-date.required' => 'Field range-date wajib diisi.',
             'range-date.regex' => 'Format range-date harus berupa "YYYY-MM-DD to YYYY-MM-DD".',
-            'classroom_id.required' => 'Field classroom_id wajib diisi.',
-            'classroom_id.uuid' => 'Field classroom_id harus berupa UUID yang valid.'
+            'states.required' => 'Field classroom_id wajib diisi.',
+            'states.uuid' => 'Field classroom_id harus berupa UUID yang valid.'
         ];
     }
 }

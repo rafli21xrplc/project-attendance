@@ -15,18 +15,13 @@ class HistoryAttendaceStudentController extends Controller
 
     public function index(string $classroom_id, string $schedule_id)
     {
-        // $student = $this->getStudentClassroom($classroom_id, $schedule_id);
-        $classroom = classRoom::findOrFail($classroom_id);
-        $schedule = schedule::findOrFail($schedule_id);
-        $student = $classroom->students;
-        $attendanceData = attendance::where('schedule_id', $schedule_id)
-            ->with(['student', 'schedule'])
-            ->whereIn('student_id', $student->pluck('id'))
-            ->get()
-            ->keyBy('student_id');
-        $schedule = $this->getschedule($schedule_id);
-        $classroom = $this->getClassroom($classroom_id);
-        return view('teacher.historyAttendanceStudent', compact('classroom', 'schedule', 'student', 'attendanceData'));
+        $attendance = $this->getAttendaence($classroom_id, $schedule_id);
+        return view('teacher.historyAttendanceStudent')->with([
+            'classroom' => $attendance['classroom'],
+            'schedule' => $attendance['schedule'],
+            'student' => $attendance['student'],
+            'attendanceData' => $attendance['attendanceData'],
+        ]);
     }
 
     /**

@@ -14,6 +14,7 @@ class attendance extends Model
         'id',
         'student_id',
         'schedule_id`',
+        'kbm_period_id',
         'hours',
         'note',
         'time',
@@ -22,6 +23,12 @@ class attendance extends Model
 
     protected $primaryKey = 'id';
     public $incrementing = false;
+
+    public function permission()
+    {
+        return $this->hasOne(permission::class, 'student_id', 'student_id')
+            ->whereColumn('schedule_id', 'schedule_id');
+    }
 
     public function student()
     {

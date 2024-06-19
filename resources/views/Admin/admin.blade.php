@@ -38,7 +38,6 @@
                                     <tr class="text-center">
                                         <th>NO</th>
                                         <th>USERNAME</th>
-                                        <th>EMAIL</th>
                                         <th>ROLE</th>
                                         <th>ACTION</th>
                                     </tr>
@@ -47,12 +46,11 @@
                                     @foreach ($user as $index => $item)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $item->name }}</td>
-                                            <td>{{ $item->email }}</td>
+                                            <td>{{ $item->username }}</td>
                                             <td>{{ $item->role }}</td>
                                             <td>
-                                                <button data-id="{{ $item->id }}" data-name="{{ $item->name }}"
-                                                    data-email="{{ $item->email }}" type="button"
+                                                <button data-id="{{ $item->id }}" data-name="{{ $item->username }}"
+                                                    type="button"
                                                     class="btn btn-label-warning btn-update"><i
                                                         class="fa-solid fa-pen"></i></button>
                                                 <button data-id="{{ $item->uuid }}" type="button"

@@ -4,16 +4,24 @@ namespace App\Http\Controllers\admin;
 
 use App\Contracts\Interfaces\AttendanceRekapInterface;
 use App\Exports\reportAttendanceExport;
+use App\Exports\singleClassAttendanceExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\attendance\SearchAttendancReporteRequest;
 use App\Models\attendance;
+use App\Models\classRoom;
+use App\Models\kbm_period;
 use App\Models\student;
+use App\Models\type_class;
+use Illuminate\Support\Str;
+use App\Traits\AttendanceTrait;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
 class AttendanceReportController extends Controller
 {
+
+    use AttendanceTrait;
     private AttendanceRekapInterface $attendanceRekapInterface;
 
     public function __construct(AttendanceRekapInterface $attendanceRekapInterface)
@@ -71,9 +79,75 @@ class AttendanceReportController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+
+        $validatedData = $request->validate([
+            'student_id' => 'required|exists:student,id',
+            'date' => 'required|date',
+            'content' => 'required|string',
+            'attendances' => 'required|array'
+        ]);
+
+        try {
+            $studentId = $validatedData['student_id'];
+            $statusString = $validatedData['content'];
+            $attendances = $validatedData['attendances'];
+
+            preg_match_all('/(\d+)([A-Za-z]+)/', $statusString, $matches, PREG_SET_ORDER);
+
+            foreach ($matches as $match) {
+                $hours = $match[1];
+                $status = strtoupper($match[2]);
+
+                $statusKey = strtolower($this->convertStatusToIndonesian($status));
+
+                if (isset($attendances[$statusKey]) && !empty($attendances[$statusKey])) {
+                    foreach ($attendances[$statusKey] as $timeIndex => $time) {
+                        $attendanceId = $attendances[$statusKey][$timeIndex] ?? null;
+                        if ($attendanceId && $hours && $statusKey) {
+                            $attendance = attendance::find($attendanceId);
+                            if ($attendance) {
+                                $attendance->update([
+                                    'update_at' => now(),
+                                    'status' => $statusKey,
+                                    'hours' => $hours,
+                                ]);
+                            }
+                        } else {
+                            attendance::create([
+                                'id' => Str::uuid(),
+                                'student_id' => $studentId,
+                                'kbm_period_id' => kbm_period::getCurrentPeriod()->id,
+                                'schedule_id' => $this->getScheduleId($studentId, $time),
+                                'time' => $time,
+                                'status' => $statusKey,
+                                'hours' => $hours,
+                            ]);
+                        }
+                    }
+                }
+            }
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+        return response()->json(['success' => true, 'message' => 'Kehadiran berhasil diperbarui!']);
+    }
+
+    private function convertStatusToIndonesian($status)
+    {
+        switch ($status) {
+            case 'A':
+                return 'alpha';
+            case 'H':
+                return 'present';
+            case 'I':
+                return 'permission';
+            case 'S':
+                return 'sick';
+            default:
+                return $status;
+        }
     }
 
     /**
@@ -88,6 +162,7 @@ class AttendanceReportController extends Controller
     {
         $classrooms = $this->attendanceRekapInterface->getClassroom();
         $report = $this->attendanceRekapInterface->getAttendanceStudent($request->validated());
+
         return view('admin.attendance_report', [
             'report' => $report['report'],
             'classroom' => $report['classroom'],
@@ -97,18 +172,13 @@ class AttendanceReportController extends Controller
         ]);
     }
 
-
-    public function export(Request $request)
+    public function export()
     {
-        // $classroomIds = $request->input('classroom_ids');
-        // $startDate = $request->input('start_date');
-        // $endDate = $request->input('end_date');
+        $TypeIds = type_class::pluck('id')->toArray();
+        $startDate = now()->startOfMonth()->toDateString();
+        $endDate = now()->endOfMonth()->toDateString();
 
-        $classroomIds = ["5ea177d1-2aa7-330e-8500-7a354e96c82a", "91c1ba44-ca9b-34d7-92e5-6bdf21b4def0"];
-        $startDate = "2024-5-10";
-        $endDate = "2024-6-10";
-
-        return Excel::download(new reportAttendanceExport($classroomIds, $startDate, $endDate), 'class_attendance_report.xlsx');
+        return Excel::download(new reportAttendanceExport($TypeIds, $startDate, $endDate), 'class_attendance_report.xlsx');
     }
 
     public function aggregateDailyAttendance($date, $studentId)

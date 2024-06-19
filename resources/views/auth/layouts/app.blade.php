@@ -55,6 +55,20 @@
     <script src="{{ asset('assets/vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('assets/js/config.js') }}"></script>
 
+
+    {{-- <style>
+        .btn-primary {
+            background-color: red;
+        }
+        .btn-primary:hover {
+            background-color: red !important;
+        }
+        .btn-primary:active {
+            background-color: red !important;
+        }
+    </style> --}}
+
+
 </head>
 
 <body>

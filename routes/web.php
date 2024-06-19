@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\absencePointController;
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\admin\AttendanceClassroomController;
 use App\Http\Controllers\admin\attendanceRekapController;
@@ -10,8 +11,11 @@ use App\Http\Controllers\admin\classroomController;
 use App\Http\Controllers\admin\classroomTeacherController;
 use App\Http\Controllers\admin\courseController;
 use App\Http\Controllers\Admin\dashboardController;
+use App\Http\Controllers\Admin\kbmPeriodController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\scheduleController;
+use App\Http\Controllers\admin\settingController;
+use App\Http\Controllers\Admin\SIAController;
 use App\Http\Controllers\admin\studentController;
 use App\Http\Controllers\Admin\StudentPaymentController;
 use App\Http\Controllers\admin\teacherController;
@@ -83,14 +87,26 @@ Route::middleware(['auth', 'role:admin'])->controller(dashboardController::class
         'time_schedule' => TimescheduleController::class,
         'type_class' => TypeClassController::class,
         'payment' => PaymentController::class,
-        'student_payment' => StudentPaymentController::class
+        'student_payment' => StudentPaymentController::class,
+        'setting' => settingController::class,
+        'kbm_period' => kbmPeriodController::class,
+        'absence_point' => absencePointController::class,
+        'SIA' => SIAController::class
     ]);
 
+    Route::post('student-import', [studentController::class, 'import'])->name('student.import');
+    Route::post('teacher-import', [teacherController::class, 'import'])->name('teacher.import');
+
+    Route::put('setting-update', [settingController::class, 'update'])->name('setting.update');
     Route::get('/attendance/results', [AttendanceStudentController::class, 'showResults'])->name('attendance.results');
     Route::put('attendance_student/{id}', [AttendanceStudentController::class, 'update'])->name('admin.attendance_student.update');
-    Route::get('export-report-attendance', [AttendanceReportController::class, 'export'])->name('export.attendance_report');
     Route::post('search-student', [AttendanceStudentController::class, 'search'])->name('attendance_student.search');
-    Route::post('report-search-student', [AttendanceReportController::class, 'search'])->name('report.attendance_student.search');
+    Route::get('report-search-student', [AttendanceReportController::class, 'search'])->name('report.attendance_student.search');
+    Route::post('report-search-student', [AttendanceReportController::class, 'update'])->name('report.attendance_student.update');
+    Route::get('report-search-SIA', [SIAController::class, 'search'])->name('SIA.search');
+
+    Route::get('export-report-attendance', [AttendanceReportController::class, 'export'])->name('export.attendance_report');
+    Route::get('export-report-SIA', [SIAController::class, 'export'])->name('SIA.export');
 });
 
 Route::middleware(['auth', 'role:studentShip'])->controller(StudentShipDashboardController::class)->name('studentShip.')->group(function () {
