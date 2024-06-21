@@ -12,11 +12,13 @@ class student extends Model
     protected $guarded = [];
     protected $fillable = [
         'id',
+        'student_id',
+        'nisn',
         'name',
         'gender',
-        'classroom_id',
         'day_of_birth',
         'telp',
+        'classroom_id',
         'user_id',
     ];
 
@@ -41,6 +43,11 @@ class student extends Model
     public function user()
     {
         return $this->belongsTo(user::class, 'user_id', 'id');
+    }
+
+    public function schedules()
+    {
+        return $this->hasManyThrough(schedule::class, classRoom::class, 'id', 'classroom_id', 'classroom_id');
     }
 
 }

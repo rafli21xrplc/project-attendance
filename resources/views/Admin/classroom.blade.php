@@ -20,9 +20,16 @@
                     <h3>KELAS</h3>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-label-primary me-2" style="color: blue">
-                        <i class="ti ti-printer me-1"></i> <span class="d-none d-sm-inline-block">Export</span>
+                    <form id="importForm" action="{{ route('admin.classroom.import') }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group d-none">
+                        <input type="file" name="file" id="fileInput" class="form-control" required>
+                    </div>
+                    <button type="button" class="btn btn-label-primary me-2" id="importButton" style="color: blue">
+                        <i class="ti ti-printer me-1"></i> <span class="d-none d-sm-inline-block">Import</span>
                     </button>
+                </form>
                     <button data-bs-toggle="modal" data-bs-target="#modal-classroom" type="button"
                         class="btn btn-label-success"><i class="ti ti-plus me-sm-1"></i> <span
                             class="d-none d-sm-inline-block">Add New Record</span></button>
@@ -39,6 +46,7 @@
                                         <th>NO</th>
                                         <th>KODE</th>
                                         <th>NAMA</th>
+                                        <th>WALI KELAS</th>
                                         <th>ACTION</th>
                                     </tr>
                                 </thead>
@@ -48,6 +56,7 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $item->class_id }}</td>
                                             <td>{{ $item->typeClass->category }} {{ $item->name }}</td>
+                                            <td>{{ $item->teacher->name }} </td>
                                             <td>
                                                 <button data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-teacher_id="{{ $item->teacher->id }}" data-type_class_id="{{ $item->typeClass->id }}"
                                                     data-class_id="{{ $item->class_id }}" type="button"
@@ -247,6 +256,17 @@
 @endsection
 
 @section('js')
+<script>
+    document.getElementById('importButton').addEventListener('click', function() {
+        document.getElementById('fileInput').click();
+    });
+
+    document.getElementById('fileInput').addEventListener('change', function() {
+        if (this.files.length > 0) {
+            document.getElementById('importForm').submit();
+        }
+    });
+</script>
     <script>
         new DataTable('#table-content', {
             pagingType: 'simple_numbers'

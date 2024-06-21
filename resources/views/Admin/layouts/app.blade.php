@@ -28,22 +28,86 @@
     <link rel="stylesheet"
         href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar7358.css?id=280196ccb54c8ae7e29ea06932c9a4b6') }}" />
     <link rel="stylesheet"
-        href="{{ asset('assets/vendor/libs/typeahead-js/typeaheadb5e1.css?id=2603197f6b29a6654cb700bd9367e2a3') }}" />
+    href="{{ asset('assets/vendor/libs/typeahead-js/typeaheadb5e1.css?id=2603197f6b29a6654cb700bd9367e2a3') }}" />
     <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('assets/vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('assets/js/config.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('assets/css/datatable.css') }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    @yield('link')
     <style>
         * {
             font-size: 12px;
         }
-    </style>
 
-    @yield('link')
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            height: 100px;
+            border: 10px solid rgba(255, 255, 255, 0.1);
+            border-top: 10px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+        }
+
+        .logo {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: url('assets/content/icon-load.png') no-repeat center center;
+            background-size: contain;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+    <link rel="preload" href="assets/content/icon-load.png" as="image">
 </head>
 
 <body>
+    <div class="loader-overlay" id="loader">
+        <div class="loader"></div>
+        <div class="logo"></div>
+    </div>
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme" style="scroll-behavior: auto;">
@@ -71,7 +135,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="" class="menu-link">
+                        <a href="{{ route('admin.dashboard_admin') }}" class="menu-link">
                             <i class="menu-icon tf-icons ti ti-smart-home"></i>
                             <div>Dashboard</div>
                         </a>
@@ -137,21 +201,6 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('admin.classroom_teacher.index') }}" class="menu-link">
-                            <div class="menu-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="#949494" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-school">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" />
-                                    <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" />
-                                </svg>
-                            </div>
-                            <div>Wali Kelas</div>
-                        </a>
-                    </li>
-                    <li class="menu-item">
                         <a href="{{ route('admin.course.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -167,22 +216,6 @@
                                 </svg>
                             </div>
                             <div>Pelajaran</div>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route('admin.teaching_hour.index') }}" class="menu-link ">
-                            <div class="menu-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-clock-hour-5">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                                    <path d="M12 12l2 3" />
-                                    <path d="M12 7v5" />
-                                </svg>
-                            </div>
-                            <div> Jam Mengajar</div>
                         </a>
                     </li>
                     <li class="menu-item">
@@ -487,6 +520,12 @@
         <div class="drag-target"></div>
     </div>
 
+    <script>
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            loader.style.display = 'none';
+        });
+    </script>
     <script src="{{ asset('assets/js/datatable-custom.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/jquery/jquery1e84.js?id=0f7eb1f3a93e3e19e8505fd8c175925a') }}"></script>
     <script src="{{ asset('assets/vendor/libs/popper/popper0a73.js?id=baf82d96b7771efbcc05c3b77135d24c') }}"></script>

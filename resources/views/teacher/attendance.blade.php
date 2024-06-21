@@ -11,6 +11,105 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/%40form-validation/umd/styles/index.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/app-academy.css') }}" />
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.css">
+    <style>
+          #table-content {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #table-content th,
+        #table-content td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #table-content th {
+            background-color: #f0f0f0;
+        }
+
+        #table-content tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        #table-content tbody tr:hover {
+            background-color: #e9e9e9;
+        }
+
+        .flatpickr-calendar {
+            background: white;
+        }
+
+        #info-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #info-table th,
+        #info-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 0px solid #ddd;
+        }
+
+        #info-table th {
+            background-color: #f2f2f2;
+        }
+
+        #info-table td:first-child {
+            font-weight: bold;
+        }
+
+        #info-table td:last-child {
+            font-style: italic;
+        }
+
+        .table-custom {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table-custom thead th {
+            border: none;
+            background-color: #f2f2f2;
+        }
+
+        .table-custom thead tr {
+            border: 1px solid #ddd;
+        }
+
+        .table-custom tbody tr,
+        .table-custom tbody td {
+            border: none;
+        }
+
+        .table-custom th,
+        .table-custom td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table-custom th {
+            text-align: left;
+        }
+
+        .form-check-label {
+            font-size: 14px;
+        }
+
+        .custom-border {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        .table-custom tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .table-custom tbody tr:nth-child(even) {
+            b
+    </style>
 @endsection
 
 @section('content')
@@ -91,6 +190,10 @@
                                     </div>
                                 </div>
                             @empty
+                                <div class="d-flex justify-content-center align-items-center my-5">
+                                    <img src="{{ asset('assets/content/empty.svg') }}" width="300"
+                                        alt="No Data Available">
+                                </div>
                             @endforelse
                         </div>
                     </div>
@@ -114,10 +217,4 @@
     <script src="{{ asset('assets/vendor/libs/%40form-validation/umd/plugin-auto-focus/index.min.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
-
-    <script>
-        new DataTable('#table-content', {
-            pagingType: 'simple_numbers'
-        });
-    </script>
 @endsection

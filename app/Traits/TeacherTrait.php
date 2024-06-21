@@ -46,17 +46,15 @@ trait TeacherTrait
 
                                 $user = User::create([
                                         'uuid' => Str::uuid(),
-                                        'username' => $row['3'],
+                                        'username' => $row['1'],
                                         'password' => Hash::make('password')
                                 ])->assignRole('teacher');
 
                                 teacher::create([
                                         'id' => Str::uuid(),
                                         'nip' => $row['1'],
-                                        'nuptk' => $row['2'],
-                                        'name' => $row['6'],
-                                        'gender' => $row['4'],
-                                        'telp' => $row['5'],
+                                        'name' => $row['0'],
+                                        'gender' => $row['2'],
                                         'user_id' => $user->id,
                                 ]);
                         }

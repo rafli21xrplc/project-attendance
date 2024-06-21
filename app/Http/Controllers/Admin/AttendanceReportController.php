@@ -94,6 +94,7 @@ class AttendanceReportController extends Controller
             $statusString = $validatedData['content'];
             $attendances = $validatedData['attendances'];
 
+
             preg_match_all('/(\d+)([A-Za-z]+)/', $statusString, $matches, PREG_SET_ORDER);
 
             foreach ($matches as $match) {
@@ -104,26 +105,26 @@ class AttendanceReportController extends Controller
 
                 if (isset($attendances[$statusKey]) && !empty($attendances[$statusKey])) {
                     foreach ($attendances[$statusKey] as $timeIndex => $time) {
+
+                        
                         $attendanceId = $attendances[$statusKey][$timeIndex] ?? null;
+                        return $attendanceId;
+
                         if ($attendanceId && $hours && $statusKey) {
                             $attendance = attendance::find($attendanceId);
-                            if ($attendance) {
-                                $attendance->update([
-                                    'update_at' => now(),
-                                    'status' => $statusKey,
-                                    'hours' => $hours,
-                                ]);
-                            }
-                        } else {
-                            attendance::create([
+
+                            $data = [
                                 'id' => Str::uuid(),
                                 'student_id' => $studentId,
                                 'kbm_period_id' => kbm_period::getCurrentPeriod()->id,
-                                'schedule_id' => $this->getScheduleId($studentId, $time),
-                                'time' => $time,
+                                'schedule_id' => $attendance->schedule->id,
+                                'time' => $attendance->time,
                                 'status' => $statusKey,
                                 'hours' => $hours,
-                            ]);
+                            ];
+
+                            attendance::insert($data);
+                            $attendance->delete();
                         }
                     }
                 }
@@ -174,89 +175,76 @@ class AttendanceReportController extends Controller
 
     public function export()
     {
-        $TypeIds = type_class::pluck('id')->toArray();
+        $TypeIds = type_class::pluck('id')->toArray(); // value X, XI, XII
         $startDate = now()->startOfMonth()->toDateString();
         $endDate = now()->endOfMonth()->toDateString();
 
         return Excel::download(new reportAttendanceExport($TypeIds, $startDate, $endDate), 'class_attendance_report.xlsx');
     }
 
-    public function aggregateDailyAttendance($date, $studentId)
-    {
-        $attendances = attendance::whereDate('time', $date)
-            ->where('student_id', $studentId)
-            ->get();
+    // public function aggregateDailyAttendance($date, $studentId)
+    // {
+    //     $attendances = attendance::whereDate('time', $date)
+    //         ->where('student_id', $studentId)
+    //         ->get();
 
-        $summary = [
-            'present' => 0,
-            'permission' => 0,
-            'sick' => 0,
-            'alpha' => 0,
-        ];
+    //     $summary = [
+    //         'present' => 0,
+    //         'permission' => 0,
+    //         'sick' => 0,
+    //         'alpha' => 0,
+    //     ];
 
-        foreach ($attendances as $attendance) {
-            $summary[$attendance->status] += $attendance->hours;
-        }
+    //     foreach ($attendances as $attendance) {
+    //         $summary[$attendance->status] += $attendance->hours;
+    //     }
 
-        $summaryString = '';
-        if ($summary['permission'] > 0) {
-            $summaryString .= "{$summary['permission']}i";
-        }
-        if ($summary['present'] > 0) {
-            $summaryString .= "{$summary['present']}H";
-        }
-        if ($summary['sick'] > 0) {
-            $summaryString .= "{$summary['sick']}S";
-        }
-        if ($summary['alpha'] > 0) {
-            $summaryString .= "{$summary['alpha']}A";
-        }
+    //     $summaryString = '';
+    //     if ($summary['permission'] > 0) {
+    //         $summaryString .= "{$summary['permission']}i";
+    //     }
+    //     if ($summary['present'] > 0) {
+    //         $summaryString .= "{$summary['present']}H";
+    //     }
+    //     if ($summary['sick'] > 0) {
+    //         $summaryString .= "{$summary['sick']}S";
+    //     }
+    //     if ($summary['alpha'] > 0) {
+    //         $summaryString .= "{$summary['alpha']}A";
+    //     }
 
-        return $summaryString;
-    }
-
-
-    public function generateClassMonthlyReport($classroomId, $startDate, $endDate)
-    {
-
-        $students = student::whereIn('classroom_id', ["4df624b6-08e8-3753-a1e1-4b7cefaa15d4", "bd1bab50-17e0-364f-bd58-f1749bb7288f"])->get();
-        $report = [];
-
-        foreach ($students as $student) {
-            $report[$student->id] = [
-                'name' => $student->name,
-                'class' => $student->classroom->name,
-                'attendance' => $this->generateStudentAttendanceSummary($student->id, $startDate, $endDate)
-            ];
-        }
+    //     return $summaryString;
+    // }
 
 
-        return $report;
+    // public function generateClassMonthlyReport($classroomId, $startDate, $endDate)
+    // {
+
+    //     $students = student::whereIn('classroom_id', ["4df624b6-08e8-3753-a1e1-4b7cefaa15d4", "bd1bab50-17e0-364f-bd58-f1749bb7288f"])->get();
+    //     $report = [];
+
+    //     foreach ($students as $student) {
+    //         $report[$student->id] = [
+    //             'name' => $student->name,
+    //             'class' => $student->classroom->name,
+    //             'attendance' => $this->generateStudentAttendanceSummary($student->id, $startDate, $endDate)
+    //         ];
+    //     }
 
 
-        // $students = student::where('classroom_id', $classroomId)->get();
-        // $report = [];
+    //     return $report;
+    // }
 
-        // foreach ($students as $student) {
-        //     $report[$student->id] = [
-        //         'name' => $student->name,
-        //         'attendance' => $this->generateStudentAttendanceSummary($student->id, $startDate, $endDate)
-        //     ];
-        // }
+    // public function generateStudentAttendanceSummary($studentId, $startDate, $endDate)
+    // {
+    //     $dateRange = CarbonPeriod::create($startDate, $endDate);
+    //     $summary = [];
 
-        // return $report;
-    }
+    //     foreach ($dateRange as $date) {
+    //         $dailySummary = $this->aggregateDailyAttendance($date->format('Y-m-d'), $studentId);
+    //         $summary[$date->format('Y-m-d')] = $dailySummary;
+    //     }
 
-    public function generateStudentAttendanceSummary($studentId, $startDate, $endDate)
-    {
-        $dateRange = CarbonPeriod::create($startDate, $endDate);
-        $summary = [];
-
-        foreach ($dateRange as $date) {
-            $dailySummary = $this->aggregateDailyAttendance($date->format('Y-m-d'), $studentId);
-            $summary[$date->format('Y-m-d')] = $dailySummary;
-        }
-
-        return $summary;
-    }
+    //     return $summary;
+    // }
 }

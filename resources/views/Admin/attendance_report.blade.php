@@ -20,6 +20,9 @@
     <link href="https://raw.githack.com/ttskch/select2-bootstrap4-theme/master/dist/select2-bootstrap4.css"
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+@endsection
+
+@section('content')
     <style>
         select {
             width: 100%;
@@ -31,67 +34,55 @@
             font-size: 14px;
         }
 
-        .table-custom {
-            border: 1px solid #ddd;
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            border: 1px solid #a4a4a4;
             border-radius: 10px;
             overflow: hidden;
         }
 
-        .table-custom thead th {
-            border: none;
-            background-color: #f2f2f2;
-        }
-
-        .table-custom thead tr {
+        th,
+        td {
             border: 1px solid #ddd;
-        }
-
-        .table-custom tbody tr,
-        .table-custom tbody td {
-            border: none;
-        }
-
-        .table-custom th,
-        .table-custom td {
-            border: 1px solid #ddd;
+            text-align: center;
             padding: 8px;
         }
 
-        .table-custom th {
-            text-align: left;
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
         }
 
-        .form-check-label {
-            font-size: 14px;
-        }
-
-        .custom-border {
-            border: 1px solid #ddd;
-            border-radius: 10px;
-        }
-
-        .table-custom tbody tr:nth-child(odd) {
+        td {
             background-color: #f9f9f9;
         }
 
-        .table-custom tbody tr:nth-child(even) {
+        tr:nth-child(even) td {
             background-color: #ffffff;
         }
-    </style>
-@endsection
 
-@section('content')
+        thead th {
+            background-color: #f2f2f2;
+        }
+
+        tfoot td {
+            font-weight: bold;
+        }
+    </style>
+    
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row mt-4">
                 <div class="col-12 order-5 ">
-                    <div class="col-md-2 align-items-center">
-                        <a href="{{ route('admin.export.attendance_report') }}">
-                            <button type="submit" class="btn btn-success mt-2">Export to Excel</button>
-                        </a>
-                    </div>
                     <form action="{{ route('admin.report.attendance_student.search') }}" method="get">
                         <div class="row justify-content-end align-items-center">
+                            <div class="col-md-2">
+                                <a href="{{ route('admin.export.attendance_report') }}" class="btn btn-primary w-100">
+                                    <span class="d-none d-sm-inline-block">Export</span>
+                                </a>
+                            </div>
                             <div class="col-md-3">
                                 <input type="text" class="form-control" placeholder="YYYY-MM-DD to YYYY-MM-DD"
                                     name="range-date" id="flatpickr-range" />
@@ -118,16 +109,13 @@
 
             <div class="row my-5">
                 <div class="col-12 order-5">
-                    <div class="card py-3">
-                        @if ($report != null)
+                    @if ($report != null)
+                        <div class="py-3">
                             <div class="container">
-                                <h1 class="text-center">Monthly Attendance Report</h1>
-                                <p class="text-center">From: {{ $startDate }} To: {{ $endDate }}</p>
-
                                 @foreach ($classroom as $class)
-                                    <h2 class="mt-4">Kelas: {{ $class->typeClass->category }} {{ $class->name }}</h2>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
+                                    <h2 class="mt-4">{{ $class->typeClass->category }} {{ $class->name }}</h2>
+                                    <div class="table-responsive text-nowrap custom-border">
+                                        <table>
                                             <thead class="thead-dark">
                                                 <tr>
                                                     <th>Student Name</th>
@@ -155,14 +143,13 @@
                                         </table>
                                     </div>
                                 @endforeach
-
                             </div>
                         @else
                             <div class="d-flex justify-content-center align-items-center my-5">
                                 <img src="{{ asset('assets/content/empty.svg') }}" width="300" alt="No Data Available">
                             </div>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -32,6 +32,7 @@ use App\Http\Controllers\Teacher\AttendaceStudentController;
 use App\Http\Controllers\Teacher\DashboardController as ControllersTeacherDashboardController;
 use App\Http\Controllers\teacher\HistoryAttendaceController;
 use App\Http\Controllers\teacher\HistoryAttendaceStudentController;
+use App\Http\Controllers\teacher\reportAttendanceController;
 use App\Http\Controllers\teacherDashboardController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -43,22 +44,6 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-// Route::get('dashboard-admin', function () {
-//     return view('Admin.dashboard');
-// })->name('dashboard');
-// Route::get('dashboard-petugas', function () {
-//     return view('Petugas.dashboard');
-// })->name('dashboard');
-// Route::get('dashboard-kesiswaan', function () {
-//     return view('kesiswaan.dashboard');
-// })->name('dashboard');
-// Route::get('dashboard-koordinator', function () {
-//     return view('Koordinator.dashboard');
-// })->name('dashboard');
-// Route::get('dashboard-kepala-sekolah', function () {
-//     return view('KepalaSekolah.dashboard');
-// })->name('dashboard');
 
 Route::get('/testing', function () {
     return view('testing');
@@ -80,8 +65,6 @@ Route::middleware(['auth', 'role:admin'])->controller(dashboardController::class
         'classroom_teacher' => classroomTeacherController::class,
         'userAdmin' => AdminController::class,
         'schedule' => scheduleController::class,
-        // 'attendance_teacher' => AttendanceTeacherController::class,
-        // 'attedance_report' => AttendanceClassroomController::class,
         'attendance_report' => AttendanceReportController::class,
         'attendance_student' => AttendanceStudentController::class,
         'time_schedule' => TimescheduleController::class,
@@ -94,6 +77,7 @@ Route::middleware(['auth', 'role:admin'])->controller(dashboardController::class
         'SIA' => SIAController::class
     ]);
 
+    Route::post('classroom-import', [classroomController::class, 'import'])->name('classroom.import');
     Route::post('student-import', [studentController::class, 'import'])->name('student.import');
     Route::post('teacher-import', [teacherController::class, 'import'])->name('teacher.import');
 
@@ -128,9 +112,11 @@ Route::middleware(['auth', 'role:teacher'])->controller(ControllersTeacherDashbo
 
     Route::resources([
         'attendance_teacher' => AttendaceController::class,
-        'history_attendance' => HistoryAttendaceController::class
+        'history_attendance' => HistoryAttendaceController::class,
+        'attendance_homeroom' => reportAttendanceController::class
     ]);
-
+    
+    Route::get('export-report-attendance-homeroom/{id}', [reportAttendanceController::class, 'export'])->name('report.attendance_homeroom.export');
     Route::get('attendance/{classroomid}/{scheduleId}', [AttendaceStudentController::class, 'index'])->name('attendance');
     Route::get('history-attendance/{classroomid}/{scheduleId}', [HistoryAttendaceStudentController::class, 'index'])->name('attendance.history');
     Route::post('attendance-student/{scheduleId}', [AttendaceStudentController::class, 'store'])->name('attendance.store');

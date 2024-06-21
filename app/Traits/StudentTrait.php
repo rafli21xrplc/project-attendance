@@ -19,6 +19,24 @@ use Maatwebsite\Excel\Facades\Excel;
 trait StudentTrait
 {
 
+        public function getScheduleStudent()
+        {
+                $student = Auth::user()->student;
+
+                if (!$student) {
+                        return redirect()->route('home')->with('error', 'Student not found.');
+                }
+
+                $today = Carbon::now()->format('l');
+
+                $schedules = Schedule::where('classroom_id', $student->classroom_id)
+                        ->where('day_of_week', $today)
+                        ->with(['course', 'StartTimeSchedules', 'EndTimeSchedules'])
+                        ->get();
+
+                return $schedules;
+        }
+
         public function importStudents(array $excel)
         {
                 $data = Excel::toArray([], $excel['file']);
@@ -33,17 +51,15 @@ trait StudentTrait
 
         public function processRow($row)
         {
-                $dayOfBirth = $this->convertExcelDate($row[2]);
-
-                list($typeClass, $className) = explode(' ', $row[1], 2);
+                list($typeClass, $className) = explode(' ', $row[3], 2);
 
                 $typeClassModel = $this->findOrCreateTypeClass($typeClass);
 
                 $classroom = $this->findOrCreateClassroom($className, $typeClassModel->id);
 
-                $user = $this->createUser($row[3]);
+                $user = $this->createUser($row[1]);
 
-                $this->createStudent($row, $classroom->id, $user->id, $dayOfBirth);
+                $this->createStudent($row, $classroom->id, $user->id);
         }
 
         public function convertExcelDate($excelDate)
@@ -90,15 +106,14 @@ trait StudentTrait
                 ])->assignRole('student');
         }
 
-        public function createStudent($row, $classroomId, $userId, $dayOfBirth)
+        public function createStudent($row, $classroomId, $userId)
         {
                 Student::create([
                         'id' => Str::uuid(),
-                        'name' => $row[6],
-                        'gender' => $row[4],
+                        'name' => $row[0],
+                        'nisn' => $row[1],
+                        'gender' => $row[2],
                         'classroom_id' => $classroomId,
-                        'day_of_birth' => $dayOfBirth,
-                        'telp' => $row[5],
                         'user_id' => $userId,
                 ]);
         }
@@ -164,10 +179,7 @@ trait StudentTrait
                         [
                                 'name' => $data['name'],
                                 'gender' => $data['gender'],
-                                // 'address' => $data['address'],
                                 'classroom_id' => $data['classroom_id'],
-                                // 'religion_id' => $data['religion_id'],
-                                // 'born_at' => $data['born_at'],
                                 'day_of_birth' => $data['day_of_birth'],
                                 'telp' => $data['telp'],
                                 'user_id' => $user->id,
@@ -180,10 +192,7 @@ trait StudentTrait
                 return [
                         'name' => $data['name'] ?? $user->name,
                         'gender' => $data['gender'] ?? $user->gender,
-                        // 'address' => $data['address'] ?? $user->address,
                         'classroom_id' => $data['classroom_id'] ?? $user->classroom_id,
-                        // 'religion_id' => $data['religion_id'] ?? $user->religion_id,
-                        // 'born_at' => $data['born_at'] ?? $user->born_at,
                         'day_of_birth' => $data['day_of_birth'] ?? $user->day_of_birth,
                         'telp' => $data['telp'] ?? $user->telp,
                         'user_id' => $user->id,

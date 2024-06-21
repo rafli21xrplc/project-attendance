@@ -15,10 +15,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->bigInteger('nip');
-            $table->bigInteger('nuptk');
             $table->string('name');
             $table->enum('gender', ['L', 'P']);
-            $table->string('telp');
+            $table->string('telp')->nullable();
             $table->timestamps();
         });
     }

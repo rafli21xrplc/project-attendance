@@ -201,19 +201,19 @@
                     @method('PUT')
                     <div class="modal-body row py-0" id="div-update">
                         <div class="mb-1">
-                            <label class="form-label" for="basic-default-number_shedule-update">Number Schedule</label>
-                            <input type="number" class="form-control" id="basic-default-number_shedule-update" name="number_shedule"
-                                placeholder="1" required value="{{ old('number_shedule') }}" />
+                            <label class="form-label" for="basic-default-time_number-update">Number Schedule</label>
+                            <input type="number" class="form-control" id="basic-default-time_number-update" name="time_number"
+                                placeholder="1" required value="{{ old('time_number') }}" />
                         </div>
                         <div class="mb-1">
-                            <label class="form-label" for="basic-default-start_time_shedule-update">Awal Waktu Schedule</label>
-                            <input type="time" class="form-control" id="basic-default-start_time_schedule-update" name="start_time_shedule"
-                                placeholder="1" required value="{{ old('start_time_shedule') }}" />
+                            <label class="form-label" for="basic-default-start_time_schedule-update">Awal Waktu Schedule</label>
+                            <input type="time" class="form-control" id="basic-default-start_time_schedule-update" name="start_time_schedule"
+                                placeholder="1" required value="{{ old('start_time_schedule') }}" />
                         </div>
                         <div class="mb-1">
-                            <label class="form-label" for="basic-default-end_time_shedule-update">Akhir Waktu Schedule</label>
-                            <input type="time" class="form-control" id="basic-default-end_time_schedule-update" name="end_time_shedule"
-                                placeholder="1" required value="{{ old('end_time_shedule') }}" />
+                            <label class="form-label" for="basic-default-end_time_schedule-update">Akhir Waktu Schedule</label>
+                            <input type="time" class="form-control" id="basic-default-end_time_schedule-update" name="end_time_schedule"
+                                placeholder="1" required value="{{ old('end_time_schedule') }}" />
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -244,7 +244,7 @@
 
             var formUpdate = $('#modal-classroom-update #div-update');
 
-            formUpdate.find('#basic-default-number_shedule-update').val(time_number);
+            formUpdate.find('#basic-default-time_number-update').val(time_number);
             formUpdate.find('#basic-default-start_time_schedule-update').val(start_time_schedule);
             formUpdate.find('#basic-default-end_time_schedule-update').val(end_time_schedule);
             $('#modal-classroom-update').modal('show');

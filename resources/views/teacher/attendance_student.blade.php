@@ -145,7 +145,7 @@
                                                 action="{{ route('teacher.attendance.store', $schedule->id) }}" method="post">
                                                 @csrf
                                                 @method('POST')
-                                                <table class="table table-custom" style="border: 1px solid black">
+                                                <table class="table table-custom" id="table-content">
                                                     <thead>
                                                         <tr>
                                                             <th class="text-center">STUDENT ID</th>
@@ -192,23 +192,27 @@
                                                                 </td>
                                                             </tr>
                                                         @empty
-                                                            <tr>
-                                                                <td colspan="3" class="text-center">No students found</td>
-                                                            </tr>
+                                                            <div class="d-flex justify-content-center align-items-center my-5">
+                                                                <img src="{{ asset('assets/content/empty.svg') }}"
+                                                                    width="300" alt="No Data Available">
+                                                            </div>
                                                         @endforelse
                                                     </tbody>
                                                 </table>
                                             </form>
                                         @else
-                                            <div class="text-center my-4">
-                                                <img src="{{ asset('assets/images/no-data.png') }}" alt="No data illustration"
-                                                    class="img-fluid" style="max-width: 300px;">
-                                                <p class="text-muted mt-3">No students found for this classroom.</p>
+                                            <div class="d-flex justify-content-center align-items-center my-5">
+                                                <img src="{{ asset('assets/content/empty.svg') }}" width="300"
+                                                    alt="No Data Available">
                                             </div>
                                         @endif
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    @else
+                        <div class="d-flex justify-content-center align-items-center my-5">
+                            <img src="{{ asset('assets/content/empty.svg') }}" width="300" alt="No Data Available">
                         </div>
                     @endisset
                 </div>

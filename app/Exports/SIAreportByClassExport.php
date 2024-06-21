@@ -206,7 +206,7 @@ class SIAreportByClassExport implements WithMultipleSheets
     protected $months;
     protected $period;
 
-    public function __construct($report, $months, $period)
+    public function __construct(array $report, array $months, array $period)
     {
         $this->report = $report;
         $this->months = $months;
@@ -217,10 +217,8 @@ class SIAreportByClassExport implements WithMultipleSheets
     {
         $sheets = [];
 
-        foreach ($this->report as $className => $classData) {
-            $teacherName = $classData['teacher_name'];
-            $students = $classData['students'];
-            $sheets[] = new SIAreportByTypeClassExport($students, $this->months, $className, $teacherName, $this->period);
+        foreach ($this->report as $classType => $classes) {
+            $sheets[] = new SIAreportByTypeClassExport($classType, $classes, $this->months, $this->period);
         }
 
         return $sheets;

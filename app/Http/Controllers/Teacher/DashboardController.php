@@ -7,6 +7,7 @@ use App\Models\type_class;
 use App\Models\User;
 use App\Traits\ScheduleTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -14,8 +15,10 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $typeClasses = type_class::with('classRooms')->get();
         $schedule = $this->getClassroom();
-        return view('teacher.dashboard', compact('typeClasses', 'schedule'));
+        $typeClasses = $this->showClassrooms();
+        $schedules = $this->showTeacherSchedule();
+        $violations = $this->getTop10Violations();
+        return view('teacher.dashboard', compact('typeClasses', 'schedule', 'schedules', 'violations'));
     }
 }

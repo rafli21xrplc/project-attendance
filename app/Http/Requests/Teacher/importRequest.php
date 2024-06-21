@@ -26,7 +26,7 @@ class importRequest extends FormRequest
             'file' => [
                 'required',
                 'file',
-                'max:5120',
+                'max:10120',
                 'mimes:xlsx,xls',
             ],
         ];

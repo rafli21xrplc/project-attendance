@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -41,6 +40,6 @@ class classRoom extends Model
 
     public function schedules()
     {
-        return $this->hasMany(Schedule::class);
+        return $this->hasMany(Schedule::class, 'classroom_id', 'id');
     }
 }

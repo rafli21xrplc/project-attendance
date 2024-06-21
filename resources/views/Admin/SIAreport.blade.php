@@ -65,7 +65,6 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row mt-4">
                 <div class="col-12 order-5">
-
                     <form action="{{ route('admin.SIA.search') }}" method="get">
                         <div class="row justify-content-end">
                             <div class="col-md-2">
@@ -98,11 +97,9 @@
 
             <div class="row my-5">
                 <div class="col-12 order-5">
-                    <div class="card">
-                        <h1>SIA Report for {{ $period }}</h1>
-                        <div class="table-responsive text-nowrap custom-border">
+                    <div class="table-responsive text-nowrap custom-border">
                             @foreach ($report as $className => $students)
-                                <h2>Class: {{ $className }}</h2>
+                                <h2>{{ $className }}</h2>
                                 <table>
                                     <thead>
                                         <tr>
@@ -145,18 +142,15 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                            @endforeach
-
-
-
-                        </div>
+                        @endforeach
                     </div>
                 </div>
-
             </div>
-        </div>
 
-        <div class="content-backdrop fade"></div>
+        </div>
+    </div>
+
+    <div class="content-backdrop fade"></div>
     </div>
 @endsection
 

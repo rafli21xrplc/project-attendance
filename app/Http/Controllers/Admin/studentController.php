@@ -29,8 +29,8 @@ class studentController extends Controller
 
     public function import(importRequest $request)
     {
+        $this->importStudents($request->validated());
         try {
-            $this->importStudents($request->validated());
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'failed created');
         }

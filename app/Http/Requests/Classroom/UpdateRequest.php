@@ -22,6 +22,7 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
+            'teacher_id' => 'required|exists:teacher,id',
             'type_class_id' => 'required|exists:type_class,id',
             'name' => 'required|string|min:3|max:255', // Aturan validasi yang ketat
         ];
@@ -37,6 +38,8 @@ class UpdateRequest extends FormRequest
             'name.unique' => 'Nama pelajaran sudah digunakan, silakan pilih nama lain.',
             'type_class_id.required' => 'type class id harus diisi.',
             'type_class_id.exists' => 'type class id yang dimasukkan tidak valid.',
+            'teacher_id.required' => 'guru id harus diisi.',
+            'teacher_id.exists' => 'guru id yang dimasukkan tidak valid.',
         ];
     }
 }

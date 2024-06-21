@@ -3,16 +3,21 @@
 namespace App\Http\Controllers\student;
 
 use App\Http\Controllers\Controller;
+use App\Traits\StudentTrait;
 use Illuminate\Http\Request;
 
 class studentDashboardController extends Controller
 {
+
+    use StudentTrait;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('student.dashboard');
+        $schedules = $this->getScheduleStudent();
+        return view('student.dashboard', compact('schedules'));
     }
 
     /**

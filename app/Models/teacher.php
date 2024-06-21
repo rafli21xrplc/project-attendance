@@ -14,7 +14,6 @@ class teacher extends Model
     protected $fillable = [
         'id',
         'nip',
-        'nuptk',
         'name',
         'gender',
         'telp',
@@ -35,7 +34,11 @@ class teacher extends Model
 
     public function schedules()
     {
-        return $this->hasMany(Schedule::class);
+        return $this->hasMany(schedule::class);
+    }
+    public function classroom()
+    {
+        return $this->hasOne(classRoom::class, 'teacher_id');
     }
 
     public function classrooms()

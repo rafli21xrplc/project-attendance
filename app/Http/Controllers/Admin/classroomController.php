@@ -4,13 +4,17 @@ namespace App\Http\Controllers\admin;
 
 use App\Contracts\Interfaces\ClassInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\classroom\importRequest;
 use App\Http\Requests\Classroom\StoreRequest;
 use App\Http\Requests\Classroom\UpdateRequest;
 use App\Models\classRoom;
+use App\Traits\ClassroomTrait;
 use Illuminate\Http\Request;
 
 class classroomController extends Controller
 {
+    use ClassroomTrait;
+
     private ClassInterface $class_room;
 
     /**
@@ -21,7 +25,17 @@ class classroomController extends Controller
         $this->class_room = $class_room;
     }
 
-    
+    public function import(importRequest $request)
+    {
+        try {
+            $this->importClassrooms($request->validated());
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'failed created');
+        }
+        return redirect()->back()->with('success', 'success created');
+    }
+
+
     public function index()
     {
         $type_class = $this->class_room->getTypeClassroom();
@@ -30,7 +44,7 @@ class classroomController extends Controller
         return view('admin.classroom', compact('classroom', 'type_class', 'teacher'));
     }
 
-    
+
 
     /**
      * Show the form for creating a new resource.
@@ -81,7 +95,7 @@ class classroomController extends Controller
         }
         return redirect()->back()->with('success', 'success update');
     }
-    
+
     /**
      * Remove the specified resource from storage.
      */

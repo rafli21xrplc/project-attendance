@@ -16,25 +16,21 @@
 @section('content')
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
-
             <div class="app-academy">
                 <div class="card p-0 mb-4">
                     <div class="card-body d-flex flex-column flex-md-row justify-content-between p-0 pt-4">
                         <div class="app-academy-md-25 card-body py-0">
                             <img src="{{ asset('assets/img/illustrations/bulb-light.png') }}"
-                                class="img-fluid app-academy-img-height scaleX-n1-rtl" alt="Bulb in hand"
-                                data-app-light-img="illustrations/bulb-light.png"
-                                data-app-dark-img="illustrations/bulb-dark.png" height="90" />
+                                class="img-fluid app-academy-img-height scaleX-n1-rtl" alt="Bulb in hand" height="90" />
                         </div>
                         <div class="app-academy-md-50 card-body d-flex align-items-md-center flex-column text-md-center">
                             <h3 class="card-title mb-4 lh-sm px-md-5 lh-lg">
-                                Education, talents, and career opportunities.
-                                <span class="text-primary fw-medium text-nowrap">All in one place</span>.
+                                Welcome to Your Teaching Dashboard
+                                <span class="text-primary fw-medium text-nowrap">All your classes</span> in one place.
                             </h3>
                             <p class="mb-3">
-                                Grow your skill with the most reliable online courses
-                                and certifications in marketing, information technology,
-                                programming, and data science.
+                                Manage your classes, track student progress, and stay updated
+                                with the latest teaching resources and tools.
                             </p>
                         </div>
                         <div class="app-academy-md-25 d-flex align-items-end justify-content-end">
@@ -47,9 +43,9 @@
                 <div class="card mb-4">
                     <div class="card-header d-flex flex-wrap justify-content-between gap-3">
                         <div class="card-title mb-0 me-1">
-                            <h5 class="mb-1">My Classroom</h5>
+                            <h5 class="mb-1">My Classes</h5>
                             <p class="text-muted mb-0">
-                                Total 6 course you have purchased
+                                Overview of your current classes
                             </p>
                         </div>
                     </div>
@@ -59,9 +55,9 @@
                                 <div class="col-sm-6 col-lg-4">
                                     <div class="card p-2 h-100 shadow-none border">
                                         <div class="rounded-2 text-center mb-3">
-                                            <a href="course-details.html"><img class="img-fluid"
+                                            <a href="#"><img class="img-fluid"
                                                     src="{{ asset('assets/content/classroom_bg.png') }}"
-                                                    alt="tutor image 1" /></a>
+                                                    alt="classroom image" /></a>
                                         </div>
                                         <div class="card-body p-3 pt-2">
                                             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -69,25 +65,24 @@
                                                 <h6 class="d-flex align-items-center justify-content-center gap-1 mb-0">
                                                     <span
                                                         class="text-muted badge bg-label-info">{{ $item->classroom->students->count() }}
-                                                        Siswa</span>
+                                                        Students</span>
                                                 </h6>
                                             </div>
-                                            <a href="course-details.html" class="h5">{{ $item->classroom->name }}</a>
-                                            <p class="mt-2">
-                                                Introductory course for Angular and framework
-                                                basics in web development.
+                                            <h5 class="mb-2">{{ $item->classroom->typeClass->category }}
+                                                {{ $item->classroom->name }}</h5>
+                                            <p class="d-flex align-items-center mb-2">
+                                                <i class="ti ti-clock me-2 mt-n1"></i>
+                                                {{ \Carbon\Carbon::parse($item->start_time)->format('H:i') }} -
+                                                {{ \Carbon\Carbon::parse($item->end_time)->format('H:i') }}
                                             </p>
-                                            <p class="d-flex align-items-center">
-                                                <i class="ti ti-clock me-2 mt-n1"></i>30 minutes
+                                            <p class="mb-0">
+                                                {{ $item->description ?? 'Class details and learning objectives.' }}
                                             </p>
-                                            {{-- <div class="progress mb-4" style="height: 8px">
-                                                <div class="progress-bar w-100" role="progressbar" 
-                                                    aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div> --}}
-                                            <div class="d-flex flex-column flex-md-row text-nowrap justify-content-end">
+                                            <div
+                                                class="d-flex flex-column flex-md-row text-nowrap justify-content-end mt-3">
                                                 <a class="btn btn-label-warning d-flex align-items-center"
                                                     href="{{ route('teacher.attendance.history', ['classroomid' => $item->classroom->id, 'scheduleId' => $item->id]) }}">
-                                                    <span class="me-2">Update</span><i
+                                                    <span class="me-2">Update Attendance</span><i
                                                         class="ti ti-chevron-right scaleX-n1-rtl ti-sm"></i>
                                                 </a>
                                             </div>
@@ -95,13 +90,16 @@
                                     </div>
                                 </div>
                             @empty
+                                <div class="d-flex justify-content-center align-items-center my-5">
+                                    <img src="{{ asset('assets/content/empty.svg') }}" width="300"
+                                        alt="No Data Available">
+                                    <p class="text-muted mt-3">No classes scheduled for today.</p>
+                                </div>
                             @endforelse
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
     </div>
 

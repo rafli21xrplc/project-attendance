@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\SIAreportByClassExport;
 use App\Exports\SIAreportExport;
 use App\Http\Controllers\Controller;
 use App\Models\classRoom;
@@ -80,10 +81,11 @@ class SIAController extends Controller
     public function search(Request $request)
     {
         $classroom = $this->getClassroom();
-        $report = $this->getSIALaporanBySearch($request->classroom_id);
+        $report = $this->getSIALaporanBySearch($request->states);
         return view('admin.SIAreport')->with([
             'period' => $report['period'],
             'report' => $report['report'],
+            'months' => $report['months'],
             'classrooms' => $classroom
         ]);
     }
@@ -98,6 +100,6 @@ class SIAController extends Controller
         $months = $reportData['months'];
         $period = $reportData['period'];
 
-        return Excel::download(new SIAReportExport($report, $months, $period), 'SIA_Report.xlsx');
+        return Excel::download(new SIAreportByClassExport($report, $months, $period), 'SIA_Report.xlsx');
     }
 }

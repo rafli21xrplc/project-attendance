@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('student', function (Blueprint $table) {
             $table->uuid('id')->index()->primary();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->integer('student_id');
+            $table->bigInteger('student_id');
+            $table->bigInteger('nisn');
             $table->string('name');
             $table->enum('gender', ['L', 'P']);
-            $table->date('day_of_birth');
-            $table->string('telp');
+            $table->date('day_of_birth')->nullable();
+            $table->string('telp')->nullable();
             $table->timestamps();
         });
     }

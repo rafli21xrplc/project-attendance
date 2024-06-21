@@ -116,6 +116,26 @@ trait AttendanceTrait
         return classRoom::with('typeClass')->get();
     }
 
+    public function AttendanceHomeroom($classroom_id)
+    {
+        $startDate = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $endDate = Carbon::now()->endOfMonth()->format('Y-m-d');
+
+        $startDateObj = new DateTime($startDate);
+        $endDateObj = new DateTime($endDate);
+
+        $report = $this->generateClassMonthlyReport([$classroom_id], $startDateObj, $endDateObj);
+
+        $classrooms = Classroom::where('id', $classroom_id)->with('typeClass')->first();
+
+        return [
+            'report' => $report,
+            'classroom' => $classrooms,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ];
+    }
+
     public function searchAttendance($data)
     {
         $dates = explode("to", $data['range-date']);
@@ -136,40 +156,6 @@ trait AttendanceTrait
             'endDate' => $endDate,
         ];
     }
-
-    // public function aggregateDailyAttendance($date, $studentId)
-    // {
-    //     $attendances = attendance::whereDate('time', $date)
-    //         ->where('student_id', $studentId)
-    //         ->get();
-
-    //     $summary = [
-    //         'present' => 0,
-    //         'permission' => 0,
-    //         'sick' => 0,
-    //         'alpha' => 0,
-    //     ];
-
-    //     foreach ($attendances as $attendance) {
-    //         $summary[$attendance->status] += $attendance->hours;
-    //     }
-
-    //     $summaryString = '';
-    //     if ($summary['permission'] > 0) {
-    //         $summaryString .= "{$summary['permission']}i";
-    //     }
-    //     if ($summary['present'] > 0) {
-    //         $summaryString .= "{$summary['present']}H";
-    //     }
-    //     if ($summary['sick'] > 0) {
-    //         $summaryString .= "{$summary['sick']}S";
-    //     }
-    //     if ($summary['alpha'] > 0) {
-    //         $summaryString .= "{$summary['alpha']}A";
-    //     }
-
-    //     return $summaryString;
-    // }
 
     public function aggregateDailyAttendance($date, $studentId)
     {
@@ -243,20 +229,6 @@ trait AttendanceTrait
 
         return $report;
     }
-
-
-    // public function generateStudentAttendanceSummary($studentId, $startDate, $endDate)
-    // {
-    //     $dateRange = CarbonPeriod::create($startDate, $endDate);
-    //     $summary = [];
-
-    //     foreach ($dateRange as $date) {
-    //         $dailySummary = $this->aggregateDailyAttendance($date->format('Y-m-d'), $studentId);
-    //         $summary[$date->format('Y-m-d')] = $dailySummary;
-    //     }
-
-    //     return $summary;
-    // }
 
     public function generateStudentAttendanceSummary($studentId, $startDate, $endDate)
     {
