@@ -19,7 +19,7 @@ jobs:
       with:
         switches: -avzr --delete --exclude=".git" --exclude=".github"
         path: /
-        remote_path: /home/develo13/public_html/
+        remote_path: /home/develo13/public_html/test
         remote_host: developertech.biz.id
         remote_user: develo13
         remote_key: ${{ secrets.DEPLOY_KEY }}
