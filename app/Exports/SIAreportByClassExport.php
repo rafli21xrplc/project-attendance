@@ -2,206 +2,14 @@
 
 namespace App\Exports;
 
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
-
-
+use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\WithTitle;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class SIAreportByClassExport implements WithMultipleSheets
 {
-    // protected $report;
-    // protected $months;
-    // protected $className;
-    // protected $teacherName;
-    // protected $period;
-
-    // public function __construct($report, $months, $className, $teacherName, $period)
-    // {
-    //     $this->report = $report;
-    //     $this->months = $months;
-    //     $this->className = $className;
-    //     $this->teacherName = $teacherName;
-    //     $this->period = $period;
-    // }
-
-    // public function collection()
-    // {
-    //     $data = [];
-
-    //     foreach ($this->report as $student) {
-    //         $row = [
-    //             'Nama Siswa' => $student['name'],
-    //             'L/P' => $student['gender'],
-    //         ];
-
-    //         foreach ($this->months as $month) {
-    //             $row[$month . ' S'] = $student['months'][$month]['sick'];
-    //             $row[$month . ' I'] = $student['months'][$month]['permission'];
-    //             $row[$month . ' A'] = $student['months'][$month]['alpha'];
-    //         }
-
-    //         $row['Jum. KTDHDRN S'] = array_sum(array_column($student['months'], 'sick'));
-    //         $row['Jum. KTDHDRN I'] = array_sum(array_column($student['months'], 'permission'));
-    //         $row['Jum. KTDHDRN A'] = array_sum(array_column($student['months'], 'alpha'));
-    //         $row['Poin Tatib'] = $student['total_tatib_points'];
-
-    //         $data[] = $row;
-    //     }
-
-    //     return collect($data);
-    // }
-
-    // public function headings(): array
-    // {
-    //     $header1 = [
-    //         'Nama Siswa', 'L/P'
-    //     ];
-    //     $header2 = [
-    //         '', ''
-    //     ];
-
-    //     foreach ($this->months as $month) {
-    //         $formattedMonth = \Carbon\Carbon::parse($month)->translatedFormat('F Y');
-    //         $header1[] = $formattedMonth;
-    //         $header1[] = '';
-    //         $header1[] = '';
-    //         $header2[] = 'S';
-    //         $header2[] = 'I';
-    //         $header2[] = 'A';
-    //     }
-
-    //     $header1[] = 'Jum. KTDHDRN';
-    //     $header1[] = '';
-    //     $header1[] = '';
-    //     $header1[] = 'Poin Tatib';
-    //     $header2[] = 'S';
-    //     $header2[] = 'I';
-    //     $header2[] = 'A';
-    //     $header2[] = '';
-
-    //     $titleInfo = [
-    //         ['Nama Kelas', $this->className],
-    //         ['Wali Kelas', $this->teacherName],
-    //         ['Tanggal Rekapan', $this->period['start_date'] . ' - ' . $this->period['end_date']],
-    //         ['Tahun Ajaran', $this->period['name']],
-    //         [], // Empty row for spacing
-    //     ];
-
-    //     return array_merge($titleInfo, [$header1, $header2]);
-    // }
-
-    // public function title(): string
-    // {
-    //     return $this->className;
-    // }
-
-    // public function styles(Worksheet $sheet)
-    // {
-    //     // Merge and style title information cells
-    //     $sheet->mergeCells('A1:H1');
-    //     $sheet->mergeCells('A2:H2');
-    //     $sheet->mergeCells('A3:H3');
-    //     $sheet->mergeCells('A4:H4');
-
-    //     $sheet->getStyle('A1:A4')->getFont()->setBold(true);
-    //     $sheet->getStyle('A6:Z6')->getFont()->setBold(true);
-    //     $sheet->getStyle('A7:Z7')->getFont()->setBold(true);
-
-    //     $sheet->getStyle('A1:A4')->getAlignment()->setHorizontal('left');
-    //     $sheet->getStyle('A6:Z6')->getAlignment()->setHorizontal('center');
-    //     $sheet->getStyle('A7:Z7')->getAlignment()->setHorizontal('center');
-
-    //     // Determine the range for the table
-    //     $highestColumn = $sheet->getHighestColumn();
-    //     $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn);
-    //     $highestRow = $sheet->getHighestRow();
-
-    //     // Style "Rekap" header
-    //     $sheet->mergeCells('D5:' . $highestColumn . '5');
-    //     $sheet->setCellValue('D5', 'Rekap');
-
-    //     $sheet->getStyle('D5:' . $highestColumn . '5')->applyFromArray([
-    //         'font' => [
-    //             'bold' => true,
-    //             'color' => ['argb' => '000000'],
-    //         ],
-    //         'alignment' => [
-    //             'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-    //             'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-    //         ],
-    //         'fill' => [
-    //             'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-    //             'startColor' => [
-    //                 'argb' => 'FFFFFF',
-    //             ],
-    //         ],
-    //         'borders' => [
-    //             'outline' => [
-    //                 'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-    //             ],
-    //         ],
-    //     ]);
-
-    //     // Merge cells for the headers in rows 6 and 7
-    //     $sheet->mergeCells('A6:A7');
-    //     $sheet->mergeCells('B6:B7');
-    //     $sheet->mergeCells('C6:C7');
-    //     $sheet->mergeCells('D6:D7');
-
-    //     // Style headings
-    //     $sheet->getStyle('A6:' . $highestColumn . '6')->applyFromArray([
-    //         'font' => [
-    //             'bold' => true,
-    //             'color' => ['argb' => '000000'],
-    //         ],
-    //         'alignment' => [
-    //             'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-    //             'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-    //         ],
-    //         'fill' => [
-    //             'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-    //             'startColor' => [
-    //                 'argb' => 'FFFFFF',
-    //             ],
-    //         ],
-    //         'borders' => [
-    //             'allBorders' => [
-    //                 'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-    //             ],
-    //         ],
-    //     ]);
-
-    //     // Calculate the highest row with data
-    //     $highestRow = $sheet->getHighestDataRow();
-
-    //     // Apply borders to the entire table
-    //     $sheet->getStyle('A6:' . $highestColumn . $highestRow)->applyFromArray([
-    //         'borders' => [
-    //             'allBorders' => [
-    //                 'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-    //             ],
-    //         ],
-    //     ]);
-
-    //     // Auto size columns
-    //     foreach (range(1, $highestColumnIndex) as $columnIndex) {
-    //         $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex);
-    //         $sheet->getColumnDimension($columnLetter)->setAutoSize(true);
-    //     }
-
-    //     // Set specific row height for better appearance
-    //     $sheet->getRowDimension('1')->setRowHeight(30);
-    //     $sheet->getRowDimension('2')->setRowHeight(20);
-    //     $sheet->getRowDimension('3')->setRowHeight(20);
-    //     $sheet->getRowDimension('4')->setRowHeight(20);
-    //     $sheet->getRowDimension('5')->setRowHeight(20);
-    //     $sheet->getRowDimension('6')->setRowHeight(20);
-    //     $sheet->getRowDimension('7')->setRowHeight(20);
-
-    //     return [
-    //         6 => ['font' => ['bold' => true]],
-    //         7 => ['font' => ['bold' => true]],
-    //     ];
-    // }
-
     protected $report;
     protected $months;
     protected $period;
@@ -217,10 +25,178 @@ class SIAreportByClassExport implements WithMultipleSheets
     {
         $sheets = [];
 
-        foreach ($this->report as $classType => $classes) {
-            $sheets[] = new SIAreportByTypeClassExport($classType, $classes, $this->months, $this->period);
+        foreach ($this->report as $classType => $data) {
+            $sheets[] = new SIAreportByTypeClassExport($classType, $data['students'], $this->months, $this->period);
         }
 
         return $sheets;
+    }
+}
+class SIAreportByTypeClassExport implements FromCollection, WithHeadings, WithTitle, WithStyles
+{
+    protected $classType;
+    protected $students;
+    protected $months;
+    protected $period;
+
+    public function __construct($classType, $students, $months, $period)
+    {
+        $this->classType = $classType;
+        $this->students = $students;
+        $this->months = $months;
+        $this->period = $period;
+    }
+
+    public function collection()
+    {
+        $rows = [];
+        $no = 1;
+
+        foreach ($this->students as $student) {
+            $row = [
+                'No' => $no++,
+                'Nama Siswa' => $student['name'],
+                'L/P' => $student['gender'],
+                'Nama Kelas' => $student['class_name'],
+            ];
+
+            foreach ($this->months as $month) {
+                $row[] = $student['months'][$month]['sick'];
+                $row[] = $student['months'][$month]['permission'];
+                $row[] = $student['months'][$month]['alpha'];
+            }
+
+            $totalSick = array_sum(array_column($student['months'], 'sick'));
+            $totalPermission = array_sum(array_column($student['months'], 'permission'));
+            $totalAlpha = array_sum(array_column($student['months'], 'alpha'));
+
+            $row[] = $totalSick;
+            $row[] = $totalPermission;
+            $row[] = $totalAlpha;
+            $row[] = $student['total_tatib_points'];
+            $row[] = $student['warning'];
+
+            $rows[] = $row;
+        }
+
+        usort($rows, function ($a, $b) {
+            return strcmp($a['Nama Kelas'], $b['Nama Kelas']);
+        });
+
+        return collect($rows);
+    }
+
+    public function headings(): array
+    {
+        $headings = [
+            ['No', 'Nama Siswa', 'L/P', 'Nama Kelas']
+        ];
+
+        $monthHeadings = [];
+        foreach ($this->months as $month) {
+            $monthHeadings[] = \Carbon\Carbon::parse($month)->translatedFormat('F Y');
+            $monthHeadings[] = '';
+            $monthHeadings[] = '';
+        }
+
+        $headings[] = array_merge(['No', 'Nama Siswa', 'L/P', 'Nama Kelas'], $monthHeadings, ['S', 'I', 'A', 'Poin Tatib', 'Keterangan']);
+
+        return $headings;
+    }
+
+    public function title(): string
+    {
+        return $this->classType;
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        // Style for the header row
+        $headerStyleArray = [
+            'font' => [
+                'bold' => true,
+                'color' => ['argb' => '000000'],
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['argb' => 'FFFFFF'],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ];
+
+        // Style for the body rows
+        $bodyStyleArray = [
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['argb' => 'FFF9F9F9'],
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ];
+
+        // Apply styles to header
+        $sheet->getStyle('A1:Z2')->applyFromArray($headerStyleArray);
+
+        // Apply styles to body
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $sheet->getStyle('A3:' . $highestColumn . $highestRow)->applyFromArray($bodyStyleArray);
+
+        // Set column widths
+        foreach (range(1, \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn)) as $columnIndex) {
+            $columnID = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($columnIndex);
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        // Merge cells for multi-row headers
+        $sheet->mergeCells('A1:A2');
+        $sheet->mergeCells('B1:B2');
+        $sheet->mergeCells('C1:C2');
+        $sheet->mergeCells('D1:D2');
+
+        $colIndex = 5; // Starting from column E
+        foreach ($this->months as $month) {
+            $sheet->mergeCellsByColumnAndRow($colIndex, 1, $colIndex + 2, 1);
+            $sheet->setCellValueByColumnAndRow($colIndex, 1, \Carbon\Carbon::parse($month)->translatedFormat('F Y'));
+            $colIndex += 3;
+        }
+
+        // Set headers for S, I, A under each month
+        $colIndex = 5; // Starting from column E
+        foreach ($this->months as $month) {
+            $sheet->setCellValueByColumnAndRow($colIndex, 2, 'S');
+            $sheet->setCellValueByColumnAndRow($colIndex + 1, 2, 'I');
+            $sheet->setCellValueByColumnAndRow($colIndex + 2, 2, 'A');
+            $colIndex += 3;
+        }
+
+        // Merge cells for attendance summary headers
+        $summaryStartCol = $colIndex;
+        $sheet->mergeCellsByColumnAndRow($summaryStartCol, 1, $summaryStartCol + 2, 1);
+        $sheet->setCellValueByColumnAndRow($summaryStartCol, 1, 'Jum. KTDHDRN');
+        $sheet->mergeCellsByColumnAndRow($summaryStartCol + 3, 1, $summaryStartCol + 3, 2);
+        $sheet->setCellValueByColumnAndRow($summaryStartCol + 3, 1, 'Poin Tatib');
+        $sheet->mergeCellsByColumnAndRow($summaryStartCol + 4, 1, $summaryStartCol + 4, 2);
+        $sheet->setCellValueByColumnAndRow($summaryStartCol + 4, 1, 'Keterangan');
+
+        // Set headers for S, I, A under Jum. KTDHDRN
+        $sheet->setCellValueByColumnAndRow($summaryStartCol, 2, 'S');
+        $sheet->setCellValueByColumnAndRow($summaryStartCol + 1, 2, 'I');
+        $sheet->setCellValueByColumnAndRow($summaryStartCol + 2, 2, 'A');
     }
 }

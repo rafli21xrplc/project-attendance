@@ -20,22 +20,9 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="d-flex justify-content-between align-items-center flex-wrap py-2 px-4">
                 <div>
-                    <h3>ABSENSI GURU</h3>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-label-primary me-2" style="color: blue">
-                        <i class="ti ti-printer me-1"></i> <span class="d-none d-sm-inline-block">Export</span>
-                    </button>
-                    <button data-bs-toggle="modal" data-bs-target="#modal-admin" type="button"
-                        class="btn btn-label-success"><i class="ti ti-plus me-sm-1"></i> <span
-                            class="d-none d-sm-inline-block">Add New Record</span></button>
+                    <h3>ABSENSI TELAT</h3>
                 </div>
             </div>
-
-            @php
-                $month = date('n');
-                $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, date('Y'));
-            @endphp
 
             <div class="row">
                 <div class="col-12 order-5">
@@ -43,125 +30,26 @@
                         <div class="card-datatable table-responsive py-3 px-4">
                             <table id="table-content" class="datatables-basic table display">
                                 <thead>
-                                    <tr class="text-center">
-                                        <th>NO</th>
-                                        <th>USERNAME</th>
-                                        @for ($i = 1; $i <= $daysInMonth; $i++)
-                                            <th>{{ str_pad($i, 2, '0', STR_PAD_LEFT) }}</th>
-                                        @endfor
+                                    <tr>
+                                        <th>Nama Guru</th>
+                                        <th>Kelas</th>
+                                        <th>Mata Pelajaran</th>
+                                        <th>Waktu Mulai Pelajaran</th>
+                                        <th>Waktu Berakhir Pelajaran</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr style="border: none;">
-                                        <td>1</td>
-                                        <td>Rafliansyah</td>
-                                        <td><i class="fa-solid fa-check" style="color: green;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-check" style="color: green;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-check" style="color: green;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-check" style="color: green;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-check" style="color: green;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-check" style="color: green;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-check" style="color: green;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-check" style="color: green;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-check" style="color: green;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-check" style="color: green;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-check" style="color: green;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-check" style="color: green;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-check" style="color: green;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                        <td><i class="fa-solid fa-check" style="color: green;"></i></td>
-                                        <td><i class="fa-solid fa-xmark" style="color: red;"></i></td>
-                                    </tr>
+                                    @foreach ($teacher as $attendance)
+                                        <tr>
+                                            <td>{{ $attendance['teacher_name'] }}</td>
+                                            <td>{{ $attendance['classroom'] }}</td>
+                                            <td>{{ $attendance['course'] }}</td>
+                                            <td>{{ $attendance['start_time'] }}</td>
+                                            <td>{{ $attendance['end_time'] }}</td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                    <div class="offcanvas offcanvas-end" id="add-new-record">
-                        <div class="offcanvas-header border-bottom">
-                            <h5 class="offcanvas-title" id="exampleModalLabel">
-                                New Record
-                            </h5>
-                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="offcanvas-body flex-grow-1">
-                            <form class="add-new-record pt-0 row g-2" id="form-add-new-record" onsubmit="return false">
-                                <div class="col-sm-12">
-                                    <label class="form-label" for="basicFullname">Full Name</label>
-                                    <div class="input-group input-group-merge">
-                                        <span id="basicFullname2" class="input-group-text"><i
-                                                class="ti ti-user"></i></span>
-                                        <input type="text" id="basicFullname" class="form-control dt-full-name"
-                                            name="basicFullname" placeholder="John Doe" aria-label="John Doe"
-                                            aria-describedby="basicFullname2" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <label class="form-label" for="basicPost">Post</label>
-                                    <div class="input-group input-group-merge">
-                                        <span id="basicPost2" class="input-group-text"><i
-                                                class="ti ti-briefcase"></i></span>
-                                        <input type="text" id="basicPost" name="basicPost"
-                                            class="form-control dt-post" placeholder="Web Developer"
-                                            aria-label="Web Developer" aria-describedby="basicPost2" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <label class="form-label" for="basicEmail">Email</label>
-                                    <div class="input-group input-group-merge">
-                                        <span class="input-group-text"><i class="ti ti-mail"></i></span>
-                                        <input type="text" id="basicEmail" name="basicEmail"
-                                            class="form-control dt-email" placeholder="john.doe@example.com"
-                                            aria-label="john.doe@example.com" />
-                                    </div>
-                                    <div class="form-text">
-                                        You can use letters, numbers & periods
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <label class="form-label" for="basicDate">Joining Date</label>
-                                    <div class="input-group input-group-merge">
-                                        <span id="basicDate2" class="input-group-text"><i
-                                                class="ti ti-calendar"></i></span>
-                                        <input type="text" class="form-control dt-date" id="basicDate"
-                                            name="basicDate" aria-describedby="basicDate2" placeholder="MM/DD/YYYY"
-                                            aria-label="MM/DD/YYYY" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <label class="form-label" for="basicSalary">Salary</label>
-                                    <div class="input-group input-group-merge">
-                                        <span id="basicSalary2" class="input-group-text"><i
-                                                class="ti ti-currency-dollar"></i></span>
-                                        <input type="number" id="basicSalary" name="basicSalary"
-                                            class="form-control dt-salary" placeholder="12000" aria-label="12000"
-                                            aria-describedby="basicSalary2" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <button type="submit" class="btn btn-danger data-submit me-sm-3 me-1">
-                                        Submit
-                                    </button>
-                                    <button type="reset" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">
-                                        Cancel
-                                    </button>
-                                </div>
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -171,99 +59,6 @@
 
         <div class="content-backdrop fade"></div>
     </div>
-
-    {{-- modal --}}
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <link href="{{ asset('assets/css/select2.css') }}" rel="stylesheet" />
-    <script src="{{ asset('assets/js/select2.js') }}"></script>
-    <div class="modal fade" id="modal-admin" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">USER</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="{{ route('admin.userAdmin.store') }}" method="POST">
-                    @csrf
-                    <div class="modal-body row py-0" style="z-index: 1000;">
-                        <select class="js-example-basic-multiple" name="states[]" multiple="multiple"
-                            style="width: 100%;">
-                            <option value="AL">Alabama</option>
-                            <option value="AL">Alabama</option>
-                            <option value="AL">Alabama</option>
-                            <option value="AL">Alabama</option>
-                            <option value="WY">Wyoming</option>
-                        </select>
-                        {{-- <div class="col-12 col-md-6 mb-2">
-                            <label class="form-label" for="basic-default-email">Email</label>
-                            <input type="email" class="form-control" id="basic-default-email" name="email"
-                                placeholder="your email.. " required value="{{ old('email') }}" />
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label" for="basic-default-password">Password</label>
-                            <input type="password" class="form-control" id="basic-default-password" name="password"
-                                placeholder="your password.. " required value="{{ old('password') }}" />
-                        </div> --}}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-label-danger" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <script>
-        $(document).ready(function() {
-            $('.js-example-basic-multiple').select2({
-                maximumSelectionLength: 2,
-                language: {
-                    maximumSelected: function(e) {
-                        return 'Anda hanya dapat memilih ' + e.maximum + ' opsi.';
-                    }
-                },
-                theme: "classic"
-            });
-        });
-    </script>
-
-    {{-- modal update --}}
-    {{-- <div class="modal fade" id="modal-admin-update" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header mb-2 py-3" style="background: rgba(56, 42, 214, 0.9);">
-                    <h5 class="modal-title mx-auto" style="color: rgb(246, 246, 246);" id="exampleModalLabel1">KELAS</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="form-update" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body row py-0" id="div-update">
-                        <div class="col-12 col-md-6 mb-2">
-                            <label class="form-label" for="basic-default-name-update">Username</label>
-                            <input type="text" class="form-control" id="basic-default-name-update" name="name"
-                                placeholder="your name.. " required value="{{ old('name') }}" />
-                        </div>
-                        <div class="col-12 col-md-6 mb-2">
-                            <label class="form-label" for="basic-default-email-update">Email</label>
-                            <input type="email" class="form-control" id="basic-default-email-update" name="email"
-                                placeholder="your email.. " required value="{{ old('email') }}" />
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label" for="basic-default-password-update">Password</label>
-                            <input type="password" class="form-control" id="basic-default-password-update" name="password"
-                                placeholder="your password.. " required value="{{ old('password') }}" />
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-label-danger" data-bs-dismiss="modal">Close</button>
-                        <button class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div> --}}
 @endsection
 
 @section('js')

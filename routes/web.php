@@ -2,8 +2,6 @@
 
 use App\Http\Controllers\Admin\absencePointController;
 use App\Http\Controllers\admin\AdminController;
-use App\Http\Controllers\admin\AttendanceClassroomController;
-use App\Http\Controllers\admin\attendanceRekapController;
 use App\Http\Controllers\admin\AttendanceReportController;
 use App\Http\Controllers\admin\AttendanceStudentController;
 use App\Http\Controllers\admin\AttendanceTeacherController;
@@ -13,6 +11,8 @@ use App\Http\Controllers\admin\courseController;
 use App\Http\Controllers\Admin\dashboardController;
 use App\Http\Controllers\Admin\kbmPeriodController;
 use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\admin\permissionController;
+use App\Http\Controllers\admin\promotedStudentController;
 use App\Http\Controllers\Admin\scheduleController;
 use App\Http\Controllers\admin\settingController;
 use App\Http\Controllers\Admin\SIAController;
@@ -22,8 +22,8 @@ use App\Http\Controllers\admin\teacherController;
 use App\Http\Controllers\admin\teachingHourController;
 use App\Http\Controllers\Admin\TimescheduleController;
 use App\Http\Controllers\Admin\TypeClassController;
-use App\Http\Controllers\coordinator\dashboardController as CoordinatorDashboardController;
-use App\Http\Controllers\officer\dashboardController as OfficerDashboardController;
+use App\Http\Controllers\auth\authController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\student\ScheduleController as StudentScheduleController;
 use App\Http\Controllers\student\studentDashboardController;
 use App\Http\Controllers\StudentShip\dashboardController as StudentShipDashboardController;
@@ -33,25 +33,18 @@ use App\Http\Controllers\Teacher\DashboardController as ControllersTeacherDashbo
 use App\Http\Controllers\teacher\HistoryAttendaceController;
 use App\Http\Controllers\teacher\HistoryAttendaceStudentController;
 use App\Http\Controllers\teacher\reportAttendanceController;
-use App\Http\Controllers\teacherDashboardController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 })->name('welcome');
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::get('/testing', function () {
-    return view('testing');
+Route::middleware('auth')->group(function () {
+    Route::post('change-password', [authController::class, 'UpdatePass'])->name('change.password');
 });
-
-Route::get('user', function () {
-    return view('Admin.user');
-})->name('user.view');
 
 Route::middleware(['auth', 'role:admin'])->controller(dashboardController::class)->name('admin.')->group(function () {
     Route::get('dashboard-admin', 'index')->name('dashboard_admin');
@@ -67,6 +60,7 @@ Route::middleware(['auth', 'role:admin'])->controller(dashboardController::class
         'schedule' => scheduleController::class,
         'attendance_report' => AttendanceReportController::class,
         'attendance_student' => AttendanceStudentController::class,
+        'report_attendance_teacher' => AttendanceTeacherController::class,
         'time_schedule' => TimescheduleController::class,
         'type_class' => TypeClassController::class,
         'payment' => PaymentController::class,
@@ -74,13 +68,18 @@ Route::middleware(['auth', 'role:admin'])->controller(dashboardController::class
         'setting' => settingController::class,
         'kbm_period' => kbmPeriodController::class,
         'absence_point' => absencePointController::class,
-        'SIA' => SIAController::class
+        'SIA' => SIAController::class,
+        'permission' => permissionController::class,
+        'promoted_student' => promotedStudentController::class
     ]);
+
+    Route::post('test-update-attendance', [AttendanceReportController::class, 'updateAttendanceRequest'])->name('updateAttendanceRequest');
 
     Route::post('classroom-import', [classroomController::class, 'import'])->name('classroom.import');
     Route::post('student-import', [studentController::class, 'import'])->name('student.import');
     Route::post('teacher-import', [teacherController::class, 'import'])->name('teacher.import');
 
+    Route::get('/promoted/student', [promotedStudentController::class, 'promoted'])->name('promoted_student');
     Route::put('setting-update', [settingController::class, 'update'])->name('setting.update');
     Route::get('/attendance/results', [AttendanceStudentController::class, 'showResults'])->name('attendance.results');
     Route::put('attendance_student/{id}', [AttendanceStudentController::class, 'update'])->name('admin.attendance_student.update');
@@ -89,7 +88,8 @@ Route::middleware(['auth', 'role:admin'])->controller(dashboardController::class
     Route::post('report-search-student', [AttendanceReportController::class, 'update'])->name('report.attendance_student.update');
     Route::get('report-search-SIA', [SIAController::class, 'search'])->name('SIA.search');
 
-    Route::get('export-report-attendance', [AttendanceReportController::class, 'export'])->name('export.attendance_report');
+    Route::get('export-report-attendance-excel', [AttendanceReportController::class, 'exportExcel'])->name('export.attendance_report.excel');
+    Route::get('export-report-attendance-pdf', [AttendanceReportController::class, 'exportPdf'])->name('export.attendance_report.pdf');
     Route::get('export-report-SIA', [SIAController::class, 'export'])->name('SIA.export');
 });
 
@@ -115,7 +115,7 @@ Route::middleware(['auth', 'role:teacher'])->controller(ControllersTeacherDashbo
         'history_attendance' => HistoryAttendaceController::class,
         'attendance_homeroom' => reportAttendanceController::class
     ]);
-    
+
     Route::get('export-report-attendance-homeroom/{id}', [reportAttendanceController::class, 'export'])->name('report.attendance_homeroom.export');
     Route::get('attendance/{classroomid}/{scheduleId}', [AttendaceStudentController::class, 'index'])->name('attendance');
     Route::get('history-attendance/{classroomid}/{scheduleId}', [HistoryAttendaceStudentController::class, 'index'])->name('attendance.history');

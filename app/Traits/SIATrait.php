@@ -120,27 +120,29 @@ trait SIATrait
             $month = Carbon::parse($attendance->time)->format('Y-m');
 
             $classType = $attendance->student->classroom->typeClass->category; // Assuming typeClass relationship
-            $className = $attendance->student->classroom->typeClass->category . ' ' . $attendance->student->classroom->name;
+            $className = $attendance->student->classroom->name;
             $teacherName = $attendance->student->classroom->teacher->name; // Assuming relationship is defined
             $studentId = $attendance->student->id;
 
             if (!isset($report[$classType])) {
-                $report[$classType] = [];
-            }
-
-            if (!isset($report[$classType][$className])) {
-                $report[$classType][$className] = [
-                    'teacher_name' => $teacherName,
-                    'students' => []
+                $report[$classType] = [
+                    'students' => [],
+                    'teacher_names' => []
                 ];
             }
 
-            if (!isset($report[$classType][$className]['students'][$studentId])) {
-                $report[$classType][$className]['students'][$studentId] = [
+            if (!in_array($teacherName, $report[$classType]['teacher_names'])) {
+                $report[$classType]['teacher_names'][] = $teacherName;
+            }
+
+            if (!isset($report[$classType]['students'][$studentId])) {
+                $report[$classType]['students'][$studentId] = [
+                    'class_name' => $className,
                     'name' => $attendance->student->name,
                     'gender' => $attendance->student->gender,
                     'months' => array_fill_keys($months, ['sick' => 0, 'permission' => 0, 'alpha' => 0, 'points' => 0]),
                     'total_tatib_points' => 0,
+                    'warning' => ' - '
                 ];
             }
 
@@ -148,17 +150,22 @@ trait SIATrait
                 $hours = $attendance->hours;
                 $tatibPoints = $this->calculateTatibPoints($attendance->status, $hours);
 
-                $report[$classType][$className]['students'][$studentId]['months'][$month][$attendance->status]++;
-                $report[$classType][$className]['students'][$studentId]['months'][$month]['points'] += $tatibPoints;
+                $report[$classType]['students'][$studentId]['months'][$month][$attendance->status]++;
+                $report[$classType]['students'][$studentId]['months'][$month]['points'] += $tatibPoints;
             }
         }
 
         foreach ($report as &$classTypes) {
-            foreach ($classTypes as &$classData) {
-                foreach ($classData['students'] as &$student) {
-                    foreach ($student['months'] as $month => $statuses) {
-                        $student['total_tatib_points'] += $statuses['points'];
-                    }
+            foreach ($classTypes['students'] as &$student) {
+                foreach ($student['months'] as $month => $statuses) {
+                    $student['total_tatib_points'] += $statuses['points'];
+                }
+
+                // Determine if a warning is needed
+                if ($student['total_tatib_points'] > 2.9) {
+                    $student['warning'] = 'konfirmasi';
+                } elseif ($student['total_tatib_points'] > 1.9) {
+                    $student['warning'] = 'panggilan walimurid';
                 }
             }
         }
@@ -192,88 +199,11 @@ trait SIATrait
 
     public function getClassroom()
     {
-        return classRoom::with('typeClass')->get();
+        return classRoom::with('typeClass')->with(['typeClass'])->get();
     }
 
     public function getSIALaporanBySearch($classroomIds)
     {
-        // $currentPeriod = kbm_period::getCurrentPeriod();
-        // if (!$currentPeriod) {
-        //     return response()->json(['message' => 'No active KBM period found.'], 404);
-        // }
-
-        // $startDate = Carbon::parse($currentPeriod->start_date);
-        // $endDate = Carbon::parse($currentPeriod->end_date);
-        // $months = [];
-
-        // while ($startDate->lte($endDate)) {
-        //     $months[$startDate->format('Y-m')] = ['sick' => 0, 'permission' => 0, 'alpha' => 0];
-        //     $startDate->addMonth();
-        // }
-
-        // $attendancesQuery = Attendance::where('kbm_period_id', $currentPeriod->id)
-        //     ->orderBy('student_id')
-        //     ->orderBy('time');
-
-        // if ($classroomId) {
-        //     $attendancesQuery->whereHas('student.classroom', function ($query) use ($classroomId) {
-        //         $query->where('id', $classroomId);
-        //     });
-        // }
-
-        // $attendances = $attendancesQuery->get();
-
-        // $report = [];
-
-        // foreach ($attendances as $attendance) {
-        //     $month = Carbon::parse($attendance->time)->format('Y-m');
-        //     $day = Carbon::parse($attendance->time)->format('d');
-
-        //     if (!isset($report[$attendance->student->classroom->name])) {
-        //         $report[$attendance->student->classroom->name] = [];
-        //     }
-
-        //     if (!isset($report[$attendance->student->classroom->name][$attendance->student->id])) {
-        //         $report[$attendance->student->classroom->name][$attendance->student->id] = [
-        //             'name' => $attendance->student->name,
-        //             'gender' => $attendance->student->gender,
-        //             'days' => [],
-        //             'total_tatib_points' => 0,
-        //         ];
-        //     }
-
-        //     if (!isset($report[$attendance->student->classroom->name][$attendance->student->id]['days'][$day])) {
-        //         $report[$attendance->student->classroom->name][$attendance->student->id]['days'][$day] = [
-        //             'sick' => 0,
-        //             'permission' => 0,
-        //             'alpha' => 0,
-        //             'points' => 0,
-        //         ];
-        //     }
-
-        //     $hours = $attendance->hours; // Assuming 'hours' is the field storing number of hours the status applies to
-        //     $tatibPoints = $this->calculateTatibPoints($attendance->status, $hours);
-
-        //     if (in_array($attendance->status, ['sick', 'permission', 'alpha'])) {
-        //         $report[$attendance->student->classroom->name][$attendance->student->id]['days'][$day][$attendance->status]++;
-        //         $report[$attendance->student->classroom->name][$attendance->student->id]['days'][$day]['points'] += $tatibPoints;
-        //     }
-        // }
-
-        // foreach ($report as $className => &$students) {
-        //     foreach ($students as &$student) {
-        //         foreach ($student['days'] as $day => $statuses) {
-        //             $student['total_tatib_points'] += $statuses['points'];
-        //         }
-        //     }
-        // }
-
-        // return [
-        //     'period' => $currentPeriod->name,
-        //     'report' => $report,
-        //     'months' => $months,
-        // ];
-
         if (empty($classroomIds)) {
             $classroomIds = [classRoom::first()->id];
         }
@@ -305,7 +235,7 @@ trait SIATrait
         foreach ($attendances as $attendance) {
             $month = Carbon::parse($attendance->time)->format('Y-m');
 
-            $className = $attendance->student->classroom->name;
+            $className = $attendance->student->classroom->typeClass->category . ' ' . $attendance->student->classroom->name;
             $studentId = $attendance->student->id;
 
             if (!isset($report[$className])) {
@@ -318,6 +248,7 @@ trait SIATrait
                     'gender' => $attendance->student->gender,
                     'months' => array_fill_keys($months, ['sick' => 0, 'permission' => 0, 'alpha' => 0, 'points' => 0]),
                     'total_tatib_points' => 0,
+                    'warning' => ' - '
                 ];
             }
 
@@ -335,6 +266,12 @@ trait SIATrait
                 foreach ($student['months'] as $month => $statuses) {
                     $student['total_tatib_points'] += $statuses['points'];
                 }
+            }
+
+            if ($student['total_tatib_points'] > 2.9) {
+                $student['warning'] = 'konfirmasi';
+            } elseif ($student['total_tatib_points'] > 1.9) {
+                $student['warning'] = 'panggilan orang tua';
             }
         }
 

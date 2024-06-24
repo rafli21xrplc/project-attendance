@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('permission', function (Blueprint $table) {
             $table->uuid('id')->index()->primary();
             $table->foreignUuid('student_id')->constrained('student')->onDelete('cascade');
-            $table->foreignUuid('schedule_id')->constrained('schedule')->onDelete('cascade');
+            // $table->foreignUuid('schedule_id')->constrained('schedule')->onDelete('cascade');
             $table->longText('description');
             $table->string('file');
             $table->timestamps();

@@ -47,24 +47,11 @@ trait HistoryAttendanceTrait
 
                 $user = Auth::user();
 
-                // if ($user->hasRole('teacher')) {
-                //         $teacher = $user->teacher;
-
-                //         $today = Carbon::now()->englishDayOfWeek;
-
-                //         $schedules = $teacher->schedules()
-                //                 ->where('day_of_week', $today)
-                //                 ->with(['classroom.students', 'course'])
-                //                 ->get();
-
-                //         return $schedules;
-                // }
-
                 if ($user->hasRole('teacher')) {
                         $teacher = teacher::where('user_id', Auth::user()->id)->first();
                         $today = Carbon::now()->format('l');
 
-                        $schedules = schedule::where('teacher_id', $teacher->id)
+                        $schedules = schedule::where('teacher_id', $teacher->id)->with(['classroom', 'course', 'StartTimeSchedules', 'EndTimeSchedules'])
                                 ->where('day_of_week', $today)
                                 ->get();
 

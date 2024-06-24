@@ -9,6 +9,7 @@ use App\Models\schedule;
 use App\Models\teacher;
 use App\Models\time_schedule;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -105,12 +106,6 @@ trait TeacherTrait
                         'nuptk' => $data['nuptk'],
                         'name' => $data['name'],
                         'gender' => $data['gender'],
-                        // 'born_at' => $data['born_at'],
-                        // 'day_of_birth' => $data['day_of_birth'],
-                        // 'position' => $data['position'],
-                        // 'status' => $data['status'],
-                        // 'address' => $data['address'],
-                        // 'religion_id' => $data['religion_id'],
                         'telp' => $data['telp'],
                         'user_id' => $user->id
                 ];
@@ -124,14 +119,35 @@ trait TeacherTrait
                         'nuptk' => $data['nuptk'] ?? $user->nuptk,
                         'name' => $data['name'] ?? $user->name,
                         'gender' => $data['gender'] ?? $user->gender,
-                        // 'born_at' => $data['born_at'] ?? $user->born_at,
-                        // 'day_of_birth' => $data['day_of_birth'] ?? $user->day_of_birth,
-                        // 'position' => $data['position'] ?? $user->position,
-                        // 'status' => $data['status'] ?? $user->status,
-                        // 'address' => $data['address'] ?? $user->address,
-                        // 'religion_id' => $data['religion_id'] ?? $user->religion_id,
                         'telp' => $data['telp'] ?? $user->telp,
                         'user_id' => $user->id,
                 ];
+        }
+
+        public function attendanceLate()
+        {
+                $today = Carbon::now()->format('l');
+                $schedules = Schedule::where('day_of_week', $today)->with(['teacher', 'classroom', 'course', 'attendances', 'StartTimeSchedules', 'EndTimeSchedules'])->get();
+                $missingAttendances = [];
+
+                foreach ($schedules as $schedule) {
+                        $endScheduleTime = Carbon::parse($schedule->EndTimeSchedules->end_time_schedule);
+
+                        if (Carbon::now()->greaterThan($endScheduleTime)) {
+                                $attendance = $schedule->attendances()->whereDate('created_at', Carbon::today())->first();
+
+                                if (!$attendance || Carbon::parse($attendance->created_at)->greaterThan($endScheduleTime)) {
+                                        $missingAttendances[] = [
+                                                'teacher_name' => $schedule->teacher->name,
+                                                'classroom' => $schedule->classroom->name,
+                                                'course' => $schedule->course->name,
+                                                'start_time' => Carbon::parse($schedule->StartTimeSchedules->start_time_schedule)->format('H:i'),
+                                                'end_time' => $endScheduleTime->format('H:i'),
+                                        ];
+                                }
+                        }
+                }
+
+                return $missingAttendances;
         }
 }

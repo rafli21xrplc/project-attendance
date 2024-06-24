@@ -19,9 +19,25 @@ class RedirectIfAuthenticated
     {
         $guards = empty($guards) ? [null] : $guards;
 
+        // foreach ($guards as $guard) {
+        //     if (Auth::guard($guard)->check()) {
+        //         return redirect(RouteServiceProvider::HOME);
+        //     }
+        // }
+
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+                $user = Auth::user();
+                if ($user->hasRole('admin')) {
+                    return redirect()->route('admin.dashboard_admin');
+                } elseif ($user->hasRole('student')) {
+                    return redirect()->route('student.dashboard_student');
+                } elseif ($user->hasRole('teacher')) {
+                    return redirect()->route('teacher.dashboard_teacher');
+                } elseif ($user->hasRole('studentShip')) {
+                    return redirect()->route('studentShip.dashboard_studentShip');
+                }
+                // Add more roles as needed
             }
         }
 

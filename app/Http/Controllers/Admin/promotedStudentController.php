@@ -2,28 +2,25 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Contracts\Interfaces\AttendanceTeacherInterface;
 use App\Http\Controllers\Controller;
-use App\Traits\TeacherTrait;
+use App\Traits\PromotedTrait;
 use Illuminate\Http\Request;
 
-class AttendanceTeacherController extends Controller
+class promotedStudentController extends Controller
 {
 
-    use TeacherTrait;
+    use PromotedTrait;
 
-    private AttendanceTeacherInterface $attendanceTeacher;
-    public function __construct(AttendanceTeacherInterface $attendanceTeacher)
-    {
-        $this->attendanceTeacher = $attendanceTeacher;
-    }
     /**
      * Display a listing of the resource.
      */
+    public function promoted()
+    {
+        $promote = $this->promotedStudent();
+    }
+    
     public function index()
     {
-        $teacher = $this->attendanceLate();
-        return view('admin.attendanceTeacher', compact('teacher'));
     }
 
     /**

@@ -41,6 +41,7 @@
             border: 1px solid #a4a4a4;
             border-radius: 10px;
             overflow: hidden;
+            background-color: white;
         }
 
         th,
@@ -71,7 +72,7 @@
             font-weight: bold;
         }
     </style>
-    
+
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row mt-4">
@@ -79,8 +80,13 @@
                     <form action="{{ route('admin.report.attendance_student.search') }}" method="get">
                         <div class="row justify-content-end align-items-center">
                             <div class="col-md-2">
-                                <a href="{{ route('admin.export.attendance_report') }}" class="btn btn-primary w-100">
-                                    <span class="d-none d-sm-inline-block">Export</span>
+                                <a href="{{ route('admin.export.attendance_report.pdf') }}" class="btn btn-warning w-100">
+                                    <span class="d-none d-sm-inline-block">Export Pdf</span>
+                                </a>
+                            </div>
+                            <div class="col-md-2">
+                                <a href="{{ route('admin.export.attendance_report.excel') }}" class="btn btn-primary w-100">
+                                    <span class="d-none d-sm-inline-block">Export Excel</span>
                                 </a>
                             </div>
                             <div class="col-md-3">
@@ -106,7 +112,6 @@
                 </div>
             </div>
 
-
             <div class="row my-5">
                 <div class="col-12 order-5">
                     @if ($report != null)
@@ -115,20 +120,34 @@
                                 @foreach ($classroom as $class)
                                     <h2 class="mt-4">{{ $class->typeClass->category }} {{ $class->name }}</h2>
                                     <div class="table-responsive text-nowrap custom-border">
-                                        <table>
+                                        <table class="table table-bordered">
                                             <thead class="thead-dark">
                                                 <tr>
-                                                    <th>Student Name</th>
+                                                    <th rowspan="2">NAMA SISWA</th>
+                                                    <th rowspan="2">L/P</th>
+                                                    <th
+                                                        colspan="{{ Carbon\CarbonPeriod::create($startDate, $endDate)->count() }}">
+                                                        TANGGAL*</th>
+                                                    <th colspan="3">JUM. KTDHDRN**</th>
+                                                    <th rowspan="2">POIN TATIB</th>
+                                                    <th rowspan="2">KET</th>
+                                                </tr>
+                                                <tr>
                                                     @foreach (Carbon\CarbonPeriod::create($startDate, $endDate) as $date)
-                                                        <th>{{ $date->format('d M') }}</th>
+                                                        <th>{{ $date->format('d') }}</th>
                                                     @endforeach
+                                                    <th>S</th>
+                                                    <th>I</th>
+                                                    <th>A</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @php $no = 1; @endphp
                                                 @foreach ($report as $studentId => $studentReport)
                                                     @if ($studentReport['class'] == $class->typeClass->category . ' ' . $class->name)
                                                         <tr>
                                                             <td>{{ $studentReport['name'] }}</td>
+                                                            <td>{{ $studentReport['gender'] }}</td>
                                                             @foreach ($studentReport['attendance'] as $date => $attendance)
                                                                 <td class="editable" data-student-id="{{ $studentId }}"
                                                                     data-date="{{ $date }}"
@@ -136,6 +155,14 @@
                                                                     {{ $attendance['status'] }}
                                                                 </td>
                                                             @endforeach
+                                                            <td>{{ number_format($studentReport['total_sakit'] * 0.1, 1) }}
+                                                            </td>
+                                                            <td>{{ number_format($studentReport['total_izin'] * 0.1, 1) }}
+                                                            </td>
+                                                            <td>{{ number_format($studentReport['total_alpha'] * 0.1, 1) }}
+                                                            </td>
+                                                            <td>{{ number_format($studentReport['total_points'], 1) }}</td>
+                                                            <td>{{ $studentReport['warning'] }}</td>
                                                         </tr>
                                                     @endif
                                                 @endforeach
@@ -144,10 +171,10 @@
                                     </div>
                                 @endforeach
                             </div>
-                        @else
-                            <div class="d-flex justify-content-center align-items-center my-5">
-                                <img src="{{ asset('assets/content/empty.svg') }}" width="300" alt="No Data Available">
-                            </div>
+                        </div>
+                    @else
+                        <div class="d-flex justify-content-center align-items-center my-5">
+                            <img src="{{ asset('assets/content/empty.svg') }}" width="300" alt="No Data Available">
                         </div>
                     @endif
                 </div>
@@ -166,7 +193,7 @@
                 var originalContent = currentElement.text();
                 var studentId = currentElement.data('student-id');
                 var date = currentElement.data('date');
-                var attendances = currentElement.data('times');
+                // var attendances = currentElement.data('times');
 
                 var input = $('<input>', {
                     type: 'text',
@@ -174,7 +201,7 @@
                     blur: function() {
                         var newContent = input.val();
                         currentElement.text(newContent);
-                        saveChanges(studentId, date, newContent, attendances);
+                        saveChanges(studentId, date, newContent);
                     },
                     keyup: function(e) {
                         if (e.which === 13) {
@@ -184,13 +211,15 @@
                 }).appendTo(currentElement.empty()).focus();
             });
 
-            function saveChanges(studentId, date, content, attendances) {
-                console.log(studentId, date, content, attendances);
+            function saveChanges(studentId, date, content) {
+                console.log(studentId);
+                console.log(date);
+                console.log(content);
                 axios.post("{{ route('admin.report.attendance_student.update') }}", {
                         student_id: studentId,
                         date: date,
                         content: content,
-                        attendances: attendances,
+                        // attendances: attendances,
                         _token: '{{ csrf_token() }}'
                     })
                     .then(function(response) {

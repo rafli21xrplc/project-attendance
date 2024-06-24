@@ -6,6 +6,7 @@ namespace App\Traits;
 use App\Models\attendance;
 use App\Models\classRoom;
 use App\Models\kbm_period;
+use App\Models\permission;
 use App\Models\schedule;
 use App\Models\teacher;
 use App\Models\time_schedule;
@@ -30,14 +31,12 @@ trait ScheduleTrait
 
                         $hours = ($endSchedule->time_number - $startSchedule->time_number) + 1;
 
-
                         if ($currentTime->greaterThanOrEqualTo(Carbon::parse($endSchedule->end_time_schedule))) {
 
-                                dd($currentTime->greaterThanOrEqualTo(Carbon::parse($endSchedule->end_time_schedule)));
-
-
                                 if (!$schedule->attendances()->whereDate('created_at', Carbon::today())->exists()) {
+
                                         foreach ($schedule->classroom->students as $student) {
+
                                                 try {
                                                         attendance::insert([
                                                                 'id' => Str::uuid(),
@@ -56,6 +55,13 @@ trait ScheduleTrait
                                 }
                         }
                 }
+        }
+
+        public function deletePermissionSchedule()
+        {
+                $twoWeeksAgo = Carbon::now()->subWeeks(2);
+                $deleted = permission::where('created_at', '<', $twoWeeksAgo)->get();
+                return $deleted;
         }
 
         public function getScheduleClassroom()

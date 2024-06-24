@@ -22,7 +22,7 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'category' => 'required|string|min:3|max:255|unique:class_room,category', // Aturan validasi yang ketat
+            'category' => 'required|string|min:3|max:255|unique:type_class,category', // Aturan validasi yang ketat
         ];
     }
 

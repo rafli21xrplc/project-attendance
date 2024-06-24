@@ -168,7 +168,7 @@
     </div>
 
     {{-- modal update --}}
-    <div class="modal fade" id="modal-classroom-update" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="modal-category-update" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header mb-2 py-3" style="background: rgba(56, 42, 214, 0.9);">
@@ -211,7 +211,7 @@
 
             var formUpdate = $('#modal-category-update #div-update');
 
-            formUpdate.find('#basic-default-name-update').val(name);
+            formUpdate.find('#basic-default-category-update').val(name);
             $('#modal-category-update').modal('show');
         });
 

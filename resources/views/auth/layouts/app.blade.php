@@ -25,6 +25,10 @@
         })(window, document, 'script', 'dataLayer', 'GTM-5J3LMKC');
     </script>
 
+    <title>PRESENCE 8</title>
+
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/content/icon-load.png') }}">
+
 
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
@@ -54,20 +58,6 @@
     <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('assets/vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('assets/js/config.js') }}"></script>
-
-
-    {{-- <style>
-        .btn-primary {
-            background-color: red;
-        }
-        .btn-primary:hover {
-            background-color: red !important;
-        }
-        .btn-primary:active {
-            background-color: red !important;
-        }
-    </style> --}}
-
 
 </head>
 

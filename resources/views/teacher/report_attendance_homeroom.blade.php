@@ -94,39 +94,58 @@
             <div class="row">
                 <div class="col-12 order-5">
                     @if ($report != null)
-                        <div>
+                        <div class="py-3">
                             <div class="table-responsive text-nowrap custom-border">
                                 <table>
                                     <thead class="thead-dark">
                                         <tr>
-                                            <th>Student Name</th>
+                                            <th rowspan="2">NAMA SISWA</th>
+                                            <th rowspan="2">L/P</th>
+                                            <th colspan="{{ Carbon\CarbonPeriod::create($startDate, $endDate)->count() }}">
+                                                TANGGAL*</th>
+                                            <th colspan="3">JUM. KTDHDRN**</th>
+                                            <th rowspan="2">POIN TATIB</th>
+                                            <th rowspan="2">KET</th>
+                                        </tr>
+                                        <tr>
                                             @foreach (Carbon\CarbonPeriod::create($startDate, $endDate) as $date)
-                                                <th>{{ $date->format('d M') }}</th>
+                                                <th>{{ $date->format('d') }}</th>
                                             @endforeach
+                                            <th>S</th>
+                                            <th>I</th>
+                                            <th>A</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php $no = 1; @endphp
                                         @foreach ($report as $studentId => $studentReport)
-                                            @if ($studentReport['class'] == $classroom->typeClass->category . ' ' . $classroom->name)
-                                                <tr>
-                                                    <td>{{ $studentReport['name'] }}</td>
-                                                    @foreach ($studentReport['attendance'] as $date => $attendance)
-                                                        <td class="editable" data-student-id="{{ $studentId }}"
-                                                            data-date="{{ $date }}"
-                                                            data-times="{{ json_encode($attendance['times']) }}">
-                                                            {{ $attendance['status'] }}
-                                                        </td>
-                                                    @endforeach
-                                                </tr>
-                                            @endif
+                                            <tr>
+                                                <td>{{ $studentReport['name'] }}</td>
+                                                <td>{{ $studentReport['gender'] }}</td>
+                                                @foreach ($studentReport['attendance'] as $date => $attendance)
+                                                    <td class="editable" data-student-id="{{ $studentId }}"
+                                                        data-date="{{ $date }}"
+                                                        data-times="{{ json_encode($attendance['times']) }}">
+                                                        {{ $attendance['status'] }}
+                                                    </td>
+                                                @endforeach
+                                                <td>{{ number_format($studentReport['total_sakit'] * 0.1, 1) }}
+                                                </td>
+                                                <td>{{ number_format($studentReport['total_izin'] * 0.1, 1) }}
+                                                </td>
+                                                <td>{{ number_format($studentReport['total_alpha'] * 0.1, 1) }}
+                                                </td>
+                                                <td>{{ number_format($studentReport['total_points'], 1) }}</td>
+                                                <td>{{ $studentReport['warning'] }}</td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
-                        @else
-                            <div class="d-flex justify-content-center align-items-center my-5">
-                                <img src="{{ asset('assets/content/empty.svg') }}" width="300" alt="No Data Available">
-                            </div>
+                        </div>
+                    @else
+                        <div class="d-flex justify-content-center align-items-center my-5">
+                            <img src="{{ asset('assets/content/empty.svg') }}" width="300" alt="No Data Available">
                         </div>
                     @endif
                 </div>

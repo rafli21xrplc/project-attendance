@@ -126,7 +126,7 @@ trait StudentTrait
                         $today = Carbon::today();
                         $dayOfWeek = $today->format('l');
 
-                        $schedules = schedule::where('classroom_id', $student->classroom_id)
+                        $schedules = schedule::where('classroom_id', $student->classroom_id)->with(['classroom', 'course', 'StartTimeSchedules', 'EndTimeSchedules'])
                                 ->where('day_of_week', $dayOfWeek)
                                 ->get();
 
@@ -139,37 +139,33 @@ trait StudentTrait
         public function storePermission(array $data)
         {
                 $today = Carbon::today();
-                $dayOfWeek = $today->format('l');
                 $student = Auth::user()->student;
 
-                $schedules = Schedule::where('classroom_id', $student->classroom_id)
-                        ->where('day_of_week', $dayOfWeek)
-                        ->get();
+                try {
+                        $existingPermission = Permission::where('student_id', $student->id)
+                                ->whereDate('created_at', $today)
+                                ->first();
 
-                $existingPermission = Permission::where('student_id', $student->id)
-                        ->whereDate('created_at', $today)
-                        ->first();
+                        if ($existingPermission) {
+                                throw new \Exception('Surat izin untuk hari ini sudah diajukan.');
+                        }
+                        
+                        if (isset($data['file'])) {
+                                $filePath = $data['file']->store('images/permission', 'public');
+                        } else {
+                                throw new \Exception('File surat izin diperlukan.');
+                        }
 
-                if ($existingPermission) {
-                        throw new \Exception('Surat izin untuk hari ini sudah diajukan.');
-                }
-
-                if (isset($data['file'])) {
-                        $filePath = $data['file']->store('images/permission', 'public');
-                } else {
-                        throw new \Exception('File surat izin diperlukan.');
-                }
-
-                foreach ($schedules as $schedule) {
                         Permission::create([
                                 'id' => Str::uuid(),
                                 'student_id' => $student->id,
-                                'schedule_id' => $schedule->id,
                                 'file' => $filePath,
                                 'description' => $data['description'] ?? null,
                         ]);
+                        
+                } catch (\Throwable $th) {
+                        throw new \Exception('Surat izin tidak bisa upload.');
                 }
-
                 return true;
         }
 

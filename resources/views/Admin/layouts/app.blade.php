@@ -1,16 +1,23 @@
 <!DOCTYPE html>
-<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<html lang="en">
 
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
     <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>PRESENCE 8</title>
+
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/content/icon-load.png') }}">
+
+    <!-- Preconnect and Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link
-        href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;display=swap"
+        href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
         rel="stylesheet">
+
+    <!-- Stylesheets -->
     <link rel="stylesheet"
         href="{{ asset('assets/vendor/fonts/tabler-iconsea04.css?id=6ad8bc28559d005d792d577cf02a2116') }}" />
     <link rel="stylesheet"
@@ -28,15 +35,19 @@
     <link rel="stylesheet"
         href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar7358.css?id=280196ccb54c8ae7e29ea06932c9a4b6') }}" />
     <link rel="stylesheet"
-    href="{{ asset('assets/vendor/libs/typeahead-js/typeaheadb5e1.css?id=2603197f6b29a6654cb700bd9367e2a3') }}" />
+        href="{{ asset('assets/vendor/libs/typeahead-js/typeaheadb5e1.css?id=2603197f6b29a6654cb700bd9367e2a3') }}" />
+
+    <!-- Scripts -->
     <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('assets/vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('assets/js/config.js') }}"></script>
     <link rel="stylesheet" href="{{ asset('assets/css/datatable.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     @yield('link')
+
     <style>
         * {
             font-size: 12px;
@@ -48,7 +59,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: whitesmoke;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -76,6 +87,25 @@
             animation: pulse 2s infinite;
         }
 
+        #left-side-menu {
+            overflow-y: auto;
+            height: 100vh;
+            position: fixed;
+        }
+
+        #left-side-menu::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #left-side-menu::-webkit-scrollbar-thumb {
+            background-color: #d2d2d2;
+            border-radius: 4px;
+        }
+
+        #left-side-menu::-webkit-scrollbar-track {
+            background-color: #f1f1f1;
+        }
+
         @keyframes spin {
             0% {
                 transform: rotate(0deg);
@@ -100,7 +130,6 @@
             }
         }
     </style>
-    <link rel="preload" href="assets/content/icon-load.png" as="image">
 </head>
 
 <body>
@@ -108,28 +137,13 @@
         <div class="loader"></div>
         <div class="logo"></div>
     </div>
+
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme" style="scroll-behavior: auto;">
-                <div class="app-brand demo my-4">
-                    <a href="https://demos.pixinvent.com/vuexy-html-laravel-admin-template/demo-1"
-                        class="app-brand-link">
-                        {{-- <span class="demo">
-                            <img src="{{ asset('assets/img/content/logo.png') }}" height="50" alt=""
-                                srcset="">
-                        </span> --}}
-                        <span class="app-brand-text demo menu-text fw-bold">Presense</span>
-                    </a>
-
-                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
-                        <i class="ti menu-toggle-icon d-none d-xl-block ti-sm align-middle"></i>
-                        <i class="ti ti-x d-block d-xl-none ti-sm align-middle"></i>
-                    </a>
-                </div>
 
                 <div class="menu-inner-shadow"></div>
-                <ul class="menu-inner py-1">
-
+                <ul class="menu-inner py-1 " id="left-side-menu">
                     <li class="menu-header small text-uppercase">
                         <span class="menu-header-text">Data Master</span>
                     </li>
@@ -140,20 +154,13 @@
                             <div>Dashboard</div>
                         </a>
                     </li>
-
-                    <li class="menu-item">
-                        <a href="{{ route('admin.userAdmin.index') }}" class="menu-link">
-                            <i class="menu-icon tf-icons ti ti-users"></i>
-                            <div>Admin</div>
-                        </a>
-                    </li>
                     <li class="menu-item">
                         <a href="{{ route('admin.teacher.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="#949494" stroke-width="2"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-school">
+                                    class="icon icon-tabler icon-tabler-school">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" />
                                     <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" />
@@ -174,7 +181,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-home-edit">
+                                    class="icon icon-tabler icon-tabler-home-edit">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M9 21v-6a2 2 0 0 1 2 -2h2c.645 0 1.218 .305 1.584 .78" />
                                     <path d="M20 11l-8 -8l-9 9h2v7a2 2 0 0 0 2 2h4" />
@@ -190,7 +197,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-home-edit">
+                                    class="icon icon-tabler icon-tabler-home-edit">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M9 21v-6a2 2 0 0 1 2 -2h2c.645 0 1.218 .305 1.584 .78" />
                                     <path d="M20 11l-8 -8l-9 9h2v7a2 2 0 0 0 2 2h4" />
@@ -206,7 +213,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-book">
+                                    class="icon icon-tabler icon-tabler-book">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
                                     <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
@@ -219,67 +226,67 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('admin.schedule.index') }}" class="menu-link ">
+                        <a href="{{ route('admin.schedule.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-clock-hour-5">
+                                    class="icon icon-tabler icon-tabler-clock-hour-5">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
                                     <path d="M12 12l2 3" />
                                     <path d="M12 7v5" />
                                 </svg>
                             </div>
-                            <div> Jadwal Pelajaran</div>
+                            <div>Jadwal Pelajaran</div>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('admin.time_schedule.index') }}" class="menu-link ">
+                        <a href="{{ route('admin.time_schedule.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-clock-hour-5">
+                                    class="icon icon-tabler icon-tabler-clock-hour-5">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
                                     <path d="M12 12l2 3" />
                                     <path d="M12 7v5" />
                                 </svg>
                             </div>
-                            <div> Jadwal Waktu Pelajaran</div>
+                            <div>Jadwal Waktu Pelajaran</div>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('admin.kbm_period.index') }}" class="menu-link ">
+                        <a href="{{ route('admin.kbm_period.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-clock-hour-5">
+                                    class="icon icon-tabler icon-tabler-clock-hour-5">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
                                     <path d="M12 12l2 3" />
                                     <path d="M12 7v5" />
                                 </svg>
                             </div>
-                            <div> Periode KBM</div>
+                            <div>Periode KBM</div>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('admin.absence_point.index') }}" class="menu-link ">
+                        <a href="{{ route('admin.absence_point.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-clock-hour-5">
+                                    class="icon icon-tabler icon-tabler-clock-hour-5">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
                                     <path d="M12 12l2 3" />
                                     <path d="M12 7v5" />
                                 </svg>
                             </div>
-                            <div> Absensi Point Pelanggaran</div>
+                            <div>Absensi Point Pelanggaran</div>
                         </a>
                     </li>
 
@@ -288,19 +295,53 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ route('admin.SIA.index') }}" class="menu-link ">
+                        <a href="{{ route('admin.report_attendance_teacher.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-clock-hour-5">
+                                    class="icon icon-tabler icon-tabler-clock-hour-5">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
                                     <path d="M12 12l2 3" />
                                     <path d="M12 7v5" />
                                 </svg>
                             </div>
-                            <div> Absensi Point Pelanggaran</div>
+                            <div>Abssensi Telat Guru</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="{{ route('admin.permission.index') }}" class="menu-link">
+                            <div class="menu-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icon-tabler-clock-hour-5">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                                    <path d="M12 12l2 3" />
+                                    <path d="M12 7v5" />
+                                </svg>
+                            </div>
+                            <div>Surat Izin</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="{{ route('admin.SIA.index') }}" class="menu-link">
+                            <div class="menu-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icon-tabler-clock-hour-5">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                                    <path d="M12 12l2 3" />
+                                    <path d="M12 7v5" />
+                                </svg>
+                            </div>
+                            <div>Absensi Point Pelanggaran</div>
                         </a>
                     </li>
 
@@ -314,7 +355,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-presentation-analytics">
+                                    class="icon icon-tabler icon-tabler-presentation-analytics">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M9 12v-4" />
                                     <path d="M15 12v-2" />
@@ -335,7 +376,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-clipboard-data">
+                                    class="icon icon-tabler icon-tabler-clipboard-data">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path
                                         d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
@@ -347,7 +388,7 @@
                                     <path d="M12 17v-1" />
                                 </svg>
                             </div>
-                            <div> Laporan Absensi Siswa</div>
+                            <div>Laporan Absensi Siswa</div>
                         </a>
                     </li>
 
@@ -361,7 +402,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-clipboard-data">
+                                    class="icon icon-tabler icon-tabler-clipboard-data">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path
                                         d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
@@ -373,7 +414,7 @@
                                     <path d="M12 17v-1" />
                                 </svg>
                             </div>
-                            <div> Pembayaran</div>
+                            <div>Pembayaran</div>
                         </a>
                     </li>
 
@@ -383,7 +424,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-clipboard-data">
+                                    class="icon icon-tabler icon-tabler-clipboard-data">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path
                                         d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
@@ -395,7 +436,7 @@
                                     <path d="M12 17v-1" />
                                 </svg>
                             </div>
-                            <div> Rekap Pembayaran Siswa</div>
+                            <div>Rekap Pembayaran Siswa</div>
                         </a>
                     </li>
 
@@ -409,7 +450,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-clipboard-data">
+                                    class="icon icon-tabler icon-tabler-clipboard-data">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path
                                         d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
@@ -421,7 +462,7 @@
                                     <path d="M12 17v-1" />
                                 </svg>
                             </div>
-                            <div> Setting</div>
+                            <div>Setting</div>
                         </a>
                     </li>
                 </ul>
@@ -430,7 +471,6 @@
             <div class="layout-page">
                 <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
                     id="layout-navbar">
-
                     <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
                         <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
                             <i class="ti ti-menu-2 ti-sm"></i>
@@ -440,9 +480,12 @@
                     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
                         <div class="navbar-nav">
                             <div class="d-flex justify-content-center align-items-center">
-                                <span style="font-size: 20px">
-                                    Dashboard
-                                </span>
+                                <a href="#" class="app-brand-link">
+                                    <span class="demo">
+                                        <img src="{{ asset('assets/content/logo-name.png') }}" height="50"
+                                            alt="Logo">
+                                    </span>
+                                </a>
                             </div>
                         </div>
 
@@ -451,23 +494,24 @@
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
                                     data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
-                                        <img src="{{ asset('assets/img/avatars/14.png') }}" alt=""
+                                        <img src="{{ asset('assets/content/hello-robot.gif') }}" alt="User Avatar"
                                             class="h-auto rounded-circle">
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
-                                        <a class="dropdown-item" href="../pages/profile-user.html">
+                                        <a class="dropdown-item" href="">
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 me-3">
                                                     <div class="avatar avatar-online">
-                                                        <img src="{{ asset('assets/img/avatars/14.png') }}"
-                                                            alt="" class="h-auto rounded-circle">
+                                                        <img src="{{ asset('assets/content/hello-robot.gif') }}"
+                                                            alt="User Avatar" class="h-auto rounded-circle" />
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <span class="fw-medium d-block"> John Doe </span>
-                                                    <small class="text-muted">Admin</small>
+                                                    <span
+                                                        class="fw-medium d-block">{{ Auth::user()->username }}</span>
+                                                    <small class="text-muted">admin</small>
                                                 </div>
                                             </div>
                                         </a>
@@ -476,18 +520,8 @@
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="../pages/profile-user.html">
-                                            <i class="ti ti-user-check me-2 ti-sm"></i>
-                                            <span class="align-middle">My Profile</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <div class="dropdown-divider"></div>
-                                    </li>
-                                    <li>
                                         <a class="dropdown-item" href="{{ route('logout') }}"
-                                            onclick="event.preventDefault();
-                                     document.getElementById('logout-form').submit();">
+                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                             <i class="ti ti-login me-2"></i>
                                             <span class="align-middle">{{ __('Logout') }}</span>
                                         </a>
@@ -520,6 +554,7 @@
         <div class="drag-target"></div>
     </div>
 
+    <!-- JS Scripts -->
     <script>
         window.addEventListener('load', function() {
             const loader = document.getElementById('loader');
@@ -545,11 +580,9 @@
     <script src="{{ asset('assets/vendor/libs/typeahead-js/typeahead.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/bloodhound/bloodhound.js') }}"></script>
     <script src="{{ asset('assets/js/mainf696.js?id=8bd0165c1c4340f4d4a66add0761ae8a') }}"></script>
-    {{-- <script src="{{ asset('assets/js/forms-selects.js') }}"></script> --}}
     <script src="{{ asset('assets/js/forms-tagify.js') }}"></script>
     <script src="{{ asset('assets/js/forms-typeahead.js') }}"></script>
     @yield('js')
 </body>
-
 
 </html>

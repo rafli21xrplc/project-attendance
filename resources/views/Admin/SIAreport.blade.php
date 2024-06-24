@@ -22,136 +22,137 @@
 @endsection
 
 @section('content')
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 20px 0;
-            border: 1px solid #a4a4a4;
-            border-radius: 10px;
-            overflow: hidden;
-        }
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 20px 0;
+        border: 1px solid #a4a4a4;
+        border-radius: 10px;
+        background-color: white;
+        overflow: hidden;
+    }
 
-        th,
-        td {
-            border: 1px solid #ddd;
-            text-align: center;
-            padding: 8px;
-        }
+    th, td {
+        border: 1px solid #ddd;
+        text-align: center;
+        padding: 8px;
+    }
 
-        th {
-            background-color: #f4f4f4;
-            font-weight: bold;
-        }
+    th {
+        background-color: #f4f4f4;
+        font-weight: bold;
+    }
 
-        td {
-            background-color: #f9f9f9;
-        }
+    td {
+        background-color: #f9f9f9;
+    }
 
-        tr:nth-child(even) td {
-            background-color: #ffffff;
-        }
+    tr:nth-child(even) td {
+        background-color: #ffffff;
+    }
 
-        thead th {
-            background-color: #f2f2f2;
-        }
+    thead th {
+        background-color: #f2f2f2;
+    }
 
-        tfoot td {
-            font-weight: bold;
-        }
-    </style>
+    tfoot td {
+        font-weight: bold;
+    }
+</style>
 
-    <div class="content-wrapper">
-        <div class="container-xxl flex-grow-1 container-p-y">
-            <div class="row mt-4">
-                <div class="col-12 order-5">
-                    <form action="{{ route('admin.SIA.search') }}" method="get">
-                        <div class="row justify-content-end">
-                            <div class="col-md-2">
-                                <a href="{{ route('admin.SIA.export') }}" class="btn btn-primary w-100">
-                                    <span class="d-none d-sm-inline-block">Export</span>
-                                </a>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control" placeholder="YYYY-MM-DD to YYYY-MM-DD"
-                                    name="range-date" id="flatpickr-range" />
-                            </div>
-                            <div class="col-md-3">
-                                <select class="js-example-basic-multiple" name="states[]" multiple="multiple"
-                                    style="width: 100%;">
-                                    @foreach ($classrooms as $item)
-                                        <option value="{{ $item->id }}">{{ $item->typeClass->category }}
-                                            {{ $item->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <button type="submit" class="btn btn-success w-100">
-                                    <span class="d-none d-sm-inline-block">Search</span>
-                                </button>
-                            </div>
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row mt-4">
+            <div class="col-12 order-5">
+                <form action="{{ route('admin.SIA.search') }}" method="get">
+                    <div class="row justify-content-end">
+                        <div class="col-md-2">
+                            <a href="{{ route('admin.SIA.export') }}" class="btn btn-primary w-100">
+                                <span class="d-none d-sm-inline-block">Export</span>
+                            </a>
                         </div>
-                    </form>
-                </div>
-            </div>
-
-            <div class="row my-5">
-                <div class="col-12 order-5">
-                    <div class="table-responsive text-nowrap custom-border">
-                            @foreach ($report as $className => $students)
-                                <h2>{{ $className }}</h2>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th rowspan="2">Nama Siswa</th>
-                                            <th rowspan="2">L/P</th>
-                                            @foreach ($months as $month)
-                                                <th colspan="3">
-                                                    {{ \Carbon\Carbon::parse($month)->translatedFormat('F Y') }}
-                                                </th>
-                                            @endforeach
-                                            <th colspan="3">Jum. KTDHDRN</th>
-                                            <th rowspan="2">Poin Tatib</th>
-                                        </tr>
-                                        <tr>
-                                            @foreach ($months as $month)
-                                                <th>S</th>
-                                                <th>I</th>
-                                                <th>A</th>
-                                            @endforeach
-                                            <th>S</th>
-                                            <th>I</th>
-                                            <th>A</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($students as $student)
-                                            <tr>
-                                                <td>{{ $student['name'] }}</td>
-                                                <td>{{ $student['gender'] }}</td>
-                                                @foreach ($months as $month)
-                                                    <td>{{ $student['months'][$month]['sick'] }}</td>
-                                                    <td>{{ $student['months'][$month]['permission'] }}</td>
-                                                    <td>{{ $student['months'][$month]['alpha'] }}</td>
-                                                @endforeach
-                                                <td>{{ array_sum(array_column($student['months'], 'sick')) }}</td>
-                                                <td>{{ array_sum(array_column($student['months'], 'permission')) }}</td>
-                                                <td>{{ array_sum(array_column($student['months'], 'alpha')) }}</td>
-                                                <td>{{ $student['total_tatib_points'] }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                        @endforeach
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" placeholder="YYYY-MM-DD to YYYY-MM-DD"
+                                name="range-date" id="flatpickr-range" />
+                        </div>
+                        <div class="col-md-3">
+                            <select class="js-example-basic-multiple" name="states[]" multiple="multiple"
+                                style="width: 100%;">
+                                @foreach ($classrooms as $item)
+                                    <option value="{{ $item->id }}">{{ $item->typeClass->category }}
+                                        {{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-success w-100">
+                                <span class="d-none d-sm-inline-block">Search</span>
+                            </button>
+                        </div>
                     </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row my-5">
+            <div class="col-12 order-5">
+                <div class="table-responsive text-nowrap custom-border">
+                    @foreach ($report as $className => $students)
+                        <h2>{{ $className }}</h2>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">Nama Siswa</th>
+                                    <th rowspan="2">L/P</th>
+                                    @foreach ($months as $month)
+                                        <th colspan="3">
+                                            {{ \Carbon\Carbon::parse($month)->translatedFormat('F Y') }}
+                                        </th>
+                                    @endforeach
+                                    <th colspan="3">Jum. KTDHDRN</th>
+                                    <th rowspan="2">Poin Tatib</th>
+                                    <th rowspan="2">Keterangan</th>
+                                </tr>
+                                <tr>
+                                    @foreach ($months as $month)
+                                        <th>S</th>
+                                        <th>I</th>
+                                        <th>A</th>
+                                    @endforeach
+                                    <th>S</th>
+                                    <th>I</th>
+                                    <th>A</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($students as $index => $student)
+                                    <tr>
+                                        <td>{{ $student['name'] }}</td>
+                                        <td>{{ $student['gender'] }}</td>
+                                        @foreach ($months as $month)
+                                            <td>{{ $student['months'][$month]['sick'] }}</td>
+                                            <td>{{ $student['months'][$month]['permission'] }}</td>
+                                            <td>{{ $student['months'][$month]['alpha'] }}</td>
+                                        @endforeach
+                                        <td>{{ array_sum(array_column($student['months'], 'sick')) }}</td>
+                                        <td>{{ array_sum(array_column($student['months'], 'permission')) }}</td>
+                                        <td>{{ array_sum(array_column($student['months'], 'alpha')) }}</td>
+                                        <td>{{ number_format($student['total_tatib_points'], 1) }}</td>
+                                        <td>{{ $student['warning'] }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endforeach
                 </div>
             </div>
-
         </div>
     </div>
+</div>
 
-    <div class="content-backdrop fade"></div>
-    </div>
+<div class="content-backdrop fade"></div>
+
 @endsection
 
 @section('js')

@@ -2,28 +2,21 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Contracts\Interfaces\AttendanceTeacherInterface;
 use App\Http\Controllers\Controller;
-use App\Traits\TeacherTrait;
+use App\Traits\PermissionTrait;
 use Illuminate\Http\Request;
 
-class AttendanceTeacherController extends Controller
+class permissionController extends Controller
 {
+    use PermissionTrait;
 
-    use TeacherTrait;
-
-    private AttendanceTeacherInterface $attendanceTeacher;
-    public function __construct(AttendanceTeacherInterface $attendanceTeacher)
-    {
-        $this->attendanceTeacher = $attendanceTeacher;
-    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $teacher = $this->attendanceLate();
-        return view('admin.attendanceTeacher', compact('teacher'));
+        $permissions = $this->getPermission();
+        return view('admin.permission', compact('permissions'));
     }
 
     /**

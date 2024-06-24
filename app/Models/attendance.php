@@ -26,8 +26,7 @@ class attendance extends Model
 
     public function permission()
     {
-        return $this->hasOne(permission::class, 'student_id', 'student_id')
-            ->whereColumn('schedule_id', 'schedule_id');
+        return $this->hasOne(Permission::class, 'student_id', 'student_id');
     }
 
     public function student()

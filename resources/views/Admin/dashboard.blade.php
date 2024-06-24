@@ -19,15 +19,12 @@
                             <div class="d-flex align-items-center mb-2 pb-1">
                                 <div class="avatar me-2">
                                     <span class="avatar-initial rounded bg-label-primary"><i
-                                            class="ti ti-truck ti-md"></i></span>
+                                            class="ti ti-building ti-md"></i></span>
                                 </div>
                                 <h4 class="ms-1 mb-0">{{ $classroom }}</h4>
                             </div>
-                            <p class="mb-1">On route vehicles</p>
-                            <p class="mb-0">
-                                <span class="fw-medium me-1">+18.2%</span>
-                                <small class="text-muted">than last week</small>
-                            </p>
+                            <p class="mb-1">Total Classrooms</p>
+
                         </div>
                     </div>
                 </div>
@@ -37,15 +34,12 @@
                             <div class="d-flex align-items-center mb-2 pb-1">
                                 <div class="avatar me-2">
                                     <span class="avatar-initial rounded bg-label-warning"><i
-                                            class="ti ti-alert-triangle ti-md"></i></span>
+                                            class="ti ti-id ti-md"></i></span>
                                 </div>
                                 <h4 class="ms-1 mb-0">{{ $teacher }}</h4>
                             </div>
-                            <p class="mb-1">Vehicles with errors</p>
-                            <p class="mb-0">
-                                <span class="fw-medium me-1">-8.7%</span>
-                                <small class="text-muted">than last week</small>
-                            </p>
+                            <p class="mb-1">Total Teachers</p>
+
                         </div>
                     </div>
                 </div>
@@ -55,15 +49,12 @@
                             <div class="d-flex align-items-center mb-2 pb-1">
                                 <div class="avatar me-2">
                                     <span class="avatar-initial rounded bg-label-danger"><i
-                                            class="ti ti-git-fork ti-md"></i></span>
+                                            class="ti ti-users ti-md"></i></span>
                                 </div>
                                 <h4 class="ms-1 mb-0">{{ $student }}</h4>
                             </div>
-                            <p class="mb-1">Deviated from route</p>
-                            <p class="mb-0">
-                                <span class="fw-medium me-1">+4.3%</span>
-                                <small class="text-muted">than last week</small>
-                            </p>
+                            <p class="mb-1">Total Students</p>
+
                         </div>
                     </div>
                 </div>
@@ -73,19 +64,17 @@
                             <div class="d-flex align-items-center mb-2 pb-1">
                                 <div class="avatar me-2">
                                     <span class="avatar-initial rounded bg-label-info"><i
-                                            class="ti ti-clock ti-md"></i></span>
+                                            class="ti ti-book ti-md"></i></span>
                                 </div>
-                                <h4 class="ms-1 mb-0">{{ $source }}</h4>
+                                <h4 class="ms-1 mb-0">{{ $course }}</h4>
                             </div>
-                            <p class="mb-1">Late vehicles</p>
-                            <p class="mb-0">
-                                <span class="fw-medium me-1">-2.5%</span>
-                                <small class="text-muted">than last week</small>
-                            </p>
+                            <p class="mb-1">Total Courses</p>
+
                         </div>
                     </div>
                 </div>
             </div>
+
 
         </div>
 

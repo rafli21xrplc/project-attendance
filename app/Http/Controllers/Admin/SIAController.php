@@ -93,7 +93,6 @@ class SIAController extends Controller
     public function export(Request $request)
     {
         $ClassroomIds = classRoom::pluck('id')->toArray();
-        
         $reportData = $this->getSIALaporanExcel($ClassroomIds);
 
         $report = $reportData['report'];

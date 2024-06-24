@@ -130,6 +130,11 @@
         .table-custom tbody tr:nth-child(even) {
             background-color: #ffffff;
         }
+        @media (max-width: 768px) {
+            #hide-on-mobile {
+                display: none;
+            }
+        }
     </style>
 @endsection
 
@@ -140,26 +145,25 @@
                 <div class="col-12 mb-4">
                     <div class="card p-0 mb-4">
                         <div class="card-body d-flex flex-column flex-md-row justify-content-between p-0 ">
-                            <div class="app-academy-md-25 d-flex align-items-end justify-content-end">
-                                <img src="{{ asset('assets/content/ornament-left.png') }}" alt="pencil rocket"
-                                    width="200" class="scaleX-n1-rtl" />
+                            <div class="app-academy-md-25 d-flex align-items-end justify-content-end hide-on-mobile" id="hide-on-mobile">
+                                <img src="{{ asset('assets/content/ornament-left.png') }}" alt="pencil rocket" width="200" class="scaleX-n1-rtl" id="hide-on-mobile" />
                             </div>
-                            <div
-                                class="app-academy-md-50 card-body d-flex align-items-md-center flex-column text-md-center">
+                            <div class="app-academy-md-50 card-body d-flex align-items-md-center flex-column text-md-center">
                                 <h3 id="greeting" class="card-title mb-4 lh-sm px-md-5 lh-lg"></h3>
-                                <p class="mb-3">Find out how easy it is to make your classes engaging, more functional,
-                                    and more efficient.</p>
+                                <p class="mb-3">Find out how easy it is to make your classes engaging, more functional, and more efficient.</p>
                             </div>
-                            <div class="app-academy-md-25 d-flex align-items-end justify-content-end">
-                                <img src="{{ asset('assets/content/ornament-right.png') }}" alt="pencil rocket"
-                                    width="200" class="scaleX-n1-rtl" />
+                            <div class="app-academy-md-25 d-flex align-items-end justify-content-end hide-on-mobile" id="hide-on-mobile">
+                                <img src="{{ asset('assets/content/ornament-right.png') }}" alt="pencil rocket" width="200" class="scaleX-n1-rtl" id="hide-on-mobile" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="container">
+            <div class="row">
+                <h4 class="py-2 mb-4">
+                    Schedule hari ini
+                </h4>
                 <div class="row ">
                     @forelse ($schedules as $schedule)
                         <div class="col-md-6">
@@ -187,16 +191,20 @@
                         </div>
                     @empty
                         <div class="col-12">
-                            <div class="alert alert-info" role="alert">
-                                No schedules for today.
+                            <div class="d-flex justify-content-center align-items-center my-5 flex-column">
+                                <img src="{{ asset('assets/content/empty.svg') }}" width="300" alt="No Data Available">
+                                <small>No schedules for today.</small>
                             </div>
                         </div>
                     @endforelse
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-datatable table-responsive px-4">
+            <div class="row">
+                <h4 class="py-2 mb-4">
+                    Top rank point kedisiplinan
+                </h4>
+                <div class="card-datatable table-responsive">
                     <div class="my-4">
                         <div class="table-responsive text-nowrap custom-border">
                             <table class="table table-custom" id="table-content">
@@ -219,9 +227,13 @@
                                             <td class="text-center">{{ $student['total_tatib_points'] }}</td>
                                         </tr>
                                     @empty
-                                        <tr>
-                                            <td colspan="5" class="text-center">No studeFnts found</td>
-                                        </tr>
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-center align-items-center my-5 flex-column">
+                                                <img src="{{ asset('assets/content/empty.svg') }}" width="300"
+                                                    alt="No Data Available">
+                                                <small>No studeFnts found.</small>
+                                            </div>
+                                        </div>
                                     @endforelse
                                 </tbody>
                             </table>
@@ -230,10 +242,13 @@
                 </div>
             </div>
 
-            <div class="container mt-5">
+            <div class="container">
+                <h4 class="py-2 mb-4">
+                    Kelas
+                </h4>
                 <div class="row">
                     <div class="col-12">
-                        <ul class="nav nav-pills flex-column flex-sm-row mb-4">
+                        <ul class="nav nav-pills flex-column flex-sm-row mb-4 justify-content-center">
                             @foreach ($typeClasses as $index => $typeClass)
                                 <li class="nav-item mx-1">
                                     <button class="nav-link {{ $index == 0 ? 'active' : '' }}" data-bs-toggle="tab"
@@ -251,7 +266,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="tab-content p-0">
-                        @foreach ($typeClasses as $index => $typeClass)
+                        @forelse ($typeClasses as $index => $typeClass)
                             <div class="tab-pane fade {{ $index == 0 ? 'active show' : '' }}"
                                 id="form-tabs-{{ $typeClass->id }}" role="tabpanel">
                                 <div class="row g-4">
@@ -287,7 +302,15 @@
                                     @endforeach
                                 </div>
                             </div>
-                        @endforeach
+                            @empty
+                            <div class="col-12">
+                                <div class="d-flex justify-content-center align-items-center my-5 flex-column">
+                                    <img src="{{ asset('assets/content/empty.svg') }}" width="300"
+                                        alt="No Data Available">
+                                    <small>classroom empty.</small>
+                                </div>
+                            </div>
+                        @endforelse
                     </div>
                 </div>
             </div>

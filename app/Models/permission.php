@@ -14,11 +14,15 @@ class permission extends Model
     protected $fillable = [
         'id',
         'student_id',
-        'schedule_id',
         'file',
         'description',
     ];
 
     protected $primaryKey = 'id';
     public $incrementing = false;
+
+    public function student()
+    {
+        return $this->belongsTo(student::class, 'student_id');
+    }
 }

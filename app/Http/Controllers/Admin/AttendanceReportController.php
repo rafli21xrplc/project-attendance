@@ -3,18 +3,16 @@
 namespace App\Http\Controllers\admin;
 
 use App\Contracts\Interfaces\AttendanceRekapInterface;
-use App\Exports\reportAttendanceExport;
-use App\Exports\singleClassAttendanceExport;
+use App\Exports\AttendanceExport;
+use App\Exports\AttendanceExportPdf;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\attendance\SearchAttendancReporteRequest;
 use App\Models\attendance;
-use App\Models\classRoom;
 use App\Models\kbm_period;
-use App\Models\student;
 use App\Models\type_class;
 use Illuminate\Support\Str;
 use App\Traits\AttendanceTrait;
-use Carbon\CarbonPeriod;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -82,57 +80,20 @@ class AttendanceReportController extends Controller
     public function update(Request $request)
     {
 
-        $validatedData = $request->validate([
-            'student_id' => 'required|exists:student,id',
-            'date' => 'required|date',
-            'content' => 'required|string',
-            'attendances' => 'required|array'
-        ]);
+        $studentId = $request->input('student_id');
+        $date = $request->input('date');
+        $newInput = $request->input('content');
 
-        try {
-            $studentId = $validatedData['student_id'];
-            $statusString = $validatedData['content'];
-            $attendances = $validatedData['attendances'];
+        $existingData = $this->getAttendanceData($studentId, $date);
 
+        $newStatusCounts = $this->parseInput($newInput);
 
-            preg_match_all('/(\d+)([A-Za-z]+)/', $statusString, $matches, PREG_SET_ORDER);
+        $changes = $this->determineChanges($existingData, $newStatusCounts);
 
-            foreach ($matches as $match) {
-                $hours = $match[1];
-                $status = strtoupper($match[2]);
+        $result = $this->applyChanges($studentId, $date, $changes);
 
-                $statusKey = strtolower($this->convertStatusToIndonesian($status));
+        return response()->json(['success' => true]);
 
-                if (isset($attendances[$statusKey]) && !empty($attendances[$statusKey])) {
-                    foreach ($attendances[$statusKey] as $timeIndex => $time) {
-
-                        
-                        $attendanceId = $attendances[$statusKey][$timeIndex] ?? null;
-                        return $attendanceId;
-
-                        if ($attendanceId && $hours && $statusKey) {
-                            $attendance = attendance::find($attendanceId);
-
-                            $data = [
-                                'id' => Str::uuid(),
-                                'student_id' => $studentId,
-                                'kbm_period_id' => kbm_period::getCurrentPeriod()->id,
-                                'schedule_id' => $attendance->schedule->id,
-                                'time' => $attendance->time,
-                                'status' => $statusKey,
-                                'hours' => $hours,
-                            ];
-
-                            attendance::insert($data);
-                            $attendance->delete();
-                        }
-                    }
-                }
-            }
-        } catch (\Throwable $th) {
-            return $th->getMessage();
-        }
-        return response()->json(['success' => true, 'message' => 'Kehadiran berhasil diperbarui!']);
     }
 
     private function convertStatusToIndonesian($status)
@@ -173,78 +134,29 @@ class AttendanceReportController extends Controller
         ]);
     }
 
-    public function export()
+    public function exportExcel()
     {
         $TypeIds = type_class::pluck('id')->toArray(); // value X, XI, XII
         $startDate = now()->startOfMonth()->toDateString();
         $endDate = now()->endOfMonth()->toDateString();
 
-        return Excel::download(new reportAttendanceExport($TypeIds, $startDate, $endDate), 'class_attendance_report.xlsx');
+        return Excel::download(new AttendanceExport($TypeIds, $startDate, $endDate), 'class_attendance_report.xlsx');
     }
 
-    // public function aggregateDailyAttendance($date, $studentId)
-    // {
-    //     $attendances = attendance::whereDate('time', $date)
-    //         ->where('student_id', $studentId)
-    //         ->get();
+    public function exportPdf()
+    {
+        ini_set('memory_limit', '1G');
 
-    //     $summary = [
-    //         'present' => 0,
-    //         'permission' => 0,
-    //         'sick' => 0,
-    //         'alpha' => 0,
-    //     ];
-
-    //     foreach ($attendances as $attendance) {
-    //         $summary[$attendance->status] += $attendance->hours;
-    //     }
-
-    //     $summaryString = '';
-    //     if ($summary['permission'] > 0) {
-    //         $summaryString .= "{$summary['permission']}i";
-    //     }
-    //     if ($summary['present'] > 0) {
-    //         $summaryString .= "{$summary['present']}H";
-    //     }
-    //     if ($summary['sick'] > 0) {
-    //         $summaryString .= "{$summary['sick']}S";
-    //     }
-    //     if ($summary['alpha'] > 0) {
-    //         $summaryString .= "{$summary['alpha']}A";
-    //     }
-
-    //     return $summaryString;
-    // }
+        $TypeIds = type_class::pluck('id')->toArray(); // value X, XI, XII
+        $startDate = now()->startOfMonth()->toDateString();
+        $endDate = now()->endOfMonth()->toDateString();
 
 
-    // public function generateClassMonthlyReport($classroomId, $startDate, $endDate)
-    // {
+        $attendanceExport = new AttendanceExportPdf($TypeIds, $startDate, $endDate);
 
-    //     $students = student::whereIn('classroom_id', ["4df624b6-08e8-3753-a1e1-4b7cefaa15d4", "bd1bab50-17e0-364f-bd58-f1749bb7288f"])->get();
-    //     $report = [];
+        $pdf = PDF::loadView('exports.report_attendance_pdf', ['attendanceExport' => $attendanceExport])
+            ->setPaper('a3', 'landscape');
 
-    //     foreach ($students as $student) {
-    //         $report[$student->id] = [
-    //             'name' => $student->name,
-    //             'class' => $student->classroom->name,
-    //             'attendance' => $this->generateStudentAttendanceSummary($student->id, $startDate, $endDate)
-    //         ];
-    //     }
-
-
-    //     return $report;
-    // }
-
-    // public function generateStudentAttendanceSummary($studentId, $startDate, $endDate)
-    // {
-    //     $dateRange = CarbonPeriod::create($startDate, $endDate);
-    //     $summary = [];
-
-    //     foreach ($dateRange as $date) {
-    //         $dailySummary = $this->aggregateDailyAttendance($date->format('Y-m-d'), $studentId);
-    //         $summary[$date->format('Y-m-d')] = $dailySummary;
-    //     }
-
-    //     return $summary;
-    // }
+        return $pdf->download('class_attendance_report.pdf');
+    }
 }

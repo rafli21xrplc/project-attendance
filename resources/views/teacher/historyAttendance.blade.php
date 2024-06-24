@@ -72,8 +72,8 @@
                                                 {{ $item->classroom->name }}</h5>
                                             <p class="d-flex align-items-center mb-2">
                                                 <i class="ti ti-clock me-2 mt-n1"></i>
-                                                {{ \Carbon\Carbon::parse($item->start_time)->format('H:i') }} -
-                                                {{ \Carbon\Carbon::parse($item->end_time)->format('H:i') }}
+                                                {{ \Carbon\Carbon::parse($item->StartTimeSchedules->start_time_schedule)->format('H:i') }} -
+                                                {{ \Carbon\Carbon::parse($item->EndTimeSchedules->end_time_schedule)->format('H:i') }}
                                             </p>
                                             <p class="mb-0">
                                                 {{ $item->description ?? 'Class details and learning objectives.' }}
@@ -93,7 +93,6 @@
                                 <div class="d-flex justify-content-center align-items-center my-5">
                                     <img src="{{ asset('assets/content/empty.svg') }}" width="300"
                                         alt="No Data Available">
-                                    <p class="text-muted mt-3">No classes scheduled for today.</p>
                                 </div>
                             @endforelse
                         </div>

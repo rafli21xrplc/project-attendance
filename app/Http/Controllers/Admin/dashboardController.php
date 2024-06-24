@@ -16,7 +16,7 @@ class dashboardController extends Controller
         $student = student::count();
         $teacher = teacher::count();
         $classroom = classRoom::count();
-        $source = course::count();
-        return view('admin.dashboard', compact('student', 'teacher', 'classroom', 'source'));
+        $course = course::count();
+        return view('admin.dashboard', compact('student', 'teacher', 'classroom', 'course'));
     }
 }

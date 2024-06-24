@@ -16,6 +16,23 @@
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
 
+            <div class="row mb-4">
+                <div class="col-12 order-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Manage Student Promotions</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-3">
+                                    <a href="{{ route('admin.promoted_student') }}" class="btn btn-primary">Promote Students</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-12 order-5">
                     <div class="col-12 order-5">
