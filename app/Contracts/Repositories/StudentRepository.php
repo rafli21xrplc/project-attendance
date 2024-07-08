@@ -6,6 +6,7 @@ use App\Contracts\Interfaces\StudentInterface;
 use App\Models\classRoom;
 use App\Models\religion;
 use App\Models\student;
+use App\Models\type_class;
 use App\Models\User;
 use App\Services\StudentService;
 use Illuminate\Database\Eloquent\Model;
@@ -14,17 +15,23 @@ use Illuminate\Database\QueryException;
 class StudentRepository extends BaseRepository implements StudentInterface
 {
     private Model $religi;
+    private Model $type_class;
     private Model $class_room;
     private Model $user;
     private StudentService $studentService;
 
-    public function __construct(student $student, religion $religion, classRoom $class_room, User $user, StudentService $studentService)
+    public function __construct(student $student, religion $religion, classRoom $class_room, User $user, StudentService $studentService, type_class $type_class)
     {
         $this->model = $student;
+        $this->type_class = $type_class;
         $this->religi = $religion;
         $this->user = $user;
         $this->class_room = $class_room;
         $this->studentService = $studentService;
+    }
+    public function getTypeClassroom(): mixed
+    {
+        return $this->type_class->query()->get();
     }
     public function getClassroom(): mixed
     {
@@ -46,8 +53,7 @@ class StudentRepository extends BaseRepository implements StudentInterface
 
     public function get(): mixed
     {
-        return $this->model->query()->with(['religion', 'classroom', 'user'])
-            ->get();
+        return student::get();
     }
 
     public function store(array $data): mixed

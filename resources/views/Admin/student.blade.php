@@ -10,31 +10,85 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/%40form-validation/umd/styles/index.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/animate-css/animate.css') }}">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.css">
+
+    <style>
+        #table-content {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #table-content th,
+        #table-content td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #table-content th {
+            background-color: #ffffff;
+        }
+
+        #table-content tbody tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        #table-content tbody tr:hover {
+            background-color: #e9e9e9;
+        }
+
+        #info-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #info-table th,
+        #info-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 0px solid #ddd;
+        }
+
+        #info-table th {
+            background-color: #f2f2f2;
+        }
+
+        #info-table td:first-child {
+            font-weight: bold;
+        }
+
+        #info-table td:last-child {
+            font-style: italic;
+        }
+    </style>
 @endsection
 
 @section('content')
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
-            <div class="d-flex justify-content-between align-items-center flex-wrap py-2 px-4">
-                <div>
+            <div class="container py-2 px-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
                     <h3>Biodata Siswa</h3>
-                </div>
-                <div style="display: flex; align-items: center;">
-                    <form id="importForm" action="{{ route('admin.student.import') }}" method="POST"
-                        enctype="multipart/form-data">
-                        @csrf
-                        <div class="form-group d-none">
-                            <input type="file" name="file" id="fileInput" class="form-control" required>
-                        </div>
-                        <button type="button" class="btn btn-label-primary me-2" id="importButton" style="color: blue">
-                            <i class="ti ti-printer me-1"></i> <span class="d-none d-sm-inline-block">Import</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <a href="{{ route('admin.promoted_student') }}" class="btn btn-primary mb-2 mb-md-0">Promote All
+                            Students</a>
+                        <form id="importForm" action="{{ route('admin.student.import') }}" method="POST"
+                            enctype="multipart/form-data" class="d-flex align-items-center mb-2 mb-md-0">
+                            @csrf
+                            <input type="file" name="file" id="fileInput" class="form-control d-none" required>
+                            <button type="button" class="btn btn-label-primary me-2" id="importButton" style="color: blue">
+                                <i class="ti ti-printer me-1"></i> <span class="d-none d-sm-inline-block">Import</span>
+                            </button>
+                        </form>
+                        <button data-bs-toggle="modal" data-bs-target="#modal-student" type="button"
+                            class="btn btn-label-success mb-2 mb-md-0">
+                            <i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add New Record</span>
                         </button>
-                    </form>
-                    <button data-bs-toggle="modal" data-bs-target="#modal-student" type="button"
-                        class="btn btn-label-success"><i class="ti ti-plus me-sm-1"></i> <span
-                            class="d-none d-sm-inline-block">Add New Record</span></button>
+                    </div>
                 </div>
             </div>
+
 
             <div class="row">
                 <div class="col-12 order-5">
@@ -47,7 +101,7 @@
                                         <th>NAMA</th>
                                         <th>GENDER</th>
                                         <th>TANGGAL LAHIR</th>
-                                        <th>TELP</th>
+                                        <th>STATUS</th>
                                         <th>ACTION</th>
                                     </tr>
                                 </thead>
@@ -55,19 +109,34 @@
                                     @foreach ($student as $index => $item)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $item->name }}</td>
+                                            <td>{{ $item->student_name }}</td>
                                             <td>{{ $item->gender }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($item->day_of_birth)->formatLocalized('%d %B %Y') }}
+                                            <td>{{ \Carbon\Carbon::parse($item->day_of_birth)->formatLocalized('%d %B %Y') ?? '-' }}
                                             </td>
-                                            <td>{{ $item->telp }}</td>
                                             <td>
-                                                <button data-id="{{ $item->id }}" data-name="{{ $item->name }}"
-                                                    data-gender="{{ $item->gender }}" data-telp="{{ $item->telp }}" data-username="{{ $item->user->username }}"
+                                                @if ($item->graduated)
+                                                    <span class="badge bg-success">Lulus</span>
+                                                @else
+                                                    <span class="badge bg-primary">Siswa Aktif</span>
+                                                @endif
+                                            </td>
+                                            
+                                            <td>
+                                                <button data-id="{{ $item->student_id }}"
+                                                    data-type_class_id="{{ $item->type_class_id }}" 
+                                                    data-classroom_id="{{ $item->classroom_id }}" 
+                                                    type="button"
+                                                    class="btn btn-label-primary btn-class"><i
+                                                        class="fa-solid fa-circle-exclamation"></i></button>
+                                                <button data-id="{{ $item->student_id }}"
+                                                    data-name="{{ $item->student_name }}"
+                                                    data-gender="{{ $item->gender }}" data-telp="{{ $item->telp }}"
+                                                    data-username="{{ $item->username }}"
                                                     data-classroom_id="{{ $item->classroom_id }}"
                                                     data-day_of_birth="{{ $item->day_of_birth }}" type="button"
                                                     class="btn btn-label-warning btn-update"><i
                                                         class="fa-solid fa-pen"></i></button>
-                                                <button data-id="{{ $item->id }}" type="button"
+                                                <button data-id="{{ $item->student_id }}" type="button"
                                                     class="btn btn-label-danger btn-delete"><i
                                                         class="fa-solid fa-trash"></i></button>
                                             </td>
@@ -85,6 +154,44 @@
         <div class="content-backdrop fade"></div>
     </div>
 
+
+    <div class="modal fade" id="modal-class-student" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">NAIK KELAS</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('admin.promoted_student.update') }}" method="POST">
+                    @csrf
+                    <div class="modal-body row py-0" id="div-update">
+                        <input type="hidden" id="classroom_id" name="classroom_id">
+                        <input type="hidden" id="student_id" name="student_id">
+                        @foreach ($type_class as $item)
+                            <div class="col-md mb-md-0 mb-3">
+                                <div class="form-check custom-option custom-option-icon checked">
+                                    <label class="form-check-label custom-option-content" for="{{ $item->id }}">
+                                        <span class="custom-option-body">
+                                            <i class="ti ti-crown" style="font-size: 30px;"></i> <!-- Example icon -->
+                                            <span class="custom-option-title">{{ $item->category }}</span>
+                                        </span>
+                                        <input name="type_class_id" class="form-check-input type-class-radio"
+                                            type="radio" value="{{ $item->id }}" id="{{ $item->id }}">
+                                    </label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-label-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
     {{-- modal --}}
     <div class="modal fade" id="modal-student" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -97,9 +204,9 @@
                     @csrf
                     <div class="modal-body row py-0">
                         <div class="col-12 col-md-6 mb-1">
-                            <label class="form-label" for="basic-default-email">email</label>
-                            <input type="email" class="form-control" id="basic-default-email" name="email"
-                                placeholder="email@gmail.com" required value="{{ old('email') }}" />
+                            <label class="form-label" for="basic-default-username">username</label>
+                            <input type="username" class="form-control" id="basic-default-username" name="username"
+                                placeholder="3918302921" required value="{{ old('username') }}" />
                         </div>
                         <div class="col-12 col-md-6 mb-1">
                             <label class="form-label" for="basic-default-password">password</label>
@@ -123,7 +230,8 @@
                                 <option selected disabled>Kelas</option>
                                 @foreach ($class_room as $item)
                                     <option value="{{ $item->id }}"
-                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>{{ $item->typeClass->category }} {{ $item->name }}</option>
+                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>
+                                        {{ $item->typeClass->category }} {{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -171,8 +279,8 @@
                     <div class="modal-body row py-0" id="div-update">
                         <div class="col-12 col-md-6 mb-2">
                             <label class="form-label" for="basic-default-username-update">username</label>
-                            <input type="text" class="form-control" id="basic-default-username-update" name="username"
-                                placeholder="your username" required value="{{ old('username') }}" />
+                            <input type="text" class="form-control" id="basic-default-username-update"
+                                name="username" placeholder="your username" required value="{{ old('username') }}" />
                         </div>
                         <div class="col-12 col-md-6 mb-2">
                             <label class="form-label" for="basic-default-password-update">Password Baru</label>
@@ -198,7 +306,8 @@
                                 <option selected disabled>Kelas</option>
                                 @foreach ($class_room as $item)
                                     <option value="{{ $item->id }}"
-                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>{{ $item->typeClass->category }} {{ $item->name }}</option>
+                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>
+                                        {{ $item->typeClass->category }} {{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -236,6 +345,15 @@
 @endsection
 
 @section('js')
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.js"></script>
+
+    <!-- Inisialisasi DataTable -->
+    <script>
+        $(document).ready(function() {
+            $('#table-content').DataTable();
+        });
+    </script>
     <script>
         document.getElementById('importButton').addEventListener('click', function() {
             document.getElementById('fileInput').click();
@@ -248,11 +366,23 @@
         });
     </script>
     <script>
-        new DataTable('#table-content', {
-            pagingType: 'simple_numbers'
+        $('.btn-class').click(function() {
+            var id = $(this).data('id');
+            var typeClassId = $(this).data('type_class_id');
+            var classroomId = $(this).data('classroom_id');
+
+            $('#modal-class-student').modal('show');
+            var formUpdate = $('#modal-class-student #div-update');
+
+            // Uncheck all radio buttons first
+            $('.type-class-radio').prop('checked', false);
+
+            // Check the radio button that matches the typeClassId
+            formUpdate.find('#classroom_id').val(classroomId);
+            formUpdate.find('#student_id').val(id);
+            $('#modal-class-student').find(`input[type=radio][value=${typeClassId}]`).prop('checked', true);
         });
-    </script>
-    <script>
+
 
         $('.btn-update').click(function() {
             var id = $(this).data('id');

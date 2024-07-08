@@ -73,11 +73,10 @@
             <div class="container">
                 <div class="row justify-content-end">
                     <div class="col-md-6">
-                        <form action="{{ route('admin.attendance_student.search') }}" method="POST" class="d-flex gap-3">
-                            @csrf
+                        <form action="{{ route('admin.attendance_student.search') }}" method="GET" class="d-flex gap-3">
                             <div class="flex-grow-1">
                                 <input class="form-control" type="date" value="2021-06-18" id="html5-date-input"
-                                    name="range-date" />
+                                    name="date" />
                             </div>
                             <div class="flex-grow-1">
                                 <select class="form-select" name="classroom_id">
@@ -113,7 +112,7 @@
                                                             data-bs-toggle="tab"
                                                             data-bs-target="#form-tabs-{{ $item->id }}" role="tab"
                                                             aria-selected="{{ $index == 0 ? 'true' : 'false' }}">
-                                                            {{ $item->course->name }}
+                                                            {{ optional($item->course)->name ?? '-' }}
                                                         </button>
                                                     </li>
                                                 @endif

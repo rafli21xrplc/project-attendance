@@ -24,6 +24,7 @@ class UpdateRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
+            'tenggat' => 'required|date',
         ];
     }
 

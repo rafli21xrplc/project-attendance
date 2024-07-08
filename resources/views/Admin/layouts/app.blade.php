@@ -436,7 +436,29 @@
                                     <path d="M12 17v-1" />
                                 </svg>
                             </div>
-                            <div>Rekap Pembayaran Siswa</div>
+                            <div>Tanggungan Siswa</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-item">
+                        <a href="{{ route('admin.installment.index') }}" class="menu-link">
+                            <div class="menu-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icon-tabler-clipboard-data">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                                    <path
+                                        d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                                    <path d="M9 17v-4" />
+                                    <path d="M12 17v-1" />
+                                    <path d="M15 17v-2" />
+                                    <path d="M12 17v-1" />
+                                </svg>
+                            </div>
+                            <div>Installments Siswa</div>
                         </a>
                     </li>
 
@@ -465,6 +487,29 @@
                             <div>Setting</div>
                         </a>
                     </li>
+
+                    <li class="menu-item">
+                        <a href="{{ route('admin.examLogin.index') }}" class="menu-link">
+                            <div class="menu-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icon-tabler-clipboard-data">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                                    <path
+                                        d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                                    <path d="M9 17v-4" />
+                                    <path d="M12 17v-1" />
+                                    <path d="M15 17v-2" />
+                                    <path d="M12 17v-1" />
+                                </svg>
+                            </div>
+                            <div>Management Ujian Siswa</div>
+                        </a>
+                    </li>
+
                 </ul>
             </aside>
 
@@ -576,7 +621,6 @@
     <script src="{{ asset('assets/vendor/js/menu2dc9.js?id=c6ce30ded4234d0c4ca0fb5f2a2990d8') }}"></script>
     <script src="{{ asset('assets/vendor/libs/select2/select2.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/tagify/tagify.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/bootstrap-select/bootstrap-select.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/typeahead-js/typeahead.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/bloodhound/bloodhound.js') }}"></script>
     <script src="{{ asset('assets/js/mainf696.js?id=8bd0165c1c4340f4d4a66add0761ae8a') }}"></script>

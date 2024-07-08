@@ -27,8 +27,7 @@ class StudentService
     {
         $user = User::create([
             'uuid' => Str::uuid(),
-            'name' => $data['name'],
-            'email' => $data['email'],
+            'username' => $data['username'],
             'password'   => Hash::make($data['password']),
         ])->assignRole('student');
 
@@ -47,9 +46,9 @@ class StudentService
                 ]);
             }
 
-            if (isset($data['email']) && $data['email']) {
+            if (isset($data['username']) && $data['username']) {
                 $user->update([
-                    'email' => $data['email'],
+                    'username' => $data['username'],
                 ]);
             }
 

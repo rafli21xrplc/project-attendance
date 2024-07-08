@@ -29,8 +29,8 @@ class studentController extends Controller
 
     public function import(importRequest $request)
     {
-        $this->importStudents($request->validated());
         try {
+            $this->importStudents($request->validated());
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'failed created');
         }
@@ -40,9 +40,10 @@ class studentController extends Controller
     public function index()
     {
         $student = $this->student->get();
+        $type_class = $this->student->getTypeClassroom();
         $religi = $this->student->getReligi();
         $class_room = $this->student->getClassroom();
-        return view('admin.student', compact('student', 'religi', 'class_room'));
+        return view('admin.student', compact('student', 'religi', 'class_room', 'type_class'));
     }
 
     /**
@@ -58,8 +59,8 @@ class studentController extends Controller
      */
     public function store(StoreRequest $request)
     {
+        $this->student->store($request->validated());
         try {
-            $this->student->store($request->validated());
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'failed created');
         }
@@ -87,6 +88,7 @@ class studentController extends Controller
      */
     public function update(UpdateRequest $request, student $student)
     {
+        dd($student, $request->all());
         try {
             $this->student->update($student->id, $request->validated());
         } catch (\Throwable $th) {

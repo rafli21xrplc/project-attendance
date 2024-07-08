@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attendance_teacher', function (Blueprint $table) {
-            $table->uuid('id')->index()->primary();
+            $table->uuid('id')->primary();
             $table->foreignUuid('teacher_id')->constrained('teacher')->onDelete('cascade');
             $table->enum('status', ['izin', 'sakit', 'alpha', 'hadir']);
             $table->date('date');

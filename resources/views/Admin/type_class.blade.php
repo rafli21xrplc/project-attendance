@@ -10,6 +10,58 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/%40form-validation/umd/styles/index.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/animate-css/animate.css') }}">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.css">
+
+    <style>
+        #table-content {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #table-content th,
+        #table-content td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #table-content th {
+            background-color: #ffffff;
+        }
+
+        #table-content tbody tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        #table-content tbody tr:hover {
+            background-color: #e9e9e9;
+        }
+
+        #info-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #info-table th,
+        #info-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 0px solid #ddd;
+        }
+
+        #info-table th {
+            background-color: #f2f2f2;
+        }
+
+        #info-table td:first-child {
+            font-weight: bold;
+        }
+
+        #info-table td:last-child {
+            font-style: italic;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -47,7 +99,8 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $item->category }}</td>
                                             <td>
-                                                <button data-id="{{ $item->id }}" data-category="{{ $item->category }}"  type="button"
+                                                <button data-id="{{ $item->id }}"
+                                                    data-category="{{ $item->category }}" type="button"
                                                     class="btn btn-label-warning btn-update"><i
                                                         class="fa-solid fa-pen"></i></button>
                                                 <button data-id="{{ $item->id }}" type="button"
@@ -84,9 +137,9 @@
                                     <div class="input-group input-group-merge">
                                         <span id="basicPost2" class="input-group-text"><i
                                                 class="ti ti-briefcase"></i></span>
-                                        <input type="text" id="basicPost" name="basicPost"
-                                            class="form-control dt-post" placeholder="Web Developer"
-                                            aria-label="Web Developer" aria-describedby="basicPost2" />
+                                        <input type="text" id="basicPost" name="basicPost" class="form-control dt-post"
+                                            placeholder="Web Developer" aria-label="Web Developer"
+                                            aria-describedby="basicPost2" />
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
@@ -181,8 +234,8 @@
                     <div class="modal-body row py-0" id="div-update">
                         <div class="mb-1">
                             <label class="form-label" for="basic-default-category-update">Kategori</label>
-                            <input type="text" class="form-control" id="basic-default-category-update" name="category"
-                                placeholder="Kelas.. " required value="{{ old('category') }}" />
+                            <input type="text" class="form-control" id="basic-default-category-update"
+                                name="category" placeholder="Kelas.. " required value="{{ old('category') }}" />
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -196,9 +249,13 @@
 @endsection
 
 @section('js')
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.js"></script>
+
+    <!-- Inisialisasi DataTable -->
     <script>
-        new DataTable('#table-content', {
-            pagingType: 'simple_numbers'
+        $(document).ready(function() {
+            $('#table-content').DataTable();
         });
     </script>
     <script>
@@ -206,7 +263,7 @@
             var id = $(this).data('id');
             var actionUrl = `type_class/${id}`;
             $('#form-update').attr('action', actionUrl);
-            
+
             var name = $(this).data('category');
 
             var formUpdate = $('#modal-category-update #div-update');

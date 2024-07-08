@@ -4,11 +4,8 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\attendance\SearchAttendanceRequest;
-use App\Models\attendance;
-use App\Models\classRoom;
-use App\Models\student;
+use App\Models\schedule;
 use App\Traits\AttendanceTrait;
-use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 
 class AttendanceStudentController extends Controller
@@ -83,8 +80,10 @@ class AttendanceStudentController extends Controller
 
     public function search(SearchAttendanceRequest $request)
     {
+
         $classroom = $this->getClassrooms();
-        $schedules = $this->getSchedules($request->validated());
+        // $schedules = $this->getSchedules($request->validated());
+        $schedules = schedule::getSchedules($request->validated());
 
         $attendanceBySchedule = [];
 
@@ -104,16 +103,8 @@ class AttendanceStudentController extends Controller
             }
         }
 
-        session(['schedules' => $schedules, 'classroom' => $classroom, 'attendanceBySchedule' => $attendanceBySchedule]);
-
         return view('admin.attendance_student', compact('schedules', 'classroom', 'attendanceBySchedule'));
     }
-
-
-    // $attendanceData = [];
-    // foreach ($schedule->attendances as $attendance) {
-    //     $attendanceData[$attendance->student_id] = $attendance->status;
-    // }
 
     public function showResults()
     {

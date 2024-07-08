@@ -24,7 +24,6 @@ class UpdateRequest extends FormRequest
     {
         return [
             'nip' => 'required|numeric|min:5',
-            'nuptk' => 'required|numeric|min:5',
             'name' => 'required|string|max:255|min:2',
             'gender' => 'required|in:L,P',
             'telp' => 'required|max:20|min:11',

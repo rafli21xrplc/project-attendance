@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>PRESENCE 8</title>
@@ -12,13 +13,16 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/tabler-iconsea04.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/fontawesome8a69.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/flag-icons80a8.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/core6cc1.css') }}" class="template-customizer-core-css">
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/theme-defaultfc79.css') }}" class="template-customizer-theme-css">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/core6cc1.css') }}"
+        class="template-customizer-core-css">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/theme-defaultfc79.css') }}"
+        class="template-customizer-theme-css">
     <link rel="stylesheet" href="{{ asset('assets/css/demof1ed.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/node-waves/node-wavesd178.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar7358.css') }}">
@@ -26,11 +30,19 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/%40form-validation/umd/styles/index.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/page-auth.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/datatable.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
     <script src="{{ asset('assets/vendor/js/template-customizer.js') }}"></script>
     <script src="{{ asset('assets/js/config.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
     <style>
         * {
@@ -132,10 +144,17 @@
                     <li class="menu-item">
                         <a href="{{ route('student.schedule_student.index') }}" class="menu-link">
                             <div class="menu-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-clipboard-data">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icon-tabler-clipboard-data">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"></path>
-                                    <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z"></path>
+                                    <path
+                                        d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2">
+                                    </path>
+                                    <path
+                                        d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z">
+                                    </path>
                                     <path d="M9 17v-4"></path>
                                     <path d="M12 17v-1"></path>
                                     <path d="M15 17v-2"></path>
@@ -145,6 +164,33 @@
                             <div>Pelajaran</div>
                         </a>
                     </li>
+
+                    @if (isset($qrCode))
+                        <li class="menu-item">
+                            <a class="menu-link btn-qr-code">
+                                <div class="menu-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="icon icon-tabler icon-tabler-clipboard-data">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path
+                                            d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2">
+                                        </path>
+                                        <path
+                                            d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z">
+                                        </path>
+                                        <path d="M9 17v-4"></path>
+                                        <path d="M12 17v-1"></path>
+                                        <path d="M15 17v-2"></path>
+                                        <path d="M12 17v-1"></path>
+                                    </svg>
+                                </div>
+                                <div>QR Code UJIAN</div>
+                            </a>
+                        </li>
+                    @endif
+
                 </ul>
             </aside>
 
@@ -228,6 +274,7 @@
                 </nav>
 
                 @include('validation.error_message')
+                @include('validation.delete_modal')
                 @include('validation.response_message')
                 @include('sweetalert::alert')
                 @yield('content')
@@ -238,7 +285,7 @@
         <div class="drag-target"></div>
     </div>
 
-    
+
     <div class="modal fade" id="change-password-modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -274,10 +321,37 @@
         </div>
     </div>
 
+    <!-- Modal for QR Code Exam Login -->
+    <div class="modal fade" id="qrCodeExamModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-simple">
+            <div class="modal-content p-3 p-md-5">
+                <div class="modal-body">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="text-center mb-4">
+                        <h3 class="mb-3">Exam Login QR Code</h3>
+                        <p class="mb-4">Using an app like Google Authenticator, Microsoft Authenticator, or any QR
+                            code scanner, scan the QR code. It will contain your exam login details (username and
+                            password).</p>
+                        <div id="qrCodeContainer" class="mb-3">
+                            {{ $qrCode ?? '' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         window.addEventListener('load', function() {
             const loader = document.getElementById('loader');
             loader.style.display = 'none';
+        });
+    </script>
+
+    <script>
+        $('.btn-qr-code').click(function() {
+
+            $('#qrCodeExamModal').modal('show');
         });
     </script>
 
@@ -297,4 +371,5 @@
 
     @yield('js')
 </body>
+
 </html>

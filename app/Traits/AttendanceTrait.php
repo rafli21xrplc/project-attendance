@@ -56,10 +56,12 @@ trait AttendanceTrait
     public function getSchedules(array $data)
     {
 
+        $dayOfWeek = Carbon::parse($data['date'])->format('l');
+        
         $schedules = schedule::where('classroom_id', $data['classroom_id'])
-            ->whereDate('created_at', $data['date'])
-            ->with(['classroom.students', 'course', 'teacher', 'StartTimeSchedules', 'EndTimeSchedules', 'attendances'])
-            ->get();
+        ->with(['classroom.students', 'course', 'teacher', 'StartTimeSchedules', 'EndTimeSchedules', 'attendances'])
+        ->where('day_of_week', $dayOfWeek)
+        ->get();
 
         $attendanceBySchedule = [];
         foreach ($schedules as $schedule) {

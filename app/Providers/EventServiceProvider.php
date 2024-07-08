@@ -7,8 +7,10 @@ use App\Models\attendanceTeacher;
 use App\Models\classRoom;
 use App\Models\classroom_teacher;
 use App\Models\course;
+use App\Models\ExamLogin;
 use App\Models\kbm_period;
 use App\Models\payment;
+use App\Models\PaymentInstallment;
 use App\Models\schedule;
 use App\Models\setting;
 use App\Models\student;
@@ -23,7 +25,9 @@ use App\Observers\AttendanceTeacherObserver;
 use App\Observers\ClassroomObserver;
 use App\Observers\ClassroomTeacherObserver;
 use App\Observers\CourseObserver;
+use App\Observers\ExamLoginObserver;
 use App\Observers\kbmPeriodObserver;
+use App\Observers\paymentInstallmentsObserver;
 use App\Observers\PaymentObserver;
 use App\Observers\ScheduleObserver;
 use App\Observers\settingObserver;
@@ -73,6 +77,8 @@ class EventServiceProvider extends ServiceProvider
         setting::observe(settingObserver::class);
         kbm_period::observe(kbmPeriodObserver::class);
         absence_point::observe(absence_pointObserver::class);
+        PaymentInstallment::observe(paymentInstallmentsObserver::class);
+        ExamLogin::observe(ExamLoginObserver::class);
     }
 
     /**

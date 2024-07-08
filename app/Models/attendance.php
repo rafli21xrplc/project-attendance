@@ -26,16 +26,16 @@ class attendance extends Model
 
     public function permission()
     {
-        return $this->hasOne(Permission::class, 'student_id', 'student_id');
+        return $this->hasOne(permission::class, 'student_id', 'student_id');
     }
 
     public function student()
     {
-        return $this->belongsTo(student::class);
+        return $this->belongsTo(student::class, 'student_id', 'id');
     }
 
     public function schedule()
     {
-        return $this->belongsTo(schedule::class);
+        return $this->belongsTo(schedule::class, 'schedule_id', 'id');
     }
 }

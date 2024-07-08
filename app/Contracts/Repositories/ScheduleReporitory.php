@@ -8,11 +8,13 @@ use App\Models\course;
 use App\Models\schedule;
 use App\Models\teacher;
 use App\Models\time_schedule;
+use App\Traits\ScheduleTrait;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 
 class ScheduleReporitory extends BaseRepository implements ScheduleInterface
 {
-
+    use ScheduleTrait;
     protected teacher $teacher;
     protected course $course;
     protected classRoom $classroom;
@@ -25,6 +27,11 @@ class ScheduleReporitory extends BaseRepository implements ScheduleInterface
         $this->course = $course;
         $this->classroom = $classroom;
         $this->time_schedule = $time_schedule;
+    }
+
+    public function getHoliday(): mixed
+    {
+        return $this->getHolidayDay();
     }
 
     public function getTimeSchedule(): mixed
@@ -54,8 +61,7 @@ class ScheduleReporitory extends BaseRepository implements ScheduleInterface
 
     public function get(): mixed
     {
-        return $this->model->query()->with(['teacher', 'classroom.typeClass', 'course', 'StartTimeSchedules', 'EndTimeSchedules'])
-        ->get();
+        return schedule::get();
     }
 
     public function store(array $data): mixed

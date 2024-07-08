@@ -4,9 +4,11 @@
 namespace App\Traits;
 
 use App\Models\classRoom;
+use App\Models\ExamLogin;
 use App\Models\permission;
 use App\Models\schedule;
 use App\Models\student;
+use App\Models\student_payment;
 use App\Models\type_class;
 use App\Models\User;
 use Carbon\Carbon;
@@ -15,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 trait StudentTrait
 {
@@ -149,7 +152,7 @@ trait StudentTrait
                         if ($existingPermission) {
                                 throw new \Exception('Surat izin untuk hari ini sudah diajukan.');
                         }
-                        
+
                         if (isset($data['file'])) {
                                 $filePath = $data['file']->store('images/permission', 'public');
                         } else {
@@ -162,7 +165,6 @@ trait StudentTrait
                                 'file' => $filePath,
                                 'description' => $data['description'] ?? null,
                         ]);
-                        
                 } catch (\Throwable $th) {
                         throw new \Exception('Surat izin tidak bisa upload.');
                 }
@@ -173,6 +175,7 @@ trait StudentTrait
         {
                 $data =
                         [
+                                'nisn' => $data['username'],
                                 'name' => $data['name'],
                                 'gender' => $data['gender'],
                                 'classroom_id' => $data['classroom_id'],
@@ -186,6 +189,7 @@ trait StudentTrait
         private function responseUpdate(User $user, array $data): array
         {
                 return [
+                        'nisn' => $data['username'] ?? $user->username,
                         'name' => $data['name'] ?? $user->name,
                         'gender' => $data['gender'] ?? $user->gender,
                         'classroom_id' => $data['classroom_id'] ?? $user->classroom_id,
@@ -193,5 +197,29 @@ trait StudentTrait
                         'telp' => $data['telp'] ?? $user->telp,
                         'user_id' => $user->id,
                 ];
+        }
+
+        private function checkPaymentStudent()
+        {
+                $student = Auth::user()->student;
+
+                $allPaymentsCompleted = student_payment::where('student_id', $student->id)->where('is_paid', false)->doesntExist();
+
+                if ($allPaymentsCompleted) {
+
+                        $examLogin = ExamLogin::where('student_id', $student->id)->first();
+
+                        $qrContent = json_encode([
+                                'username' => $examLogin->username,
+                                'password' => $examLogin->password
+                        ]);
+
+                        $qrCode = QrCode::size(200)->generate(
+                                $qrContent
+                        );
+
+                        return $qrCode;
+                }
+                return null;
         }
 }

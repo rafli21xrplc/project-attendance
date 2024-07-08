@@ -22,18 +22,10 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            // 'nip' => 'required|numeric|unique:teacher,nip|min:5|max:18',
-            // 'nuptk' => 'required|numeric|unique:teacher,nuptk|min:5|max:16',
             'nip' => 'required|numeric|unique:teacher,nip|min:5',
-            'nuptk' => 'required|numeric|unique:teacher,nuptk|min:5',
             'name' => 'required|string|max:255|min:2',
-            // 'born_at' => 'required|string|max:255|min:2',
-            // 'position' => 'required|string|max:255|min:2',
-            // 'status' => 'required|string|max:255|min:2',
             'gender' => 'required|in:L,P',
-            // 'address' => 'required|string|max:255|min:5',
             'telp' => 'required|string|max:20|min:11',
-            // 'religion_id' => 'required',
             'username' => 'required|string|max:255|unique:users,username',
             'password' => 'required|string|min:8',
         ];

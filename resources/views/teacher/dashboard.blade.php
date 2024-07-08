@@ -130,6 +130,7 @@
         .table-custom tbody tr:nth-child(even) {
             background-color: #ffffff;
         }
+
         @media (max-width: 768px) {
             #hide-on-mobile {
                 display: none;
@@ -145,15 +146,21 @@
                 <div class="col-12 mb-4">
                     <div class="card p-0 mb-4">
                         <div class="card-body d-flex flex-column flex-md-row justify-content-between p-0 ">
-                            <div class="app-academy-md-25 d-flex align-items-end justify-content-end hide-on-mobile" id="hide-on-mobile">
-                                <img src="{{ asset('assets/content/ornament-left.png') }}" alt="pencil rocket" width="200" class="scaleX-n1-rtl" id="hide-on-mobile" />
+                            <div class="app-academy-md-25 d-flex align-items-end justify-content-end hide-on-mobile"
+                                id="hide-on-mobile">
+                                <img src="{{ asset('assets/content/ornament-left.png') }}" alt="pencil rocket"
+                                    width="200" class="scaleX-n1-rtl" id="hide-on-mobile" />
                             </div>
-                            <div class="app-academy-md-50 card-body d-flex align-items-md-center flex-column text-md-center">
+                            <div
+                                class="app-academy-md-50 card-body d-flex align-items-md-center flex-column text-md-center">
                                 <h3 id="greeting" class="card-title mb-4 lh-sm px-md-5 lh-lg"></h3>
-                                <p class="mb-3">Find out how easy it is to make your classes engaging, more functional, and more efficient.</p>
+                                <p class="mb-3">Find out how easy it is to make your classes engaging, more functional,
+                                    and more efficient.</p>
                             </div>
-                            <div class="app-academy-md-25 d-flex align-items-end justify-content-end hide-on-mobile" id="hide-on-mobile">
-                                <img src="{{ asset('assets/content/ornament-right.png') }}" alt="pencil rocket" width="200" class="scaleX-n1-rtl" id="hide-on-mobile" />
+                            <div class="app-academy-md-25 d-flex align-items-end justify-content-end hide-on-mobile"
+                                id="hide-on-mobile">
+                                <img src="{{ asset('assets/content/ornament-right.png') }}" alt="pencil rocket"
+                                    width="200" class="scaleX-n1-rtl" id="hide-on-mobile" />
                             </div>
                         </div>
                     </div>
@@ -173,6 +180,7 @@
                                         <h6 class="text-primary mb-1">{{ now()->format('D') }}</h6>
                                         <h4 class="mb-0">{{ now()->format('d') }}</h4>
                                     </div>
+                                    @if ($schedule->course != null && $schedule->classroom != null && $schedule->teacher != null)
                                     <div class="flex-grow-1 schedule-details ms-3">
                                         <h5 class="card-title mb-1">{{ $schedule->course->name }}</h5>
                                         <p class="card-text text-muted">
@@ -180,12 +188,17 @@
                                             {{ $schedule->classroom->name }}</p>
                                     </div>
                                     <div class="text-end schedule-time">
-                                        <h6 class="mb-1">
-                                            {{ \Carbon\Carbon::parse($schedule->StartTimeSchedules->start_time_schedule)->format('H:i') }}
-                                            -
-                                            {{ \Carbon\Carbon::parse($schedule->EndTimeSchedules->end_time_schedule)->format('H:i') }}
-                                        </h6>
+                                        @if ($schedule->StartTimeSchedules && $schedule->EndTimeSchedules)
+                                            <h6 class="mb-1">
+                                                {{ \Carbon\Carbon::parse($schedule->StartTimeSchedules->start_time_schedule)->format('H:i') }}
+                                                -
+                                                {{ \Carbon\Carbon::parse($schedule->EndTimeSchedules->end_time_schedule)->format('H:i') }}
+                                            </h6>
+                                        @else
+                                            {{-- @dd($schedule->StartTimeSchedules) --}}
+                                        @endif
                                     </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -302,7 +315,7 @@
                                     @endforeach
                                 </div>
                             </div>
-                            @empty
+                        @empty
                             <div class="col-12">
                                 <div class="d-flex justify-content-center align-items-center my-5 flex-column">
                                     <img src="{{ asset('assets/content/empty.svg') }}" width="300"

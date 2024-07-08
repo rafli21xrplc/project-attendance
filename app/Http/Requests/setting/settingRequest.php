@@ -23,10 +23,9 @@ class settingRequest extends FormRequest
     public function rules()
     {
         return [
-            'start-date' => 'required|date|before:end-date',
-            'end-date' => 'required|date|after:start-date',
             'first-holiday' => ['required', Rule::in(['none', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])],
-            'second-holiday' => ['required', Rule::in(['none', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])]
+            'second-holiday' => ['required', Rule::in(['none', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])],
+            'examp_date' => 'required|date',
         ];
     }
 
@@ -42,7 +41,9 @@ class settingRequest extends FormRequest
             'first-holiday.required' => 'Libur mingguan pertama harus dipilih.',
             'first-holiday.in' => 'Libur mingguan pertama yang dipilih tidak valid.',
             'second-holiday.required' => 'Libur mingguan kedua harus dipilih.',
-            'second-holiday.in' => 'Libur mingguan kedua yang dipilih tidak valid.'
+            'second-holiday.in' => 'Libur mingguan kedua yang dipilih tidak valid.',
+            'examp_date.required' => 'Tanggal pengambilan kartu ujian harus diisi.',
+            'examp_date.date' => 'Tanggal pengambilan kartu ujian tidak valid.',
         ];
     }
 }

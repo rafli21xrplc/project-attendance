@@ -77,6 +77,8 @@
                                                             <h6 class="text-primary mb-1">{{ now()->format('D') }}</h6>
                                                             <h4 class="mb-0">{{ now()->format('d') }}</h4>
                                                         </div>
+                                                        @if ($schedule->course != null && $schedule->classroom != null && $schedule->teacher != null)
+                                                            
                                                         <div class="flex-grow-1 schedule-details ms-3">
                                                             <h5 class="card-title mb-1">{{ $schedule->course->name }}</h5>
                                                             <p class="card-text text-muted">
@@ -91,6 +93,7 @@
                                                                 {{ \Carbon\Carbon::parse($schedule->EndTimeSchedules->end_time_schedule)->format('H:i') }}
                                                             </h6>
                                                         </div>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>

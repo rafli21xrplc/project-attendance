@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('time_schedules', function (Blueprint $table) {
-            $table->uuid('id')->index()->primary();
+            $table->uuid('id')->primary();
             $table->integer('time_number');
             $table->time('start_time_schedule');
             $table->time('end_time_schedule');

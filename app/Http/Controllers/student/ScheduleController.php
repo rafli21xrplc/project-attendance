@@ -19,8 +19,9 @@ class ScheduleController extends Controller
      */
     public function index()
     {
+        $qrCode = $this->checkPaymentStudent();
         $schedule = $this->getSchedule();
-        return view('student.schedule', compact('schedule'));
+        return view('student.schedule', compact('schedule', 'qrCode'));
     }
 
     public function permission(permissionRequest $request)

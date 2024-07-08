@@ -18,4 +18,9 @@ class course extends Model
 
     protected $primaryKey = 'id';
     public $incrementing = false;
+
+    public function schedules()
+    {
+        return $this->hasMany(schedule::class, 'course_id');
+    }
 }

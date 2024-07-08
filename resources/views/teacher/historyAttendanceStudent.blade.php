@@ -120,123 +120,124 @@
 @endsection
 
 @section('content')
-    <div class="content-wrapper">
-        <div class="container-xxl flex-grow-1 container-p-y">
-            <div class="row">
-                <div class="col-12 order-5">
-                    <div class="d-flex justify-content-end mb-4">
-                        <button id="saveButton" type="button" class="btn btn-label-success"
-                            onclick="document.getElementById('attendanceForm').submit();">
-                            <span class="d-none d-sm-inline-block">Save</span>
-                        </button>
-                    </div>
-                    <div class="card">
-                        <div class="card-datatable table-responsive px-4">
-                            <div class="my-4">
-                                <div class="d-flex flex-wrap justify-content-between gap-3 my-3">
-                                    <div class="card-title mb-0">
-                                        <h5 class="mb-1">{{ $classroom->name }}</h5>
-                                        <p class="text-muted mb-0">Attendance for {{ $schedule->course->name }}</p>
-                                    </div>
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row">
+            <div class="col-12 order-5">
+                <div class="d-flex justify-content-end mb-4">
+                    <button id="saveButton" type="button" class="btn btn-label-success"
+                        onclick="document.getElementById('attendanceForm').submit();">
+                        <span class="d-none d-sm-inline-block">Save</span>
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-datatable table-responsive px-4">
+                        <div class="my-4">
+                            <div class="d-flex flex-wrap justify-content-between gap-3 my-3">
+                                <div class="card-title mb-0">
+                                    <h5 class="mb-1">{{ $classroom->name }}</h5>
+                                    <p class="text-muted mb-0">Attendance for {{ $schedule->course->name }}</p>
                                 </div>
-                                <div class="table-responsive text-nowrap custom-border">
-                                    <form id="attendanceForm"
-                                        action="{{ route('teacher.attendance.update.history', $schedule->id) }}"
-                                        method="post">
-                                        @csrf
-                                        @method('POST')
-                                        <table class="table table-custom" id="table-content">
-                                            <thead>
-                                                <tr>
-                                                    <th class="text-center">Student ID</th>
-                                                    <th>Name</th>
-                                                    <th class="text-center">Attendance</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse ($student as $index => $item)
-                                                    @php
-                                                        $attendance = $attendanceData[$item->id] ?? null;
-                                                        $status = $attendance ? $attendance->status : '';
-                                                        $fileUrl =
-                                                            $attendance &&
-                                                            $attendance->permission &&
-                                                            ($status == 'permission' || $status == 'sick')
-                                                                ? Storage::url($attendance->permission->file)
-                                                                : null;
-                                                    @endphp
+                            </div>
+                            <div class="table-responsive text-nowrap custom-border">
+                                <form id="attendanceForm"
+                                    action="{{ route('teacher.attendance.update.history', $schedule->id) }}"
+                                    method="post">
+                                    @csrf
+                                    @method('POST')
+                                    <table class="table table-custom" id="table-content">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Student ID</th>
+                                                <th>Name</th>
+                                                <th class="text-center">Attendance</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($student as $index => $item)
+                                                @php
+                                                    $attendance = $attendanceData[$item->id] ?? null;
+                                                    $status = $attendance ? $attendance->status : '';
+                                                    $fileUrl =
+                                                        $attendance &&
+                                                        $attendance->permission &&
+                                                        ($status == 'permission' || $status == 'sick')
+                                                            ? Storage::url($attendance->permission->file)
+                                                            : null;
+                                                @endphp
 
-                                                    <tr>
-                                                        <td class="text-center">{{ $item->student_id }}</td>
-                                                        <td>{{ $item->name }}</td>
-                                                        <td>
-                                                            <div
-                                                                class="col-md d-flex align-items-center flex-wrap gap-2 justify-content-center">
-                                                                <div class="form-check form-check-success">
-                                                                    <input name="attendance[{{ $item->id }}]"
-                                                                        class="form-check-input" type="radio"
-                                                                        value="present" id="hadir_{{ $item->id }}"
-                                                                        {{ $status == 'present' ? 'checked' : '' }}
-                                                                        required />
-                                                                    <label class="form-check-label"
-                                                                        for="hadir_{{ $item->id }}">Present</label>
-                                                                </div>
-                                                                <div class="form-check form-check-danger">
-                                                                    <input name="attendance[{{ $item->id }}]"
-                                                                        class="form-check-input" type="radio"
-                                                                        value="alpha" id="alpha_{{ $item->id }}"
-                                                                        {{ $status == 'alpha' ? 'checked' : '' }} />
-                                                                    <label class="form-check-label"
-                                                                        for="alpha_{{ $item->id }}">Alpha</label>
-                                                                </div>
-                                                                <div class="form-check form-check-warning">
-                                                                    <input name="attendance[{{ $item->id }}]"
-                                                                        class="form-check-input" type="radio"
-                                                                        value="permission" id="izin_{{ $item->id }}"
-                                                                        {{ $status == 'permission' ? 'checked' : '' }} />
-                                                                    <label class="form-check-label"
-                                                                        for="izin_{{ $item->id }}">Permission</label>
-                                                                </div>
-                                                                <div class="form-check form-check-warning">
-                                                                    <input name="attendance[{{ $item->id }}]"
-                                                                        class="form-check-input" type="radio"
-                                                                        value="sick" id="sakit_{{ $item->id }}"
-                                                                        {{ $status == 'sick' ? 'checked' : '' }} />
-                                                                    <label class="form-check-label"
-                                                                        for="sakit_{{ $item->id }}">Sick</label>
-                                                                </div>
-                                                                <div class="d-flex align-items-center mx-2">
-                                                                    @if ($status == 'permission' && $fileUrl)
-                                                                        <a href="{{ $fileUrl }}" target="_blank"
-                                                                            class="ml-2"><i
-                                                                                class="fa fa-eye fs-5"></i></a>
-                                                                    @endif
-                                                                    @if ($status == 'sick' && $fileUrl)
-                                                                        <a href="{{ $fileUrl }}" target="_blank"
-                                                                            class="ml-2"><i
-                                                                                class="fa fa-file-medical-alt fs-5"></i></a>
-                                                                    @endif
-                                                                </div>
+                                                <tr>
+                                                    <td class="text-center">{{ $item->student_id }}</td>
+                                                    <td>{{ $item->name }}</td>
+                                                    <td>
+                                                        <div
+                                                            class="col-md d-flex align-items-center flex-wrap gap-2 justify-content-center">
+                                                            <div class="form-check form-check-success">
+                                                                <input name="attendance[{{ $item->id }}]"
+                                                                    class="form-check-input" type="radio"
+                                                                    value="present" id="hadir_{{ $item->id }}"
+                                                                    {{ $status == 'present' ? 'checked' : '' }}
+                                                                    required />
+                                                                <label class="form-check-label"
+                                                                    for="hadir_{{ $item->id }}">Present</label>
                                                             </div>
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="3" class="text-center">No students found</td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </form>
-                                </div>
+                                                            <div class="form-check form-check-danger">
+                                                                <input name="attendance[{{ $item->id }}]"
+                                                                    class="form-check-input" type="radio"
+                                                                    value="alpha" id="alpha_{{ $item->id }}"
+                                                                    {{ $status == 'alpha' ? 'checked' : '' }} />
+                                                                <label class="form-check-label"
+                                                                    for="alpha_{{ $item->id }}">Alpha</label>
+                                                            </div>
+                                                            <div class="form-check form-check-warning">
+                                                                <input name="attendance[{{ $item->id }}]"
+                                                                    class="form-check-input" type="radio"
+                                                                    value="permission" id="izin_{{ $item->id }}"
+                                                                    {{ $status == 'permission' ? 'checked' : '' }} />
+                                                                <label class="form-check-label"
+                                                                    for="izin_{{ $item->id }}">Permission</label>
+                                                            </div>
+                                                            <div class="form-check form-check-warning">
+                                                                <input name="attendance[{{ $item->id }}]"
+                                                                    class="form-check-input" type="radio"
+                                                                    value="sick" id="sakit_{{ $item->id }}"
+                                                                    {{ $status == 'sick' ? 'checked' : '' }} />
+                                                                <label class="form-check-label"
+                                                                    for="sakit_{{ $item->id }}">Sick</label>
+                                                            </div>
+                                                            <div class="d-flex align-items-center mx-2">
+                                                                @if ($status == 'permission' && $fileUrl)
+                                                                    <a href="{{ $fileUrl }}" target="_blank"
+                                                                        class="ml-2"><i
+                                                                            class="fa fa-eye fs-5"></i></a>
+                                                                @endif
+                                                                @if ($status == 'sick' && $fileUrl)
+                                                                    <a href="{{ asset('public/' .  $fileUrl) }}" target="_blank"
+                                                                        class="ml-2"><i
+                                                                            class="fa fa-file-medical-alt fs-5"></i></a>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="3" class="text-center">No students found</td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="content-backdrop fade"></div>
     </div>
+    <div class="content-backdrop fade"></div>
+</div>
+
 @endsection
 
 @section('js')

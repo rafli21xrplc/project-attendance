@@ -2,15 +2,24 @@
 
 namespace App\Http\Controllers\teacher;
 
-use App\Exports\ClassAttendanceHomeroomExport;
 use App\Http\Controllers\Controller;
+use App\Models\classRoom;
+use App\Services\AttendanceHomeroomPdf;
 use App\Traits\AttendanceTrait;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 
 class reportAttendanceController extends Controller
 {
     use AttendanceTrait;
+
+    private AttendanceHomeroomPdf $attendanceHomeroomPdf;
+
+    public function __construct(AttendanceHomeroomPdf $attendanceHomeroomPdf)
+    {
+        $this->attendanceHomeroomPdf = $attendanceHomeroomPdf;
+    }
 
     /**
      * Display a listing of the resource.
@@ -27,12 +36,20 @@ class reportAttendanceController extends Controller
         ]);
     }
 
-    public function export(string $id)
+    public function export(string $classroom_id)
     {
         $startDate = now()->startOfMonth()->toDateString();
         $endDate = now()->endOfMonth()->toDateString();
 
-        return Excel::download(new ClassAttendanceHomeroomExport($id, $startDate, $endDate), 'class_attendance_report.xlsx');
+        $classroom = classRoom::with(['students.attendance', 'typeClass', 'teacher'])
+            ->findOrFail($classroom_id);
+
+        $attendanceSummary = $this->attendanceHomeroomPdf->generateAttendanceSummary($classroom, $startDate, $endDate);
+        $dateRange = CarbonPeriod::create($startDate, $endDate);
+
+        $pdf = Pdf::loadView('exports.reportAttendanceHomeTeacher', compact('classroom', 'attendanceSummary', 'dateRange', 'startDate', 'endDate'))->setPaper('a3', 'landscape');
+
+        return $pdf->download('class_attendance_report.pdf');
     }
 
     /**

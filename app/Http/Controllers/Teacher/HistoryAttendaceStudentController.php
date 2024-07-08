@@ -19,9 +19,9 @@ class HistoryAttendaceStudentController extends Controller
         return view('teacher.historyAttendanceStudent')->with([
             'classroom' => $attendance['classroom'],
             'schedule' => $attendance['schedule'],
-            'student' => $attendance['students'],
+            'student' => $attendance['student'],
             'attendanceData' => $attendance['attendanceData'],
-            'permissionData' => $attendance['permissionData'],
+            // 'permissionData' => $attendance['permissionData'],
         ]);
     }
     /**

@@ -10,6 +10,58 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/%40form-validation/umd/styles/index.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/animate-css/animate.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.css">
+
+    <style>
+    #table-content {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #table-content th,
+    #table-content td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: center;
+    }
+
+    #table-content th {
+        background-color: #ffffff;
+    }
+
+    #table-content tbody tr:nth-child(odd) {
+        background-color: #ffffff;
+    }
+
+    #table-content tbody tr:hover {
+        background-color: #e9e9e9;
+    }
+
+    #info-table {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    #info-table th,
+    #info-table td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 0px solid #ddd;
+    }
+
+    #info-table th {
+        background-color: #f2f2f2;
+    }
+
+    #info-table td:first-child {
+        font-weight: bold;
+    }
+
+    #info-table td:last-child {
+        font-style: italic;
+    }
+</style>
+
 @endsection
 
 @section('content')
@@ -45,7 +97,6 @@
                                     <tr class="text-center">
                                         <th>NO</th>
                                         <th>NIP</th>
-                                        <th>NUPTK</th>
                                         <th>NAMA</th>
                                         <th>TELP</th>
                                         <th>ACTION</th>
@@ -56,12 +107,11 @@
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $item->nip }}</td>
-                                            <td>{{ $item->nuptk }}</td>
                                             <td>{{ $item->name }}</td>
-                                            <td>{{ $item->telp }}</td>
+                                            <td>{{ $item->telp ?? '-' }}</td>
                                             <td>
-                                                <button data-id="{{ $item->id }}" data-nip="{{ $item->nip }}"
-                                                    data-nuptk="{{ $item->nuptk }}" data-name="{{ $item->name }}" data-username="{{ $item->user->username }}"
+                                                <button data-id="{{ $item->id }}" data-nip="{{ $item->nip }}"  data-name="{{ $item->name }}"
+                                                    data-username="{{ $item->user->username }}"
                                                     data-gender="{{ $item->gender }}" data-telp="{{ $item->telp }}"
                                                     type="button" class="btn btn-label-warning btn-update"><i
                                                         class="fa-solid fa-pen"></i></button>
@@ -101,11 +151,6 @@
                                 placeholder="0029100292101" required value="{{ old('nip') }}" />
                         </div>
                         <div class="col-12 col-md-6 mb-1">
-                            <label class="form-label" for="basic-default-NUPTK">NUPTK</label>
-                            <input type="text" class="form-control" id="basic-default-NUPTK" name="nuptk"
-                                placeholder="2022911119921" required value="{{ old('nuptk') }}" />
-                        </div>
-                        <div class="col-12 col-md-6 mb-1">
                             <label class="form-label" for="basic-default-username">username</label>
                             <input type="text" class="form-control" id="basic-default-username" name="username"
                                 placeholder="your username or number numeric" required value="{{ old('username') }}" />
@@ -115,29 +160,17 @@
                             <input type="password" class="form-control" id="basic-default-password" name="password"
                                 placeholder="password" required value="{{ old('password') }}" />
                         </div>
-                        <div class="col-4 col-md-4 mb-1">
+                        <div class="col-4 col-md-6 mb-1">
                             <label class="form-label" for="basic-default-name">Name</label>
                             <input type="text" class="form-control" id="basic-default-name" name="name"
                                 placeholder="your name" required value="{{ old('name') }}" />
                         </div>
-                        {{-- <div class="col-12 col-md-4">
-                            <label class="form-label" for="religion_id">Agama</label>
-                            <select id="religion_id" name="religion_id" class="select2 form-select"
-                                aria-label="Default select example">
-                                <option selected disabled>Agama</option>
-                                @foreach ($religi as $item)
-                                    <option value="{{ $item->id }}"
-                                        {{ old('religi') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div> --}}
-
-                        <div class="col-4 col-md-4 mb-2">
+                        <div class="col-4 col-md-6 mb-2">
                             <label for="form-label-Telefon" class="form-label">Telefon</label>
                             <input class="form-control" type="number" id="form-label-Telefon" name="telp"
                                 placeholder="00392002911" value="{{ old('telp') }}" />
                         </div>
-                        <div class="col-4 col-md-4 mb-2">
+                        <div class="col-4 col-md-6 mb-2">
                             <label class="form-label">Gender</label>
                             <div class="form-check">
                                 <input type="radio" id="basic-default-radio-laki-laki" name="gender" value="L"
@@ -176,8 +209,7 @@
                         <div class="col-4 col-md-6 mb-1">
                             <label class="form-label" for="basic-default-username-update">username</label>
                             <input type="text" class="form-control" id="basic-default-username-update"
-                                name="username" placeholder="your username" required
-                                value="{{ old('username') }}" />
+                                name="username" placeholder="your username" required value="{{ old('username') }}" />
                         </div>
                         <div class="col-12 col-md-6 mb-2">
                             <label class="form-label" for="basic-default-password-update">Password Baru</label>
@@ -191,22 +223,17 @@
                             <input type="text" class="form-control" id="basic-default-NIP-update" name="nip"
                                 placeholder="0029100292101" required value="{{ old('nip') }}" />
                         </div>
-                        <div class="col-12 col-md-6 mb-1">
-                            <label class="form-label" for="basic-default-NUPTK-update">NUPTK</label>
-                            <input type="text" class="form-control" id="basic-default-NUPTK-update" name="nuptk"
-                                placeholder="2022911119921" required value="{{ old('nuptk') }}" />
-                        </div>
-                        <div class="col-4 col-md-4 mb-1">
+                        <div class="col-4 col-md-6 mb-1">
                             <label class="form-label" for="basic-default-name-update">Name</label>
                             <input type="text" class="form-control" id="basic-default-name-update" name="name"
                                 placeholder="your name" required value="{{ old('name') }}" />
                         </div>
-                        <div class="col-4 col-md-4 mb-1">
+                        <div class="col-4 col-md-6 mb-1">
                             <label for="form-label-Telefon-update" class="form-label">Telefon</label>
                             <input class="form-control" type="number" id="form-label-Telefon-update" name="telp"
                                 placeholder="00392002911" value="{{ old('telp') }}" />
                         </div>
-                        <div class="col-4 col-md-4 mb-2">
+                        <div class="col-4 col-md-6 mb-2">
                             <label class="form-label">Gender</label>
                             <div class="form-check">
                                 <input type="radio" id="basic-default-radio-laki-laki-update" name="gender"
@@ -235,6 +262,15 @@
 @endsection
 
 @section('js')
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.js"></script>
+
+    <!-- Inisialisasi DataTable -->
+    <script>
+        $(document).ready(function() {
+            $('#table-content').DataTable();
+        });
+    </script>
     <script>
         document.getElementById('importButton').addEventListener('click', function() {
             document.getElementById('fileInput').click();
@@ -247,12 +283,6 @@
         });
     </script>
     <script>
-        new DataTable('#table-content', {
-            pagingType: 'simple_numbers'
-        });
-    </script>
-    <script>
-
         $('.btn-update').click(function() {
             var id = $(this).data('id');
             var actionUrl = `teacher/${id}`;
@@ -260,7 +290,6 @@
 
             var username = $(this).data('username');
             var nip = $(this).data('nip');
-            var nuptk = $(this).data('nuptk');
             var name = $(this).data('name');
             var gender = $(this).data('gender');
             var telp = $(this).data('telp');
@@ -271,7 +300,6 @@
 
             formUpdate.find('#basic-default-username-update').val(username);
             formUpdate.find('#basic-default-NIP-update').val(nip);
-            formUpdate.find('#basic-default-NUPTK-update').val(nuptk);
             formUpdate.find('#basic-default-name-update').val(name);
             formUpdate.find('#form-label-Telefon-update').val(telp);
             if (gender === 'L') {

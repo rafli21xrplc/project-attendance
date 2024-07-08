@@ -24,12 +24,9 @@ class StoreRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|min:2',
             'gender' => 'required|in:L,P',
-            // 'address' => 'required|string|max:255|min:5',
             'day_of_birth' => 'required|date',
             'telp' => 'required|string|max:20|min:11',
             'classroom_id' => 'required',
-            // 'religion_id' => 'required',
-            // 'born_at' => 'required|string|max:255|min:2',
             'username' => 'required|string|max:255|unique:users,username',
             'password' => 'required|string|min:8',
         ];

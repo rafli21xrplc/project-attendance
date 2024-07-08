@@ -10,6 +10,58 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/%40form-validation/umd/styles/index.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/animate-css/animate.css') }}">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.css">
+
+    <style>
+        #table-content {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #table-content th,
+        #table-content td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #table-content th {
+            background-color: #ffffff;
+        }
+
+        #table-content tbody tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        #table-content tbody tr:hover {
+            background-color: #e9e9e9;
+        }
+
+        #info-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #info-table th,
+        #info-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 0px solid #ddd;
+        }
+
+        #info-table th {
+            background-color: #f2f2f2;
+        }
+
+        #info-table td:first-child {
+            font-weight: bold;
+        }
+
+        #info-table td:last-child {
+            font-style: italic;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -20,9 +72,6 @@
                     <h3>Schedule</h3>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-label-primary me-2" style="color: blue">
-                        <i class="ti ti-printer me-1"></i> <span class="d-none d-sm-inline-block">Export</span>
-                    </button>
                     <button data-bs-toggle="modal" data-bs-target="#modal-course" type="button"
                         class="btn btn-label-success"><i class="ti ti-plus me-sm-1"></i> <span
                             class="d-none d-sm-inline-block">Add New Record</span></button>
@@ -47,22 +96,34 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @php
+                                        $days = [
+                                            'Monday' => 'Senin',
+                                            'Tuesday' => 'Selasa',
+                                            'Wednesday' => 'Rabu',
+                                            'Thursday' => 'Kamis',
+                                            'Friday' => 'Jumat',
+                                            'Saturday' => 'Sabtu',
+                                            'Sunday' => 'Minggu',
+                                        ];
+                                    @endphp
                                     @foreach ($schedule as $index => $item)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $item->day_of_week }}</td>
-                                            <td>{{ $item->classroom->typeClass->category }} {{ $item->classroom->name }}</td>
-                                            <td>{{ $item->StartTimeSchedules->time_number }}</td>
-                                            <td>{{ $item->EndTimeSchedules->time_number }}</td>
-                                            <td>{{ $item->course->name }}</td>
+                                            <td>{{ $days[$item->day_of_week] ?? $item->day_of_week }}</td>
+                                            <td>{{ $item->classroom->typeClass->category }} {{ $item->classroom->name }}
+                                            </td>
+                                            <td>{{ $item->startTimeSchedules->time_number ?? '-' }}</td>
+                                            <td>{{ $item->endTimeSchedules->time_number ?? '-' }}</td>
+                                            <td>{{ $item->course->name ?? '-' }}</td>
                                             <td>{{ $item->teacher->name }}</td>
                                             <td>
                                                 <button data-id="{{ $item->id }}"
                                                     data-day_of_week="{{ $item->day_of_week }}"
                                                     data-classroom="{{ $item->classroom->id }}"
-                                                    data-start_time_schedule_id="{{ $item->StartTimeSchedules->id }}"
-                                                    data-end_time_schedule_id="{{ $item->EndTimeSchedules->id }}"
-                                                    data-course="{{ $item->course->id }}"
+                                                    data-start_time_schedule_id="{{ optional($item->startTimeSchedules)->id }}"
+                                                    data-end_time_schedule_id="{{ optional($item->EndTimeSchedules)->id }}"
+                                                    data-course="{{ optional($item->course)->id }}"
                                                     data-teacher="{{ $item->teacher->id }}" type="button"
                                                     class="btn btn-label-warning btn-update"><i
                                                         class="fa-solid fa-pen"></i></button>
@@ -77,7 +138,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -101,13 +161,9 @@
                             <select id="day_of_week" name="day_of_week" class="select2 form-select"
                                 aria-label="Default select example">
                                 <option selected disabled value="monday">Pilih Hari</option>
-                                <option value="Monday">Senin</option>
-                                <option value="Tuesday">Selasa</option>
-                                <option value="Wednesday">Rabu</option>
-                                <option value="Thursday">Kamis</option>
-                                <option value="Friday">Jumat</option>
-                                <option value="Saturday">Sabtu</option>
-                                <option value="Sunday">Minggu</option>
+                                @foreach ($holiday as $day => $dayName)
+                                    <option value="{{ $day }}">{{ $dayName }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-12 col-md-6 mb-1">
@@ -154,7 +210,8 @@
                                 <option selected disabled>Pilih Kelas</option>
                                 @foreach ($classroom as $item)
                                     <option value="{{ $item->id }}"
-                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>{{ $item->typeClass->category }} {{ $item->name }}</option>
+                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>
+                                        {{ $item->typeClass->category }} {{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -197,13 +254,9 @@
                             <select id="day_of_week-update" name="day_of_week" class="select2 form-select"
                                 aria-label="Default select example">
                                 <option selected disabled value="monday">Pilih Hari</option>
-                                <option value="Monday">Senin</option>
-                                <option value="Tuesday">Selasa</option>
-                                <option value="Wednesday">Rabu</option>
-                                <option value="Thursday">Kamis</option>
-                                <option value="Friday">Jumat</option>
-                                <option value="Saturday">Sabtu</option>
-                                <option value="Sunday">Minggu</option>
+                                @foreach ($holiday as $day => $dayName)
+                                    <option value="{{ $day }}">{{ $dayName }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="col-12 col-md-6">
@@ -250,7 +303,8 @@
                                 <option selected disabled>Pilih Kelas</option>
                                 @foreach ($classroom as $item)
                                     <option value="{{ $item->id }}"
-                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>{{ $item->typeClass->category }} {{ $item->name }}</option>
+                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>
+                                        {{ $item->typeClass->category }} {{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -277,9 +331,13 @@
 @endsection
 
 @section('js')
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.js"></script>
+
+    <!-- Inisialisasi DataTable -->
     <script>
-        new DataTable('#table-content', {
-            pagingType: 'simple_numbers'
+        $(document).ready(function() {
+            $('#table-content').DataTable();
         });
     </script>
     <script>
@@ -297,8 +355,10 @@
 
             var formUpdate = $('#modal-course-update #div-update');
 
-            formUpdate.find('#start_time_schedule_id-update option[value="' + start_time_schedule_id + '"]').prop('selected', true);
-            formUpdate.find('#end_time_schedule_id-update option[value="' + end_time_schedule_id + '"]').prop('selected', true);
+            formUpdate.find('#start_time_schedule_id-update option[value="' + start_time_schedule_id + '"]').prop(
+                'selected', true);
+            formUpdate.find('#end_time_schedule_id-update option[value="' + end_time_schedule_id + '"]').prop(
+                'selected', true);
             formUpdate.find('#day_of_week-update option[value="' + day_of_week + '"]').prop('selected', true);
             formUpdate.find('#course_id-update option[value="' + course + '"]').prop('selected', true);
             formUpdate.find('#teacher_id-update option[value="' + teacher + '"]').prop('selected', true);

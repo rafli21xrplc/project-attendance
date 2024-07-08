@@ -43,9 +43,9 @@
                                         <tr>
                                             <td>{{ $attendance['teacher_name'] }}</td>
                                             <td>{{ $attendance['classroom'] }}</td>
-                                            <td>{{ $attendance['course'] }}</td>
-                                            <td>{{ $attendance['start_time'] }}</td>
-                                            <td>{{ $attendance['end_time'] }}</td>
+                                            {{-- <td>{{ $attendance['course'] }}</td>
+                                            <td>{{ $attendance['start_time'] }}</td> --}}
+                                            {{-- <td>{{ $attendance['end_time'] }}</td> --}}
                                         </tr>
                                     @endforeach
                                 </tbody>

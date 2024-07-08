@@ -41,8 +41,7 @@ class StudentPaymentRepository extends BaseRepository implements StudentPaymentI
 
     public function get(): mixed
     {
-        return $this->model->query()
-            ->get();
+        return student_payment::getStudentPayments();
     }
 
     public function store(array $data): mixed

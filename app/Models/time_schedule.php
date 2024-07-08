@@ -18,4 +18,9 @@ class time_schedule extends Model
     ];
     protected $primaryKey = 'id';
     public $incrementing = false;
+
+    public function schedules()
+    {
+        return $this->hasMany(schedule::class, 'start_time_schedule_id');
+    }
 }

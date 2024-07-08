@@ -34,8 +34,7 @@ class ClassRepository extends BaseRepository implements ClassInterface
 
     public function get(): mixed
     {
-        return $this->model->query()->with(['typeClass', 'teacher'])
-            ->get();
+        return classRoom::get();
     }
 
     public function store(array $data): mixed

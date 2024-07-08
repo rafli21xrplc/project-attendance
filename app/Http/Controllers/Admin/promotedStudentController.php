@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\promotedStudent\updateRequest;
 use App\Traits\PromotedTrait;
 use Illuminate\Http\Request;
 
@@ -16,11 +17,19 @@ class promotedStudentController extends Controller
      */
     public function promoted()
     {
-        $promote = $this->promotedStudent();
+        $this->promotedStudentAll();
+        try {
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'failed update');
+        }
+        return redirect()->back()->with('success', 'success update');
     }
     
     public function index()
     {
+        $student = $this->get();
+        $classroom = $this->getClassroom();
+        return view('admin.promotedStudent', compact(['student', 'classroom']));
     }
 
     /**
@@ -58,9 +67,14 @@ class promotedStudentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(updateRequest $request)
     {
-        //
+        try {
+            $this->promotedStudent($request->validated());
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'failed update');
+        }
+        return redirect()->back()->with('success', 'success update');
     }
 
     /**

@@ -8,54 +8,79 @@ use App\Models\classRoom;
 use App\Models\kbm_period;
 use App\Models\permission;
 use App\Models\schedule;
+use App\Models\setting;
 use App\Models\teacher;
 use App\Models\time_schedule;
 use App\Models\type_class;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 trait ScheduleTrait
 {
+
         public function checkAndMarkAutomaticAttendance()
         {
-                $currentPeriod = kbm_period::getCurrentPeriod();
-                $today = Carbon::now()->format('l');
-                $currentTime = Carbon::now();
+                try {
+                        $currentPeriod = kbm_period::getCurrentPeriod();
+                        $today = Carbon::now()->format('l');
+                        $currentTime = Carbon::now();
 
-                $schedules = Schedule::where('day_of_week', $today)->with(['classroom.students', 'attendances', 'StartTimeSchedules', 'EndTimeSchedules'])->get();
+                        $schedules = Schedule::where('day_of_week', $today)
+                                ->with(['classroom.students', 'attendances', 'StartTimeSchedules', 'EndTimeSchedules'])
+                                ->get();
 
-                foreach ($schedules as $schedule) {
-                        $startSchedule = $schedule->StartTimeSchedules;
-                        $endSchedule = $schedule->EndTimeSchedules;
+                        $uncreatedAttendanceCount = 0; // Counter untuk jadwal tanpa kehadiran
 
-                        $hours = ($endSchedule->time_number - $startSchedule->time_number) + 1;
+                        foreach ($schedules as $schedule) {
+                                $startSchedule = time_schedule::find($schedule->start_time_schedule_id);
+                                $endSchedule = time_schedule::find($schedule->end_time_schedule_id);
 
-                        if ($currentTime->greaterThanOrEqualTo(Carbon::parse($endSchedule->end_time_schedule))) {
+                                // Logging untuk waktu mulai dan akhir
+                                Log::info('WAKTU MULAI: ', ['start_time_schedule' => $startSchedule]);
+                                Log::info('WAKTU AKHIR: ', ['end_time_schedule' => $endSchedule]);
 
-                                if (!$schedule->attendances()->whereDate('created_at', Carbon::today())->exists()) {
+                                // Cek apakah time_number tidak null
+                                if ($startSchedule && $endSchedule && $startSchedule->time_number !== null && $endSchedule->time_number !== null) {
+                                        $hours = ($endSchedule->time_number - $startSchedule->time_number) + 1;
 
-                                        foreach ($schedule->classroom->students as $student) {
-
-                                                try {
-                                                        attendance::insert([
-                                                                'id' => Str::uuid(),
-                                                                'kbm_period_id' => $currentPeriod->id,
-                                                                'time' => now()->format('Y-m-d H:i:s'),
-                                                                'status' => 'present',
-                                                                'student_id' => $student->id,
-                                                                'schedule_id' => $schedule->id,
-                                                                'hours' => $hours,
-                                                                'created_at' => now(),
-                                                        ]);
-                                                } catch (\Throwable $th) {
-                                                        dd($th->getMessage());
+                                        if ($currentTime->greaterThanOrEqualTo(Carbon::parse($endSchedule->end_time_schedule))) {
+                                                if (!$schedule->attendances()->whereDate('created_at', Carbon::today())->exists()) {
+                                                        $uncreatedAttendanceCount++; // Increment the counter
+                                                        foreach ($schedule->classroom->students as $student) {
+                                                                Attendance::insert([
+                                                                        'id' => Str::uuid(),
+                                                                        'kbm_period_id' => $currentPeriod->id,
+                                                                        'time' => now()->format('Y-m-d H:i:s'),
+                                                                        'status' => 'present',
+                                                                        'student_id' => $student->id,
+                                                                        'schedule_id' => $schedule->id,
+                                                                        'hours' => $hours,
+                                                                        'created_at' => now(),
+                                                                ]);
+                                                        }
                                                 }
                                         }
+                                } else {
+                                        // Tangani kasus di mana StartTimeSchedules atau EndTimeSchedules tidak ada atau time_number null
+                                        Log::warning('Missing or invalid StartTimeSchedules or EndTimeSchedules for schedule ID: ' . $schedule->id);
+                                        Log::warning('start_time_schedule_id: ' . $schedule->start_time_schedule_id);
+                                        Log::warning('end_time_schedule_id: ' . $schedule->end_time_schedule_id);
                                 }
                         }
+
+                        // Catat atau kembalikan total jumlah jadwal tanpa kehadiran yang tercipta
+                        Log::info('Total schedules without attendance created today: ' . $uncreatedAttendanceCount);
+                        return $uncreatedAttendanceCount;
+                } catch (\Throwable $th) {
+                        Log::error('Error in checkAndMarkAutomaticAttendance: ' . $th->getMessage());
+                        return $th->getMessage();
                 }
         }
+
+
 
         public function deletePermissionSchedule()
         {
@@ -137,10 +162,7 @@ trait ScheduleTrait
 
                 $currentDay = now()->format('l');
 
-                $schedules = Schedule::where('teacher_id', $teacher->id)
-                        ->where('day_of_week', $currentDay)
-                        ->with(['classroom', 'course', 'StartTimeSchedules', 'EndTimeSchedules'])
-                        ->get();
+                $schedules = Schedule::getTeacherSchedule($teacher->id, $currentDay);
 
                 return $schedules;
         }
@@ -155,7 +177,7 @@ trait ScheduleTrait
 
                 $currentPeriod = kbm_period::getCurrentPeriod();
                 if (!$currentPeriod) {
-                        return response()->json(['message' => 'No active KBM period found.'], 404);
+                        return;
                 }
 
                 $attendances = Attendance::where('kbm_period_id', $currentPeriod->id)
@@ -209,5 +231,26 @@ trait ScheduleTrait
                 ];
 
                 return $pointsPerHour[$status] * $hours;
+        }
+
+        private function getHolidayDay()
+        {
+                $holidays = setting::whereIn('key', ['first-holiday', 'second-holiday'])->pluck('value')->toArray();
+
+                // Define all days of the week
+                $daysOfWeek = [
+                        'Monday' => 'Senin',
+                        'Tuesday' => 'Selasa',
+                        'Wednesday' => 'Rabu',
+                        'Thursday' => 'Kamis',
+                        'Friday' => 'Jumat',
+                        'Saturday' => 'Sabtu',
+                        'Sunday' => 'Minggu'
+                ];
+
+                // Filter days of the week excluding holidays
+                $availableDays = array_diff_key($daysOfWeek, array_flip($holidays));
+
+                return $availableDays;
         }
 }

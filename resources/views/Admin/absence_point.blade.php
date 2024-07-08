@@ -10,6 +10,57 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/%40form-validation/umd/styles/index.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/animate-css/animate.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.css">
+
+    <style>
+        #table-content {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #table-content th,
+        #table-content td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #table-content th {
+            background-color: #ffffff;
+        }
+
+        #table-content tbody tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        #table-content tbody tr:hover {
+            background-color: #e9e9e9;
+        }
+
+        #info-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #info-table th,
+        #info-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 0px solid #ddd;
+        }
+
+        #info-table th {
+            background-color: #f2f2f2;
+        }
+
+        #info-table td:first-child {
+            font-weight: bold;
+        }
+
+        #info-table td:last-child {
+            font-style: italic;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -136,11 +187,15 @@
 @endsection
 
 @section('js')
-    <script>
-        new DataTable('#table-content', {
-            pagingType: 'simple_numbers'
-        });
-    </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.js"></script>
+
+<!-- Inisialisasi DataTable -->
+<script>
+    $(document).ready(function() {
+        $('#table-content').DataTable();
+    });
+</script>
     <script>
         $('.btn-update').click(function() {
             var id = $(this).data('id');

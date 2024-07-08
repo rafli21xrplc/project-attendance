@@ -25,8 +25,8 @@ class UpdateRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|min:2',
             'gender' => 'required|in:L,P',
-            'day_of_birth' => 'required|date',
-            'telp' => 'required|string|max:20|min:11',
+            'day_of_birth' => 'nullable|date',
+            'telp' => 'nullable|string|max:20|min:11',
             'classroom_id' => 'required',
             'username' => ['required', 'string', 'max:255'],
             'password' => 'nullable|string|min:8',

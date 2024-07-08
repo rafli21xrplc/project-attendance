@@ -10,6 +10,58 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/%40form-validation/umd/styles/index.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/animate-css/animate.css') }}">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.css">
+
+    <style>
+        #table-content {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #table-content th,
+        #table-content td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #table-content th {
+            background-color: #ffffff;
+        }
+
+        #table-content tbody tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        #table-content tbody tr:hover {
+            background-color: #e9e9e9;
+        }
+
+        #info-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #info-table th,
+        #info-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 0px solid #ddd;
+        }
+
+        #info-table th {
+            background-color: #f2f2f2;
+        }
+
+        #info-table td:first-child {
+            font-weight: bold;
+        }
+
+        #info-table td:last-child {
+            font-style: italic;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -53,9 +105,8 @@
                                             <td>
                                                 <button data-id="{{ $item->id }}"
                                                     data-time_number="{{ $item->time_number }}"
-                                                    data-start_time_schedule="{{ $item->start_time_schedule }}" 
-                                                    data-end_time_schedule="{{ $item->end_time_schedule }}" 
-                                                    type="button"
+                                                    data-start_time_schedule="{{ $item->start_time_schedule }}"
+                                                    data-end_time_schedule="{{ $item->end_time_schedule }}" type="button"
                                                     class="btn btn-label-warning btn-update"><i
                                                         class="fa-solid fa-pen"></i></button>
                                                 <button data-id="{{ $item->id }}" type="button"
@@ -163,19 +214,22 @@
                         <div class="mb-3 row">
                             <label for="time_number" class="col-md-2 col-form-label">Number Schedule</label>
                             <div class="col-md-10">
-                                <input class="form-control" type="number" name="time_number" id="time_number" placeholder="1" />
+                                <input class="form-control" type="number" name="time_number" id="time_number"
+                                    placeholder="1" />
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label for="start_time_schedule" class="col-md-2 col-form-label">Awal Waktu Schedule</label>
                             <div class="col-md-10">
-                                <input class="form-control" type="time" value="12:30:00" id="start_time_schedule" name="start_time_schedule" />
+                                <input class="form-control" type="time" value="12:30:00" id="start_time_schedule"
+                                    name="start_time_schedule" />
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label for="end_time_schedule" class="col-md-2 col-form-label">Akhir Waktu Schedule</label>
                             <div class="col-md-10">
-                                <input class="form-control" type="time" value="12:30:00" id="end_time_schedule" name="end_time_schedule" />
+                                <input class="form-control" type="time" value="12:30:00" id="end_time_schedule"
+                                    name="end_time_schedule" />
                             </div>
                         </div>
                     </div>
@@ -202,18 +256,22 @@
                     <div class="modal-body row py-0" id="div-update">
                         <div class="mb-1">
                             <label class="form-label" for="basic-default-time_number-update">Number Schedule</label>
-                            <input type="number" class="form-control" id="basic-default-time_number-update" name="time_number"
-                                placeholder="1" required value="{{ old('time_number') }}" />
+                            <input type="number" class="form-control" id="basic-default-time_number-update"
+                                name="time_number" placeholder="1" required value="{{ old('time_number') }}" />
                         </div>
                         <div class="mb-1">
-                            <label class="form-label" for="basic-default-start_time_schedule-update">Awal Waktu Schedule</label>
-                            <input type="time" class="form-control" id="basic-default-start_time_schedule-update" name="start_time_schedule"
-                                placeholder="1" required value="{{ old('start_time_schedule') }}" />
+                            <label class="form-label" for="basic-default-start_time_schedule-update">Awal Waktu
+                                Schedule</label>
+                            <input type="time" class="form-control" id="basic-default-start_time_schedule-update"
+                                name="start_time_schedule" placeholder="1" required
+                                value="{{ old('start_time_schedule') }}" />
                         </div>
                         <div class="mb-1">
-                            <label class="form-label" for="basic-default-end_time_schedule-update">Akhir Waktu Schedule</label>
-                            <input type="time" class="form-control" id="basic-default-end_time_schedule-update" name="end_time_schedule"
-                                placeholder="1" required value="{{ old('end_time_schedule') }}" />
+                            <label class="form-label" for="basic-default-end_time_schedule-update">Akhir Waktu
+                                Schedule</label>
+                            <input type="time" class="form-control" id="basic-default-end_time_schedule-update"
+                                name="end_time_schedule" placeholder="1" required
+                                value="{{ old('end_time_schedule') }}" />
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -227,9 +285,13 @@
 @endsection
 
 @section('js')
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.js"></script>
+
+    <!-- Inisialisasi DataTable -->
     <script>
-        new DataTable('#table-content', {
-            pagingType: 'simple_numbers'
+        $(document).ready(function() {
+            $('#table-content').DataTable();
         });
     </script>
     <script>

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('student', function (Blueprint $table) {
-            $table->uuid('id')->index()->primary();
+            $table->uuid('id')->primary();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->bigInteger('student_id');
             $table->bigInteger('nisn');
@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('gender', ['L', 'P']);
             $table->date('day_of_birth')->nullable();
             $table->string('telp')->nullable();
+            $table->boolean('graduated')->default(false);
             $table->timestamps();
         });
     }

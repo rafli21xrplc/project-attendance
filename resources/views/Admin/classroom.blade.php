@@ -10,6 +10,58 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/%40form-validation/umd/styles/index.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/animate-css/animate.css') }}">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.css">
+
+    <style>
+        #table-content {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #table-content th,
+        #table-content td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #table-content th {
+            background-color: #ffffff;
+        }
+
+        #table-content tbody tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        #table-content tbody tr:hover {
+            background-color: #e9e9e9;
+        }
+
+        #info-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #info-table th,
+        #info-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 0px solid #ddd;
+        }
+
+        #info-table th {
+            background-color: #f2f2f2;
+        }
+
+        #info-table td:first-child {
+            font-weight: bold;
+        }
+
+        #info-table td:last-child {
+            font-style: italic;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -19,17 +71,17 @@
                 <div>
                     <h3>KELAS</h3>
                 </div>
-                <div>
+                <div style="display: flex; align-items: center;">
                     <form id="importForm" action="{{ route('admin.classroom.import') }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    <div class="form-group d-none">
-                        <input type="file" name="file" id="fileInput" class="form-control" required>
-                    </div>
-                    <button type="button" class="btn btn-label-primary me-2" id="importButton" style="color: blue">
-                        <i class="ti ti-printer me-1"></i> <span class="d-none d-sm-inline-block">Import</span>
-                    </button>
-                </form>
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group d-none">
+                            <input type="file" name="file" id="fileInput" class="form-control" required>
+                        </div>
+                        <button type="button" class="btn btn-label-primary me-2" id="importButton" style="color: blue">
+                            <i class="ti ti-printer me-1"></i> <span class="d-none d-sm-inline-block">Import</span>
+                        </button>
+                    </form>
                     <button data-bs-toggle="modal" data-bs-target="#modal-classroom" type="button"
                         class="btn btn-label-success"><i class="ti ti-plus me-sm-1"></i> <span
                             class="d-none d-sm-inline-block">Add New Record</span></button>
@@ -44,7 +96,6 @@
                                 <thead>
                                     <tr class="text-center">
                                         <th>NO</th>
-                                        <th>KODE</th>
                                         <th>NAMA</th>
                                         <th>WALI KELAS</th>
                                         <th>ACTION</th>
@@ -54,15 +105,16 @@
                                     @foreach ($classroom as $index => $item)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $item->class_id }}</td>
-                                            <td>{{ $item->typeClass->category }} {{ $item->name }}</td>
-                                            <td>{{ $item->teacher->name }} </td>
+                                            <td>{{ $item->type_class_category }} {{ $item->name }}</td>
+                                            <td>{{ $item->teacher_name }} </td>
                                             <td>
-                                                <button data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-teacher_id="{{ $item->teacher->id }}" data-type_class_id="{{ $item->typeClass->id }}"
-                                                    data-class_id="{{ $item->class_id }}" type="button"
+                                                <button data-id="{{ $item->classroom_id }}" data-name="{{ $item->name }}"
+                                                    data-teacher_id="{{ $item->teacher_id }}"
+                                                    data-type_class_id="{{ $item->type_class_id }}"
+                                                    data-class_id="{{ $item->classroom_id }}" type="button"
                                                     class="btn btn-label-warning btn-update"><i
                                                         class="fa-solid fa-pen"></i></button>
-                                                <button data-id="{{ $item->id }}" type="button"
+                                                <button data-id="{{ $item->classroom_id }}" type="button"
                                                     class="btn btn-label-danger btn-delete"><i
                                                         class="fa-solid fa-trash"></i></button>
                                             </td>
@@ -224,7 +276,8 @@
                                 <option selected disabled>Pilih Type</option>
                                 @foreach ($teacher as $item)
                                     <option value="{{ $item->id }}"
-                                        {{ old('teacher_id') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        {{ old('teacher_id') == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -235,7 +288,8 @@
                                 <option selected disabled>Pilih Type</option>
                                 @foreach ($type_class as $item)
                                     <option value="{{ $item->id }}"
-                                        {{ old('type_class_id') == $item->id ? 'selected' : '' }}>{{ $item->category }}</option>
+                                        {{ old('type_class_id') == $item->id ? 'selected' : '' }}>{{ $item->category }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -256,20 +310,24 @@
 @endsection
 
 @section('js')
-<script>
-    document.getElementById('importButton').addEventListener('click', function() {
-        document.getElementById('fileInput').click();
-    });
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.js"></script>
 
-    document.getElementById('fileInput').addEventListener('change', function() {
-        if (this.files.length > 0) {
-            document.getElementById('importForm').submit();
-        }
-    });
-</script>
+    <!-- Inisialisasi DataTable -->
     <script>
-        new DataTable('#table-content', {
-            pagingType: 'simple_numbers'
+        $(document).ready(function() {
+            $('#table-content').DataTable();
+        });
+    </script>
+    <script>
+        document.getElementById('importButton').addEventListener('click', function() {
+            document.getElementById('fileInput').click();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', function() {
+            if (this.files.length > 0) {
+                document.getElementById('importForm').submit();
+            }
         });
     </script>
     <script>

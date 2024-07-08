@@ -9,6 +9,8 @@ use App\Contracts\Interfaces\AttendanceTeacherInterface;
 use App\Contracts\Interfaces\ClassInterface;
 use App\Contracts\Interfaces\ClassroomTeacherInterface;
 use App\Contracts\Interfaces\CourseInterface;
+use App\Contracts\Interfaces\ExamLoginInterface;
+use App\Contracts\Interfaces\InstallmentsInterface;
 use App\Contracts\Interfaces\KbmPeriodInterface;
 use App\Contracts\Interfaces\PaymentInterface;
 use App\Contracts\Interfaces\ScheduleInterface;
@@ -23,12 +25,14 @@ use App\Contracts\Interfaces\TypeClassInterface;
 use App\Contracts\Repositories\AbsencePointRepository;
 use App\Contracts\Repositories\AdminReporitory;
 use App\Contracts\Repositories\AttendanceRekapRepository;
+use App\Contracts\Repositories\InstallmentsRepository;
 use App\Contracts\Repositories\StudentPaymentRepository;
 use App\Contracts\Repositories\Teacher\AttendanceStudentRepository;
 use App\Contracts\Repositories\AttendanceTeacherReporitory;
 use App\Contracts\Repositories\ClassRepository;
 use App\Contracts\Repositories\ClassroomTeacherReporitory;
 use App\Contracts\Repositories\CourseRepository;
+use App\Contracts\Repositories\ExamLoginRepository;
 use App\Contracts\Repositories\KbmPeriodRepository;
 use App\Contracts\Repositories\PaymentRepository;
 use App\Contracts\Repositories\ScheduleReporitory;
@@ -60,7 +64,9 @@ class AppServiceProvider extends ServiceProvider
         StudentPaymentInterface::class => StudentPaymentRepository::class,
         AttendanceRekapInterface::class => AttendanceRekapRepository::class,
         KbmPeriodInterface::class => KbmPeriodRepository::class,
-        AbsencePointInterface::class => AbsencePointRepository::class
+        AbsencePointInterface::class => AbsencePointRepository::class,
+        InstallmentsInterface::class => InstallmentsRepository::class,
+        ExamLoginInterface::class => ExamLoginRepository::class
     ];
 
     /**

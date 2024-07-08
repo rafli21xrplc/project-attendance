@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\student;
 
 use App\Http\Controllers\Controller;
+use App\Models\ExamLogin;
+use App\Models\student_payment;
 use App\Traits\StudentTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class studentDashboardController extends Controller
 {
@@ -16,8 +20,9 @@ class studentDashboardController extends Controller
      */
     public function index()
     {
+        $qrCode = $this->checkPaymentStudent();
         $schedules = $this->getScheduleStudent();
-        return view('student.dashboard', compact('schedules'));
+        return view('student.dashboard', compact('schedules', 'qrCode'));
     }
 
     /**
