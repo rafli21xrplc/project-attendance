@@ -19,16 +19,20 @@ class AttendanceExportPdf
         $this->endDate = $endDate;
     }
 
-    public function sheets(): array
+    public function getData()
     {
-        $sheets = [];
-
+        $data = [];
         $typeClasses = type_class::whereIn('id', $this->typeClassIds)->get();
 
         foreach ($typeClasses as $typeClass) {
-            $sheets[] = new TypeClassSheetAttendanceExportPdf($typeClass, $this->startDate, $this->endDate);
+            $sheet = new TypeClassSheetAttendanceExportPdf($typeClass, $this->startDate, $this->endDate);
+            $data[] = [
+                'typeClass' => $typeClass,
+                'data' => $sheet->collection(),
+                'title' => $sheet->title()
+            ];
         }
 
-        return $sheets;
+        return $data;
     }
 }

@@ -32,6 +32,11 @@ class student_payment extends Model
         return $this->belongsTo(payment::class, 'payment_id', 'id');
     }
 
+    public function paymentInstallments()
+    {
+        return $this->hasMany(PaymentInstallment::class, 'student_payment_id', 'id');
+    }
+
     public static function getStudentPayments()
     {
         $studentPayments = DB::table('student_payment')

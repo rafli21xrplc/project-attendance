@@ -25,7 +25,7 @@ class UpdateRequest extends FormRequest
         return [
             'time_number' => 'required|integer|min:1|max:10',
             'start_time_schedule' => ['required', new ValidTime()],
-            'end_time_schedule' => ['required', 'after:start_time_schedule', new ValidTime()]
+            'end_time_schedule' => ['required', 'after:start_time_schedule', new ValidTime()],
         ];
     }
 

@@ -26,7 +26,7 @@ class classRoom extends Model
 
     public function students()
     {
-        return $this->hasMany(Student::class, 'classroom_id', 'id');
+        return $this->hasMany(Student::class, 'classroom_id', 'id')->orderBy('name', 'asc');
     }
     
     public function teacher()
@@ -50,7 +50,7 @@ class classRoom extends Model
             ->join('type_class', 'class_room.type_class_id', '=', 'type_class.id')
             ->join('teacher', 'class_room.teacher_id', '=', 'teacher.id')
             ->select(
-                'class_room.id AS classroom_id',
+                'class_room.id AS id',
                 'class_room.name AS name',
                 'type_class.id AS type_class_id',
                 'type_class.category AS type_class_category',

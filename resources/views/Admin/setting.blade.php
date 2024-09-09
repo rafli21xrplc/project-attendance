@@ -19,7 +19,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card mb-4">
-                        <h5 class="card-header">Setting</h5>
+                        <h6 class="card-header">Setting Tanggal Libur</h6>
                         <div class="card-body">
                             <form action="{{ route('admin.setting.update') }}" method="post">
                                 @csrf
@@ -85,6 +85,61 @@
                 </div>
             </div>
             
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <h6 class="card-header">Setting Hari Khusus</h6>
+                        <div class="card-body">
+                            <form action="{{ route('admin.setting.spesialDay') }}" method="post">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="first-holiday" class="form-label">Libur mingguan pertama</label>
+                                        <input type="date" class="form-control" placeholder="Start Date" name="start_date" value="{{ $startDate ?? '' }}" />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="second-holiday" class="form-label">Libur mingguan kedua</label>
+                                        <input type="date" class="form-control" placeholder="End Date" name="end_date" value="{{ $endDate ?? '' }}" />
+                                    </div>
+                                    <div class="col-12 text-end">
+                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <h6 class="card-header">Setting Hari Pemdatan</h6>
+                        <div class="card-body">
+                            <form action="{{ route('admin.subtraction.store') }}" method="post">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="tanggal" class="form-label">Libur mingguan pertama</label>
+                                        <input type="date" id="tanggal" class="form-control" value="{{ $SubtractionTime->tanggal ?? '' }}" name="tanggal" />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="start_time" class="form-label">Jam Awal</label>
+                                        <input type="number" id="start_time" class="form-control" placeholder="{{ $SubtractionTime->start_time ?? '' }}" name="start_time" min="1" />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="end_time" class="form-label">Jam Akhir</label>
+                                        <input type="number" id="end_time" class="form-control" placeholder="{{ $SubtractionTime->end_time ?? '' }}" name="end_time" min="2" />
+                                    </div>
+                                    <div class="col-12 text-end">
+                                        <button type="submit" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="content-backdrop fade"></div>
         </div>

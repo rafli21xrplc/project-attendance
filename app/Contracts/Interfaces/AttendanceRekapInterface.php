@@ -2,6 +2,6 @@
 
 namespace App\Contracts\Interfaces;
 
-interface AttendanceRekapInterface extends GetAttendanceStudent, ShowClassroomInterface
+interface AttendanceRekapInterface extends GetAttendanceStudent, ShowClassroomInterface, GetStudentInterface
 {
 }

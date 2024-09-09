@@ -25,6 +25,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <link href="https://raw.githack.com/ttskch/select2-bootstrap4-theme/master/dist/select2-bootstrap4.css"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <style>
         #table-content {
             border-collapse: collapse;
@@ -87,9 +95,25 @@
                 <div>
                     <h3>Tanggungan Pembayaran</h3>
                 </div>
-                <div>
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                    <form action="{{ route('admin.export.payment_bbpp.excel') }}" method="POST">
+                        @csrf
+                        <div class="row g-3 align-items-center">
+                            <div class="col-12 col-md-6">
+                                <input type="month" id="month" name="month" class="form-control" required>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    Export Report
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
                     <button data-bs-toggle="modal" data-bs-target="#modal-classroom" type="button"
-                        class="btn btn-label-success"><i class="ti ti-plus me-sm-1"></i> <span
+                        class="btn btn-label-success d-block"><i class="ti ti-plus me-sm-1"></i> <span
                             class="d-none d-sm-inline-block">Add New Record</span></button>
                 </div>
             </div>
@@ -326,10 +350,27 @@
                             </ul>
                         </div>
                         <div class="border-top pt-3">
-                            <div class="mb-3">
-                                <label for="installment-amount" class="form-label">Tambah Installment</label>
-                                <input type="number" class="form-control" id="installment-amount"
-                                    placeholder="Masukkan nominal installment">
+                            <div class="row mb-3">
+                                <div class="col-12 col-md-6 mb-2">
+                                    <label for="installment-amount" class="form-label">Tambah Installment</label>
+                                    <input type="number" class="form-control" id="installment-amount" min="1"
+                                        placeholder="Masukkan nominal installment">
+                                </div>
+                                <div class="col-12 col-md-6 mb-2">
+                                    <label for="type_payment_id" class="form-label">Pembayaran</label>
+                                    <select id="type_payment_id" name="type_payment_id" class="form-select"
+                                        aria-label="Default select example">
+                                        <option selected disabled>Pilih Type</option>
+                                        @foreach ($typePayment as $item)
+                                            <option id="{{ $item->name }}" value="{{ $item->id }}">
+                                                {{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-12 mb-2" id="file-upload-div" style="display: none;">
+                                    <label for="description" class="form-label">Bukti Pembayaran</label>
+                                    <textarea class="form-control" name="" id="description" rows="2" style="resize: none"></textarea>
+                                </div>
                             </div>
                             <div>
                                 <button type="button" id="add-installment-btn" class="btn btn-primary">Tambah
@@ -347,6 +388,30 @@
 @endsection
 
 @section('js')
+    <script>
+        $(function() {
+            $('.select').each(function() {
+                $(this).select2({
+                    theme: 'bootstrap4',
+                    width: 'style',
+                    placeholder: $(this).attr('placeholder'),
+                    allowClear: Boolean($(this).data('allow-clear')),
+                });
+            });
+        });
+    </script>
+    <script>
+        document.getElementById('type_payment_id').addEventListener('change', function() {
+            var fileUploadDiv = document.getElementById('file-upload-div');
+            var selectedOption = this.options[this.selectedIndex];
+            var selectedOptionId = selectedOption.id;
+            if (selectedOptionId === 'TRANSFER') {
+                fileUploadDiv.style.display = 'block';
+            } else {
+                fileUploadDiv.style.display = 'none';
+            }
+        });
+    </script>
     <script>
         $(document).ready(function() {
             $('.btn-pay').click(function() {
@@ -374,7 +439,7 @@
                     $('#payment-status').removeClass('bg-danger').addClass('bg-success').text('LUNAS');
                 } else {
                     $('#payment-status').removeClass('bg-success').addClass('bg-danger').text(
-                    'BELUM LUNAS');
+                        'BELUM LUNAS');
                 }
 
                 var installmentList = $('#installment-list');
@@ -406,7 +471,7 @@
                 } else {
                     installmentList.append(
                         '<li class="timeline-item timeline-item-transparent ps-4 list-group-item">No installments</li>'
-                        );
+                    );
                 }
 
                 $('#add-installment-btn').data('student-payment-id', id);
@@ -416,14 +481,24 @@
             $('#add-installment-btn').click(function() {
                 var studentPaymentId = $(this).data('student-payment-id');
                 var amount = $('#installment-amount').val();
+                var type_payment_id = $('#type_payment_id').val();
+                var description = $('#description').val();
 
                 if (amount && studentPaymentId) {
-                    axios.post('{{ route('admin.installments.api') }}', {
-                            _token: '{{ csrf_token() }}',
-                            student_payment_id: studentPaymentId,
-                            amount: amount
+                    var formData = new FormData();
+                    formData.append('_token', '{{ csrf_token() }}');
+                    formData.append('student_payment_id', studentPaymentId);
+                    formData.append('amount', amount);
+                    formData.append('type_payment_id', type_payment_id);
+                    formData.append('description', description);
+
+                    axios.post('{{ route('admin.installments.api') }}', formData, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
                         })
                         .then(function(response) {
+
                             var formattedAmount = new Intl.NumberFormat('id-ID', {
                                 style: 'currency',
                                 currency: 'IDR'
@@ -434,14 +509,14 @@
                                 year: 'numeric'
                             });
                             var listItem = `<li class="timeline-item timeline-item-transparent ps-4 list-group-item">
-                                    <span class="timeline-point timeline-point-info"></span>
-                                    <div class="timeline-event">
-                                        <div class="timeline-header">
-                                            <h6 class="mb-0">Amount: ${formattedAmount}</h6>
-                                            <small class="text-muted">Payment Date: ${formattedDate}</small>
-                                        </div>
-                                    </div>
-                                </li>`;
+                        <span class="timeline-point timeline-point-info"></span>
+                        <div class="timeline-event">
+                            <div class="timeline-header">
+                                <h6 class="mb-0">Amount: ${formattedAmount}</h6>
+                                <small class="text-muted">Payment Date: ${formattedDate}</small>
+                            </div>
+                        </div>
+                    </li>`;
 
                             $('#installment-list').append(listItem);
 
@@ -470,8 +545,11 @@
                             }
 
                             $('#installment-amount').val('');
+                            $('#file').val(''); // Clear the file input after submission
                         })
                         .catch(function(error) {
+                            console.log(error);
+
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Gagal',

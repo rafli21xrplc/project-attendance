@@ -81,6 +81,10 @@
                                 <i class="ti ti-printer me-1"></i> <span class="d-none d-sm-inline-block">Import</span>
                             </button>
                         </form>
+                        <button data-bs-toggle="modal" data-bs-target="#modal-cari" type="button"
+                            class="btn btn-label-warning mb-2 mb-md-0">
+                            <i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Cari</span>
+                        </button>
                         <button data-bs-toggle="modal" data-bs-target="#modal-student" type="button"
                             class="btn btn-label-success mb-2 mb-md-0">
                             <i class="ti ti-plus me-sm-1"></i> <span class="d-none d-sm-inline-block">Add New Record</span>
@@ -88,7 +92,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div class="row">
                 <div class="col-12 order-5">
@@ -107,41 +110,41 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($student as $index => $item)
-                                        <tr>
-                                            <td>{{ $index + 1 }}</td>
-                                            <td>{{ $item->student_name }}</td>
-                                            <td>{{ $item->gender }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($item->day_of_birth)->formatLocalized('%d %B %Y') ?? '-' }}
-                                            </td>
-                                            <td>
-                                                @if ($item->graduated)
-                                                    <span class="badge bg-success">Lulus</span>
-                                                @else
-                                                    <span class="badge bg-primary">Siswa Aktif</span>
-                                                @endif
-                                            </td>
-                                            
-                                            <td>
-                                                <button data-id="{{ $item->student_id }}"
-                                                    data-type_class_id="{{ $item->type_class_id }}" 
-                                                    data-classroom_id="{{ $item->classroom_id }}" 
-                                                    type="button"
-                                                    class="btn btn-label-primary btn-class"><i
-                                                        class="fa-solid fa-circle-exclamation"></i></button>
-                                                <button data-id="{{ $item->student_id }}"
-                                                    data-name="{{ $item->student_name }}"
-                                                    data-gender="{{ $item->gender }}" data-telp="{{ $item->telp }}"
-                                                    data-username="{{ $item->username }}"
-                                                    data-classroom_id="{{ $item->classroom_id }}"
-                                                    data-day_of_birth="{{ $item->day_of_birth }}" type="button"
-                                                    class="btn btn-label-warning btn-update"><i
-                                                        class="fa-solid fa-pen"></i></button>
-                                                <button data-id="{{ $item->student_id }}" type="button"
-                                                    class="btn btn-label-danger btn-delete"><i
-                                                        class="fa-solid fa-trash"></i></button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $item->student_name }}</td>
+                                        <td>{{ $item->gender }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->day_of_birth)->formatLocalized('%d %B %Y') ?? '-' }}
+                                        </td>
+                                        <td>
+                                            @if ($item->graduated)
+                                                <span class="badge bg-success">Lulus</span>
+                                            @else
+                                                <span class="badge bg-primary">Siswa Aktif</span>
+                                            @endif
+                                        </td>
+                                        
+                                        <td>
+                                            <button data-id="{{ $item->student_id }}"
+                                                data-type_class_id="{{ $item->type_class_id }}" 
+                                                data-classroom_id="{{ $item->classroom_id }}" 
+                                                type="button"
+                                                class="btn btn-label-primary btn-class"><i
+                                                    class="fa-solid fa-circle-exclamation"></i></button>
+                                            <button data-id="{{ $item->student_id }}"
+                                                data-name="{{ $item->student_name }}"
+                                                data-gender="{{ $item->gender }}" data-telp="{{ $item->telp }}"
+                                                data-username="{{ $item->username }}"
+                                                data-classroom_id="{{ $item->classroom_id }}"
+                                                data-day_of_birth="{{ $item->day_of_birth }}" type="button"
+                                                class="btn btn-label-warning btn-update"><i
+                                                    class="fa-solid fa-pen"></i></button>
+                                            <button data-id="{{ $item->student_id }}" type="button"
+                                                class="btn btn-label-danger btn-delete"><i
+                                                    class="fa-solid fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -190,78 +193,38 @@
             </div>
         </div>
     </div>
-
-
-    {{-- modal --}}
-    <div class="modal fade" id="modal-student" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">BIODATA SISWA</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    
+        {{-- modal --}}
+        <div class="modal fade" id="modal-cari" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">Pencarian</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('admin.student.search') }}" method="GET">
+                        <div class="modal-body row py-0">
+                            <div class="col-12 col-md-12 mb-2">
+                                <label class="form-label" for="classroom_id">Kelas</label>
+                                <select id="classroom_id" name="classroom_id" class="select2 form-select"
+                                    aria-label="Default select example">
+                                    <option selected disabled>Kelas</option>
+                                    @foreach ($class_room as $item)
+                                        <option value="{{ $item->id }}"
+                                            {{ old('classroom') == $item->id ? 'selected' : '' }}>
+                                            {{ $item->typeClass->category }} {{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-label-danger" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
                 </div>
-                <form action="{{ route('admin.student.store') }}" method="POST">
-                    @csrf
-                    <div class="modal-body row py-0">
-                        <div class="col-12 col-md-6 mb-1">
-                            <label class="form-label" for="basic-default-username">username</label>
-                            <input type="username" class="form-control" id="basic-default-username" name="username"
-                                placeholder="3918302921" required value="{{ old('username') }}" />
-                        </div>
-                        <div class="col-12 col-md-6 mb-1">
-                            <label class="form-label" for="basic-default-password">password</label>
-                            <input type="password" class="form-control" id="basic-default-password" name="password"
-                                placeholder="password" required value="{{ old('password') }}" />
-                        </div>
-                        <div class="col-12 col-md-6 mb-1">
-                            <label class="form-label" for="basic-default-name">Name</label>
-                            <input type="text" class="form-control" id="basic-default-name" name="name"
-                                placeholder="your name" required value="{{ old('name') }}" />
-                        </div>
-                        <div class="col-12 col-md-6 mb-1">
-                            <label for="html5-date-input" class="form-label">Tanggal Lahir</label>
-                            <input class="form-control" type="date" value="2021-06-18" id="html5-date-input"
-                                name="day_of_birth" value="{{ old('day_of_birth') }}" />
-                        </div>
-                        <div class="col-12 col-md-4 mb-2">
-                            <label class="form-label" for="classroom_id">Kelas</label>
-                            <select id="classroom_id" name="classroom_id" class="select2 form-select"
-                                aria-label="Default select example">
-                                <option selected disabled>Kelas</option>
-                                @foreach ($class_room as $item)
-                                    <option value="{{ $item->id }}"
-                                        {{ old('classroom') == $item->id ? 'selected' : '' }}>
-                                        {{ $item->typeClass->category }} {{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-12 col-md-4 mb-2">
-                            <label for="form-label-Telefon" class="form-label">Telefon</label>
-                            <input class="form-control" type="number" id="form-label-Telefon" name="telp"
-                                placeholder="00392002911" value="{{ old('telp') }}" />
-                        </div>
-                        <div class="col-12 col-md-4 mb-2">
-                            <label class="form-label">Gender</label>
-                            <div class="form-check">
-                                <input type="radio" id="basic-default-radio-laki-laki" name="gender" value="L"
-                                    class="form-check-input" required {{ old('gender') == 'L' ? 'checked' : '' }} />
-                                <label class="form-check-label" for="basic-default-radio-laki-laki">laki-laki</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="radio" id="basic-default-radio-perempuan" name="gender" value="P"
-                                    class="form-check-input" required {{ old('gender') == 'P' ? 'checked' : '' }} />
-                                <label class="form-check-label" for="basic-default-radio-perempuan">perempuan</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-label-danger" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
             </div>
         </div>
-    </div>
 
 
     {{-- modal update --}}

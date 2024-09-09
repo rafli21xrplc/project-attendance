@@ -38,8 +38,8 @@ class TimescheduleController extends Controller
      */
     public function store(StoreRequest $request)
     {
+        $this->timeScheduleInterface->store($request->validated());
         try {
-            $this->timeScheduleInterface->store($request->validated());
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'failed created');
         }

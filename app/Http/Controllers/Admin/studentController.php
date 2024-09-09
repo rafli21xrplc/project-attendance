@@ -27,6 +27,15 @@ class studentController extends Controller
      * Display a listing of the resource.
      */
 
+    public function search(Request $request)
+    {
+        $student = $this->searchStudent($request->classroom_id);
+        $type_class = $this->student->getTypeClassroom();
+        $religi = $this->student->getReligi();
+        $class_room = $this->student->getClassroom();
+        return view('admin.student', compact('student', 'religi', 'class_room', 'type_class'));
+    }
+
     public function import(importRequest $request)
     {
         try {
@@ -88,7 +97,6 @@ class studentController extends Controller
      */
     public function update(UpdateRequest $request, student $student)
     {
-        dd($student, $request->all());
         try {
             $this->student->update($student->id, $request->validated());
         } catch (\Throwable $th) {

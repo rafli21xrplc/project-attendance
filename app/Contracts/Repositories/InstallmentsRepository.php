@@ -6,6 +6,7 @@ use App\Contracts\Interfaces\InstallmentsInterface;
 use App\Models\PaymentInstallment;
 use App\Services\PaymentService;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Storage;
 
 class InstallmentsRepository extends BaseRepository implements InstallmentsInterface
 {
@@ -25,13 +26,12 @@ class InstallmentsRepository extends BaseRepository implements InstallmentsInter
 
     public function get(): mixed
     {
-        return $this->model->query()->with(['studentPayment.student', 'studentPayment.payment'])
-            ->get();
+        return PaymentInstallment::get();
     }
 
     public function store(array $data): mixed
     {
-        $this->model->query()->create($data);
+        $this->paymentService->store($data);
         return $this->paymentService->checkingPayment($data);
     }
 
@@ -45,6 +45,7 @@ class InstallmentsRepository extends BaseRepository implements InstallmentsInter
         try {
             $data = $this->show($id);
             $data->delete($id);
+            $this->paymentService->checkingPayment($data);
         } catch (QueryException $e) {
             if ($e->errorInfo[1] == 1451) return false;
         }

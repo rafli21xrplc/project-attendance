@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignUuid('student_payment_id')->constrained('student_payment')->onDelete('cascade');
             $table->decimal('amount', 10, 2)->default('0.00');
             $table->date('payment_date');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

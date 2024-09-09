@@ -3,13 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Contracts\Interfaces\StudentPaymentInterface;
+use App\Exports\studentPaymentMonthExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\studentPayment\storeRequest;
 use App\Http\Requests\studentPayment\updateRequest;
+use App\Models\classRoom;
 use App\Models\student;
 use App\Models\student_payment;
 use App\Traits\PaymentTrait;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentPaymentController extends Controller
 {
@@ -22,6 +26,17 @@ class StudentPaymentController extends Controller
         $this->studentPayment = $studentPayment;
     }
 
+    public function export(Request $request)
+    {
+        $month = $request->input('month');
+
+        $formattedMonth = Carbon::createFromFormat('Y-m', $month)->locale('id')->translatedFormat('F');
+
+        $classrooms = classRoom::with(['students.studentPayments.payment', 'students.studentPayments.paymentInstallments', 'typeClass', 'teacher'])->get();
+
+        return Excel::download(new studentPaymentMonthExport($classrooms, $formattedMonth), 'student_payment_report.xlsx');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -32,8 +47,9 @@ class StudentPaymentController extends Controller
         $student = $this->studentPayment->getStudent();
         $payment = $this->studentPayment->getPayment();
         $studentPayment = $this->studentPayment->get();
+        $typePayment = $this->studentPayment->getTypePayment();
 
-        return view('admin.student_payment', compact('studentPayment', 'student', 'payment', 'classroom', 'type'));
+        return view('admin.student_payment', compact('studentPayment', 'student', 'payment', 'classroom', 'type', 'typePayment'));
     }
 
     public function getStudentsByClassroom(Request $request)

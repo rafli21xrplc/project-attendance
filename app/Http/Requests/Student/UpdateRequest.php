@@ -22,6 +22,7 @@ class UpdateRequest extends FormRequest
      */
     public function rules()
     {
+        dd($this->all());
         return [
             'name' => 'required|string|max:255|min:2',
             'gender' => 'required|in:L,P',

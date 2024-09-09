@@ -24,6 +24,8 @@ class storeRequest extends FormRequest
         return [
             'student_payment_id' => 'required|exists:student_payment,id',
             'amount' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
+            'type_payment_id' => 'required|exists:type_payments,id',
         ];
     }
 
@@ -40,6 +42,10 @@ class storeRequest extends FormRequest
             'amount.required' => 'Kolom Jumlah wajib diisi.',
             'amount.numeric' => 'Kolom Jumlah harus berupa angka.',
             'amount.min' => 'Kolom Jumlah harus lebih besar atau sama dengan 0.',
+            'type_payment_id.required' => 'Kolom Pembayaran wajib diisi.',
+            'type_payment_id.exists' => 'Pembayaran tidak valid.',
+            'month.required' => 'Kolom Bulan wajib diisi.',
+            'month.string' => 'Format bulan tidak valid.',
         ];
     }
 }

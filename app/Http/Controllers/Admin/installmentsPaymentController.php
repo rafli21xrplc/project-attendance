@@ -26,7 +26,8 @@ class installmentsPaymentController extends Controller
     {
         $installments = $this->PaymentInstallment->get();
         $tagihan = $this->getTagihanSiswa();
-        return view('admin.installments_payment', compact('installments', 'tagihan'));
+        $payment = $this->getPayment();
+        return view('admin.installments_payment', compact('installments', 'tagihan', 'payment'));
     }
 
     /**
@@ -45,7 +46,7 @@ class installmentsPaymentController extends Controller
         try {
             $this->PaymentInstallment->store($request->validated());
         } catch (\Throwable $th) {
-            return response()->json(['message' => 'failed created'], 500);
+            return response()->json(['message' => $th->getMessage()], 500);
         }
         return response()->json(['message' => 'success created'], 200);
     }
@@ -82,8 +83,8 @@ class installmentsPaymentController extends Controller
      */
     public function update(updateRequest $request, PaymentInstallment $PaymentInstallment)
     {
-        $this->PaymentInstallment->update($PaymentInstallment, $request->validated());
         try {
+            $this->PaymentInstallment->update($PaymentInstallment, $request->validated());
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'failed update');
         }

@@ -18,4 +18,8 @@ class AttendanceRekapRepository extends BaseRepository implements AttendanceReka
     {
         return $this->getClassrooms();
     }
+
+    public function getStudent(): mixed {
+        return $this->getStudents();
+    }
 }

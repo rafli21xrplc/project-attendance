@@ -81,12 +81,25 @@
                             <h2>Laporan Absensi Bulanan {{ $classroom->typeClass->category }} {{ $classroom->name }}
                             </h2>
                         </div>
-                        <div>
-                            <a href="{{ route('teacher.report.attendance_homeroom.export', $classroom->id) }}"
-                                class="btn btn-primary w-100">
-                                <span class="d-none d-sm-inline-block">Export</span>
-                            </a>
-                        </div>
+                    </div>
+                    <div class="col-12">
+                        <form action="{{ route('teacher.report.attendance_homeroom.export', $classroom->id) }}"
+                            method="POST" class="mt-4">
+                            @csrf
+                            <div class="row g-3 align-items-center">
+                                <div class="col-12 col-md-4">
+                                    <label for="month" class="form-label">Select Month</label>
+                                    <input type="month" id="month" name="month" class="form-control" required>
+                                </div>
+
+                                <!-- Export Button -->
+                                <div class="col-12 col-md-4">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        Export Report
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -103,17 +116,11 @@
                                             <th rowspan="2">L/P</th>
                                             <th colspan="{{ Carbon\CarbonPeriod::create($startDate, $endDate)->count() }}">
                                                 TANGGAL*</th>
-                                            <th colspan="3">JUM. KTDHDRN**</th>
-                                            <th rowspan="2">POIN TATIB</th>
-                                            <th rowspan="2">KET</th>
                                         </tr>
                                         <tr>
                                             @foreach (Carbon\CarbonPeriod::create($startDate, $endDate) as $date)
                                                 <th>{{ $date->format('d') }}</th>
                                             @endforeach
-                                            <th>S</th>
-                                            <th>I</th>
-                                            <th>A</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -129,14 +136,6 @@
                                                         {{ $attendance['status'] }}
                                                     </td>
                                                 @endforeach
-                                                <td>{{ number_format($studentReport['total_sakit'] * 0.1, 1) }}
-                                                </td>
-                                                <td>{{ number_format($studentReport['total_izin'] * 0.1, 1) }}
-                                                </td>
-                                                <td>{{ number_format($studentReport['total_alpha'] * 0.1, 1) }}
-                                                </td>
-                                                <td>{{ number_format($studentReport['total_points'], 1) }}</td>
-                                                <td>{{ $studentReport['warning'] }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>

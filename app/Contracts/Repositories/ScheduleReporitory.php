@@ -41,7 +41,7 @@ class ScheduleReporitory extends BaseRepository implements ScheduleInterface
 
     public function getClassroom(): mixed
     {
-        return $this->classroom->query()->with(['typeClass'])->get();
+        return classRoom::get();
     }
 
     public function getTeacher(): mixed
@@ -53,6 +53,7 @@ class ScheduleReporitory extends BaseRepository implements ScheduleInterface
     {
         return $this->course->query()->get();
     }
+
 
     public function show(mixed $id): mixed
     {

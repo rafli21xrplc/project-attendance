@@ -18,7 +18,9 @@ use App\Models\student_payment;
 use App\Models\teacher;
 use App\Models\teaching_hour;
 use App\Models\time_schedule;
+use App\Models\time_schedule_day;
 use App\Models\type_class;
+use App\Models\type_payment;
 use App\Models\User;
 use App\Observers\absence_pointObserver;
 use App\Observers\AttendanceTeacherObserver;
@@ -35,8 +37,10 @@ use App\Observers\StudentObserver;
 use App\Observers\StudentPaymentObserver;
 use App\Observers\TeacherObserver;
 use App\Observers\TeachingHourObserver;
+use App\Observers\timeScheduleDayObserver;
 use App\Observers\TimeScheduleObserver;
 use App\Observers\TypeClassObserver;
+use App\Observers\typePaymentObserver;
 use App\Observers\UserObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -79,6 +83,7 @@ class EventServiceProvider extends ServiceProvider
         absence_point::observe(absence_pointObserver::class);
         PaymentInstallment::observe(paymentInstallmentsObserver::class);
         ExamLogin::observe(ExamLoginObserver::class);
+        type_payment::observe(typePaymentObserver::class);
     }
 
     /**

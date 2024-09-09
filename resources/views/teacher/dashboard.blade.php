@@ -173,183 +173,51 @@
                 </h4>
                 <div class="row ">
                     @forelse ($schedules as $schedule)
-                        <div class="col-md-6">
-                            <div class="card mb-3 shadow-sm schedule-card">
-                                <div class="card-body d-flex align-items-center">
-                                    <div class="text-center border-end schedule-date">
-                                        <h6 class="text-primary mb-1">{{ now()->format('D') }}</h6>
-                                        <h4 class="mb-0">{{ now()->format('d') }}</h4>
-                                    </div>
-                                    @if ($schedule->course != null && $schedule->classroom != null && $schedule->teacher != null)
-                                    <div class="flex-grow-1 schedule-details ms-3">
-                                        <h5 class="card-title mb-1">{{ $schedule->course->name }}</h5>
-                                        <p class="card-text text-muted">
-                                            {{ $schedule->classroom->typeClass->category }}
-                                            {{ $schedule->classroom->name }}</p>
-                                    </div>
-                                    <div class="text-end schedule-time">
-                                        @if ($schedule->StartTimeSchedules && $schedule->EndTimeSchedules)
-                                            <h6 class="mb-1">
-                                                {{ \Carbon\Carbon::parse($schedule->StartTimeSchedules->start_time_schedule)->format('H:i') }}
-                                                -
-                                                {{ \Carbon\Carbon::parse($schedule->EndTimeSchedules->end_time_schedule)->format('H:i') }}
-                                            </h6>
-                                        @else
-                                            {{-- @dd($schedule->StartTimeSchedules) --}}
-                                        @endif
-                                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3 shadow-sm schedule-card">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="text-center border-end schedule-date">
+                                    <h6 class="text-primary mb-1">{{ now()->format('D') }}</h6>
+                                    <h4 class="mb-0">{{ now()->format('d') }}</h4>
+                                </div>
+                                @if ($schedule->course_name != null && $schedule->classroom_name != null && $schedule->teacher_name != null)
+                                <div class="flex-grow-1 schedule-details ms-3">
+                                    <h5 class="card-title mb-1">{{ $schedule->course_name }}</h5>
+                                    <p class="card-text text-muted">
+                                        {{ $schedule->type_class_category }}
+                                        {{ $schedule->classroom_name }}</p>
+                                </div>
+                                <div class="text-end schedule-time">
+                                    @if ($schedule->start_time && $schedule->end_time)
+                                        <h6 class="mb-1">
+                                            {{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }}
+                                            -
+                                            {{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}
+                                        </h6>
+                                    @else
+                                        {{-- @dd($schedule->start_time) --}}
                                     @endif
                                 </div>
+                                @endif
                             </div>
-                        </div>
-                    @empty
-                        <div class="col-12">
-                            <div class="d-flex justify-content-center align-items-center my-5 flex-column">
-                                <img src="{{ asset('assets/content/empty.svg') }}" width="300" alt="No Data Available">
-                                <small>No schedules for today.</small>
-                            </div>
-                        </div>
-                    @endforelse
-                </div>
-            </div>
-
-            <div class="row">
-                <h4 class="py-2 mb-4">
-                    Top rank point kedisiplinan
-                </h4>
-                <div class="card-datatable table-responsive">
-                    <div class="my-4">
-                        <div class="table-responsive text-nowrap custom-border">
-                            <table class="table table-custom" id="table-content">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center">Rank</th>
-                                        <th class="text-center">Student ID</th>
-                                        <th>Name</th>
-                                        <th class="text-center">Class</th>
-                                        <th class="text-center">Total Violation Points</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($violations as $index => $student)
-                                        <tr>
-                                            <td class="text-center">{{ $index + 1 }}</td>
-                                            <td class="text-center">{{ $student['id'] }}</td>
-                                            <td>{{ $student['name'] }}</td>
-                                            <td class="text-center">{{ $student['class_name'] }}</td>
-                                            <td class="text-center">{{ $student['total_tatib_points'] }}</td>
-                                        </tr>
-                                    @empty
-                                        <div class="col-12">
-                                            <div class="d-flex justify-content-center align-items-center my-5 flex-column">
-                                                <img src="{{ asset('assets/content/empty.svg') }}" width="300"
-                                                    alt="No Data Available">
-                                                <small>No studeFnts found.</small>
-                                            </div>
-                                        </div>
-                                    @endforelse
-                                </tbody>
-                            </table>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="container">
-                <h4 class="py-2 mb-4">
-                    Kelas
-                </h4>
-                <div class="row">
+                @empty
                     <div class="col-12">
-                        <ul class="nav nav-pills flex-column flex-sm-row mb-4 justify-content-center">
-                            @foreach ($typeClasses as $index => $typeClass)
-                                <li class="nav-item mx-1">
-                                    <button class="nav-link {{ $index == 0 ? 'active' : '' }}" data-bs-toggle="tab"
-                                        data-bs-target="#form-tabs-{{ $typeClass->id }}" role="tab"
-                                        aria-selected="{{ $index == 0 ? 'true' : 'false' }}">
-                                        {{ $typeClass->category }}
-                                    </button>
-                                </li>
-                            @endforeach
-                        </ul>
+                        <div class="d-flex justify-content-center align-items-center my-5 flex-column">
+                            <img src="{{ asset('public/assets/content/empty.svg') }}" width="300" alt="No Data Available">
+                            <small>Tidak ada jadwal pelajaran hari ini.</small>
+                        </div>
                     </div>
+                @endforelse
                 </div>
             </div>
-
-            <div class="row">
-                <div class="col-12">
-                    <div class="tab-content p-0">
-                        @forelse ($typeClasses as $index => $typeClass)
-                            <div class="tab-pane fade {{ $index == 0 ? 'active show' : '' }}"
-                                id="form-tabs-{{ $typeClass->id }}" role="tabpanel">
-                                <div class="row g-4">
-                                    @foreach ($typeClass->classRooms as $classRoom)
-                                        <div class="col-xl-4 col-lg-6 col-md-6">
-                                            <div class="card shadow-sm">
-                                                <div class="card-body">
-                                                    <div class="d-flex align-items-center mb-3">
-                                                        <div class="me-2">
-                                                            <h5 class="card-title mb-0">{{ $classRoom->name }}</h5>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <span
-                                                            class="badge bg-primary m-1">{{ $classRoom->students->count() }}
-                                                            SISWA</span>
-                                                        @foreach ($classRoom->schedules as $schedule)
-                                                            <span
-                                                                class="badge bg-info m-1">{{ $schedule->course->name }}</span>
-                                                        @endforeach
-                                                    </div>
-                                                    <div class="text-center">
-                                                        <button type="button" class="btn btn-sm btn-outline-primary"
-                                                            id="detail-{{ $classRoom->id }}"
-                                                            onclick="showStudentsModal(`{{ $classRoom->id }}`, `{{ $classRoom->name }}`)"
-                                                            data-students='@json($classRoom->students)'>
-                                                            Detail
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @empty
-                            <div class="col-12">
-                                <div class="d-flex justify-content-center align-items-center my-5 flex-column">
-                                    <img src="{{ asset('assets/content/empty.svg') }}" width="300"
-                                        alt="No Data Available">
-                                    <small>classroom empty.</small>
-                                </div>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-            </div>
-
 
         </div>
     </div>
 
 
     <div class="content-backdrop fade"></div>
-    </div>
-
-    <div class="modal fade" id="studentsModal" tabindex="-1" aria-labelledby="studentsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-simple modal-enable-otp modal-dialog-centered">
-            <div class="modal-content p-3 p-md-5">
-                <div class="modal-body">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    <div class="text-center">
-                        <h3 class="mb-2" id="studentsModalLabel">Students</h3>
-                        <p>List of students in the class</p>
-                    </div>
-                    <div id="studentsContent">
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 @endsection
 

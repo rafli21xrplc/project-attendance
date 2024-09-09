@@ -22,11 +22,13 @@ class SearchAttendancReporteRequest extends FormRequest
     public function rules()
     {
         return [
-            'range-date' => ['required', 'regex:/^\d{4}-\d{2}-\d{2}\sto\s\d{4}-\d{2}-\d{2}$/'],
+            'start-date' => ['required', 'date', 'date_format:Y-m-d', 'before_or_equal:end-date'],
+            'end-date' => ['required', 'date', 'date_format:Y-m-d', 'after_or_equal:start-date'],
             'states' => ['required', 'array'],
             'states.*' => ['uuid']
         ];
     }
+
 
     public function messages()
     {

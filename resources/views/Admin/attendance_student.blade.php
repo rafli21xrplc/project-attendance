@@ -1,4 +1,5 @@
-@extends('Admin.layouts.app')
+@extends('admin.layouts.app')
+
 
 @section('link')
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/app-logistics-dashboard.css') }}" />
@@ -73,9 +74,9 @@
             <div class="container">
                 <div class="row justify-content-end">
                     <div class="col-md-6">
-                        <form action="{{ route('admin.attendance_student.search') }}" method="GET" class="d-flex gap-3">
+                        <form action="{{ route('admin.attendance_student.search.report') }}" method="GET" class="d-flex gap-3">
                             <div class="flex-grow-1">
-                                <input class="form-control" type="date" value="2021-06-18" id="html5-date-input"
+                                <input class="form-control" type="date" id="html5-date-input"
                                     name="date" />
                             </div>
                             <div class="flex-grow-1">
@@ -112,7 +113,7 @@
                                                             data-bs-toggle="tab"
                                                             data-bs-target="#form-tabs-{{ $item->id }}" role="tab"
                                                             aria-selected="{{ $index == 0 ? 'true' : 'false' }}">
-                                                            {{ optional($item->course)->name ?? '-' }}
+                                                            {{ $item->course->name ?? '-' }}
                                                         </button>
                                                     </li>
                                                 @endif
@@ -133,12 +134,6 @@
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('PUT')
-                                                                <div class="d-flex justify-content-end mb-4">
-                                                                    <button id="saveButton" type="submit"
-                                                                        class="btn btn-success">
-                                                                        <span class="d-none d-sm-inline-block">Simpan</span>
-                                                                    </button>
-                                                                </div>
                                                                 <table class="table table-custom">
                                                                     <thead>
                                                                         <tr>
@@ -159,7 +154,7 @@
                                                                                         @foreach (['present' => 'Hadir', 'alpha' => 'Alpha', 'permission' => 'Izin', 'sick' => 'Sakit'] as $value => $label)
                                                                                             <div
                                                                                                 class="form-check form-check-inline">
-                                                                                                <input
+                                                                                                <input readonly disabled
                                                                                                     name="attendance[{{ $student->id }}]"
                                                                                                     class="form-check-input"
                                                                                                     type="radio"
@@ -185,14 +180,14 @@
                                                     </div>
                                                 @else
                                                     <div class="d-flex justify-content-center align-items-center my-5">
-                                                        <img src="{{ asset('assets/content/empty.svg') }}" width="300"
+                                                        <img src="{{ asset('public/assets/content/empty.svg') }}" width="300"
                                                             alt="No Data Available">
                                                     </div>
                                                 @endif
                                             </div>
                                         @empty
                                             <div class="d-flex justify-content-center align-items-center my-5">
-                                                <img src="{{ asset('assets/content/empty.svg') }}" width="300"
+                                                <img src="{{ asset('public/assets/content/empty.svg') }}" width="300"
                                                     alt="No Data Available">
                                             </div>
                                         @endforelse
@@ -203,7 +198,7 @@
                     </div>
                 @else
                     <div class="d-flex justify-content-center align-items-center my-5">
-                        <img src="{{ asset('assets/content/empty.svg') }}" width="300" alt="No Data Available">
+                        <img src="{{ asset('public/assets/content/empty.svg') }}" width="300" alt="No Data Available">
                     </div>
                 @endif
 
@@ -280,56 +275,6 @@
 @endsection
 
 @section('js')
-    {{-- <script>
-    document.getElementById('saveButton').addEventListener('click', function() {
-        var form = document.getElementById('attendanceForm');
-        var allChecked = true;
-        var students = @json($attendance->schedule->classroom->students);
-
-        students.forEach(function(student) {
-            var radios = form.querySelectorAll('input[name="attendance[' + student.id + ']"]:checked');
-            if (radios.length === 0) {
-                allChecked = false;
-            }
-        });
-
-        if (!allChecked) {
-            alert('Please select attendance status for all students.');
-        } else {
-            form.submit();
-        }
-    });
-</script> --}}
-
-    {{-- <script>
-        new DataTable('#table-content', {
-            pagingType: 'simple_numbers'
-        });
-    </script>
-    <script>
-        $('.btn-update').click(function() {
-            var id = $(this).data('id');
-            var name = $(this).data('name');
-            var email = $(this).data('email');
-            var actionUrl = `user_admin/${id}`;
-            $('#form-update').attr('action', actionUrl);
-
-            var formUpdate = $('#modal-admin-update #div-update');
-            formUpdate.find('#basic-default-name-update').val(name);
-            formUpdate.find('#basic-default-email-update').val(email);
-
-            $('#modal-admin-update').modal('show');
-        });
-
-        $('.btn-delete').click(function() {
-            id = $(this).data('id')
-            var actionUrl = `user_admin/${id}`;
-            console.log(actionUrl);
-            console.log(id);
-            $('#form-delete').attr('action', actionUrl);
-            $('#modal-delete').modal('show')
-        });
-    </script> --}}
     <script src="{{ asset('assets/vendor/libs/moment/moment.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/%40form-validation/umd/bundle/popular.min.js') }}"></script>

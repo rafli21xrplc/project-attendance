@@ -1,13 +1,17 @@
 <?php
 
 namespace App\Contracts\Repositories;
+
 use App\Contracts\Interfaces\TimeScheduleInterface;
 use App\Models\time_schedule;
+use App\Services\TimeScheduleDayService;
+use App\Traits\TimeScheduleTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 
 class TimeScheduleRepository extends BaseRepository implements TimeScheduleInterface
 {
+    use TimeScheduleTrait;
     private Model $time_schedule;
     public function __construct(time_schedule $time_schedule)
     {

@@ -15,6 +15,6 @@ class DashboardController extends Controller
         $typeClasses = $this->showClassrooms();
         $schedules = $this->showTeacherSchedule();
         $violations = $this->getTop10Violations();
-        return view('teacher.dashboard', compact('typeClasses', 'schedule', 'schedules', 'violations'));
+        return view('teacher.dashboard', compact('typeClasses', 'schedules'));
     }
 }

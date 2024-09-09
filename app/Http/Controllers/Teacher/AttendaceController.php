@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Contracts\Interfaces\Teacher\AttendanceInterface;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\attendance\attendanceRequest;
+use App\Traits\TeacherTrait;
 use Illuminate\Http\Request;
 
 class AttendaceController extends Controller
 {
+    use TeacherTrait;
     private AttendanceInterface $attendanceInterface;
 
     public function __construct(AttendanceInterface $attendanceInterface)
@@ -19,12 +22,8 @@ class AttendaceController extends Controller
      */
     public function index()
     {
-        $schedule = $this->attendanceInterface->getClassroom();
-        return view('teacher.attendance_student')->with([
-            'schedule' => $schedule['schedule'] ?? null,
-            'classroom' => $schedule['classroom'] ?? null,
-            'student' => $schedule['student'] ?? null
-        ]);
+        $schedule = $this->attendanceInterface->getSchedule();
+        return view('teacher.attendance', compact('schedule'));
     }
 
     /**
@@ -38,9 +37,16 @@ class AttendaceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(attendanceRequest $request, $id)
     {
-        //
+        try {
+            $request->validated();
+            $attendances = $request->input('attendance');
+            $this->storeAttendanceStudent($attendances, $id);
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'failed attendance');
+        }
+        return redirect()->back()->with('success', 'success attendance');
     }
 
     /**

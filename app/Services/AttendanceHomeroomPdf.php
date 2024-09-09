@@ -11,7 +11,6 @@ class AttendanceHomeroomPdf
 
     public function generateAttendanceSummary($classroom, $startDate, $endDate)
     {
-        $dateRange = CarbonPeriod::create($startDate, $endDate);
         $attendanceSummary = [];
 
         foreach ($classroom->students as $student) {
@@ -81,6 +80,7 @@ class AttendanceHomeroomPdf
     {
         $attendances = attendance::whereDate('time', $date)
             ->where('student_id', $studentId)
+            ->wheredate('created_at', $date)
             ->get();
 
         $summary = [

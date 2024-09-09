@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('student_id')->nullable()->constrained('student')->onDelete('cascade');
             $table->timestamp('time');
             $table->integer('hours');
-            $table->longText('note')->nullable();
+            $table->boolean('is_spesialDay')->default(false);
             $table->enum('status', ['alpha', 'present', 'sick', 'permission'])->default('present');
             $table->timestamps();
         });

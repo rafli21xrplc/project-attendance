@@ -100,7 +100,26 @@
                 <div>
                     <h3>Pembayaran Siswa</h3>
                 </div>
-                <div>
+                <div class="d-flex align-items-center gap-2">
+                    <form action="{{ route('admin.export.payment.installment') }}" method="post">
+                        @csrf
+                        <div class="row g-3 align-items-center">
+                            <div class="col-12 col-md-6">
+                                <select name="payment" id="payment" class="form-select" required>
+                                    <option selected disabled>Pilih Payment</option>
+                                    @foreach ($payment as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    Export Report
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                     <button data-bs-toggle="modal" data-bs-target="#modal-installments" type="button"
                         class="btn btn-label-success"><i class="ti ti-plus me-sm-1"></i> <span
                             class="d-none d-sm-inline-block">Add New Record</span></button>
@@ -119,6 +138,7 @@
                                         <th>SISWA</th>
                                         <th>JUMLAH</th>
                                         <th>TANGGAL PEMBAYARAN</th>
+                                        <th>DESKRIPSI</th>
                                         <th>ACTION</th>
                                     </tr>
                                 </thead>
@@ -126,20 +146,21 @@
                                     @foreach ($installments as $index => $item)
                                         <tr>
                                             <td>{{ $index + 1 }}</td>
-                                            <td>{{ $item->studentPayment->payment->name }}</td>
-                                            <td>{{ $item->studentPayment->student->name }}</td>
+                                            <td>{{ $item->payment_name }}</td>
+                                            <td>{{ $item->student_name }}</td>
                                             <td>{{ $item->amount }}</td>
                                             <td>{{ \Carbon\Carbon::parse($item->payment_date)->formatLocalized('%d %B %Y') ?? '-' }}
+                                            <td>{{ $item->description }}</td>
                                             </td>
                                             <td>
-                                                <button data-id="{{ $item->id }}"
+                                                <button data-id="{{ $item->payment_installment_id }}"
                                                     data-student_payment_id="{{ $item->student_payment_id }}"
                                                     data-amount="{{ $item->amount }}"
                                                     data-payment_date="{{ $item->payment_date }}" type="button"
                                                     class="btn btn-label-warning btn-update">
                                                     <i class="fa-solid fa-pen"></i>
                                                 </button>
-                                                <button data-id="{{ $item->id }}" type="button"
+                                                <button data-id="{{ $item->payment_installment_id }}" type="button"
                                                     class="btn btn-label-danger btn-delete">
                                                     <i class="fa-solid fa-trash"></i>
                                                 </button>
@@ -171,7 +192,8 @@
                     <div class="modal-body row py-0" id="div-update">
                         <div class="col-md-6 mb-4">
                             <label for="student_payment_id-update" class="form-label">Tagihan Siswa</label>
-                            <select id="student_payment_id-update" class="selectpicker form-control" name="student_payment_id" required data-live-search="true">
+                            <select id="student_payment_id-update" class="selectpicker form-control"
+                                name="student_payment_id" required data-live-search="true">
                                 <option selected disabled>PILIH SISWA</option>
                                 @foreach ($tagihan as $item)
                                     <option value="{{ $item->id }}">{{ $item->student_name }} -
@@ -265,7 +287,8 @@
 
             console.log(studentPaymentId);
 
-            formUpdate.find('#student_payment_id-update option[value="' + studentPaymentId + '"]').prop('selected', true);
+            formUpdate.find('#student_payment_id-update option[value="' + studentPaymentId + '"]').prop('selected',
+                true);
             formUpdate.find('#basic-default-amount-update').val(amount);
             formUpdate.find('#basic-default-payment-date-update').val(paymentDate);
 

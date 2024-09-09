@@ -9,6 +9,6 @@ trait PermissionTrait
 {
         public function getPermission()
         {
-                return permission::with(['student'])->paginate(10);
+            return permission::with(['student'])->orderBy('created_at', 'desc')->get();
         }
 }

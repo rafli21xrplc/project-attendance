@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\absence_point;
 use App\Models\attendance;
 use App\Models\type_class;
+use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
@@ -13,9 +14,6 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class AttendanceExport implements WithMultipleSheets
 {
@@ -44,6 +42,7 @@ class AttendanceExport implements WithMultipleSheets
     }
 }
 
+
 class TypeClassSheetAttendanceExport implements FromCollection, WithHeadings, WithTitle, WithStyles, WithCustomStartCell
 {
     protected $typeClass;
@@ -52,6 +51,7 @@ class TypeClassSheetAttendanceExport implements FromCollection, WithHeadings, Wi
     protected $tableStartRows = [];
     protected $tableEndRows = [];
     protected $highestColumn;
+    protected $numDateColumns; // Add this property
 
     public function __construct($typeClass, $startDate, $endDate)
     {
@@ -65,16 +65,26 @@ class TypeClassSheetAttendanceExport implements FromCollection, WithHeadings, Wi
         $data = collect();
         $absencePoints = $this->getAbsencePoints();
         $dateRange = CarbonPeriod::create($this->startDate, $this->endDate);
-        $numDateColumns = iterator_count($dateRange); // Count the number of date columns
-        $this->highestColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($numDateColumns + 9); // Total columns including additional columns
+        $this->numDateColumns = iterator_count($dateRange);
+        $this->highestColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($this->numDateColumns + 9);
+
+        $startDate = Carbon::parse($this->startDate);
+        $monthName = $startDate->format('F');
 
         foreach ($this->typeClass->classrooms as $classroom) {
-            $currentRow = $data->count() + 1; // Calculate the current row
+            $currentRow = $data->count() + 1;
+
+            // Add space for the logo
+            $data->push(['']);
+            $data->push(['']);
+            $data->push(['']);
+            $data->push(['']);
 
             // Add class information
             $data->push(['Kelas:', $classroom->typeClass->category . ' ' . $classroom->name]);
             $data->push(['Wali Kelas:', $classroom->teacher->name ?? 'N/A']);
-            $data->push(['Tanggal Rekap:', date('d M Y', strtotime($this->startDate)) . ' - ' . date('d M Y', strtotime($this->endDate))]);
+            $data->push(['Bulan:', $monthName]);
+            $data->push(['Tahun Ajaran:', 'Semester Gasal - 24/25']);
 
             // Add a blank row for spacing
             $data->push(['']);
@@ -91,7 +101,7 @@ class TypeClassSheetAttendanceExport implements FromCollection, WithHeadings, Wi
             $header[] = 'KET';
 
             $data->push($header);
-            $this->tableStartRows[] = $currentRow + 4; // Mark the start of the table including header
+            $this->tableStartRows[] = $currentRow + 9;
 
             // Add student data
             $attendanceSummary = [];
@@ -116,29 +126,30 @@ class TypeClassSheetAttendanceExport implements FromCollection, WithHeadings, Wi
                 $row[] = number_format($attendanceSummary[$student->id]['total_izin'] * 0.1, 1);
                 $row[] = number_format($attendanceSummary[$student->id]['total_alpha'] * 0.1, 1);
                 $row[] = number_format($attendanceSummary[$student->id]['total_points'], 1);
-                $row[] = $attendanceSummary[$student->id]['warning'];
+
+                // Calculate the Excel formula for KET column dynamically
+                $pointColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($this->numDateColumns + 8);
+                $currentDataRow = $data->count() + 1;
+                $row[] = "=IF({$pointColumn}{$currentDataRow}<=0.9,\"\",IF({$pointColumn}{$currentDataRow}<=1.9,\"Konfirmasi\",IF({$pointColumn}{$currentDataRow}<=2.9,\"Konfirmasi ortu\",\"Panggilan ortu\")))";
 
                 $data->push($row);
             }
 
-            $this->tableEndRows[] = $data->count(); // Mark the end of the table
+            $this->tableEndRows[] = $data->count();
 
-            // Add additional information below the table for the class
+
+
             $data->push(['']);
-            $data->push(['Ket: *) Contoh penulisan sakit 1 hari = S', '', '']);
-            $data->push(['      Contoh penulisan ijin 1 hari = I', 'Perhitungan jml Ketidakhadiran:', 'Malang, ' . date('d M Y')]);
-            $data->push(['      Contoh penulisan alfa 1 hari = A', '1 jam = 0,1', '']);
-            $data->push(['      Contoh penulisan sakit 2 jam = S2', '2 jam = 0,2', 'Waka Kesiswaan,']);
-            $data->push(['      Contoh penulisan ijin 3 jam = I3', '3 jam = 0,3', '']);
-            $data->push(['', '4 jam = 0,4', '']);
-            $data->push(['', '5 jam = 0,5', 'Priyo Adi Nugroho, S.ST']);
-            $data->push(['', '6 jam = 0,6', 'NIP. 19840517 201001 1 013']);
-            $data->push(['', '7 jam = 0,7', '']);
-            $data->push(['', '8 jam = 0,8', 'M. Amrul Jamrozi']);
-            $data->push(['', '9 jam = 0,9', 'NIP.']);
-            $data->push(['', '10 jam = 1', '']);
-
-            // Add multiple blank rows for spacing between tables
+            $data->push(['']);
+            $data->push(['']);
+            $data->push(['']);
+            $data->push(['']);
+            $data->push(['']);
+            $data->push(['']);
+            $data->push(['']);
+            $data->push(['']);
+            $data->push(['']);
+            $data->push(['']);
             $data->push(['']);
             $data->push(['']);
             $data->push(['']);
@@ -192,36 +203,47 @@ class TypeClassSheetAttendanceExport implements FromCollection, WithHeadings, Wi
                     ],
                 ],
             ]);
+
+            // Define the columns for Sakit, Izin, Alpha
+            $sakitColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($this->numDateColumns + 5);
+            $izinColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($this->numDateColumns + 6);
+            $alphaColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($this->numDateColumns + 7);
+
+            // Apply colors to the Sakit, Izin, Alpha columns
+            $sheet->getStyle("{$sakitColumn}{$tableStartRow}:{$sakitColumn}{$tableEndRow}")
+                ->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'color' => ['argb' => 'FFFF00'] // Yellow for Sakit
+                    ]
+                ]);
+
+            $sheet->getStyle("{$izinColumn}{$tableStartRow}:{$izinColumn}{$tableEndRow}")
+                ->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'color' => ['argb' => '00FF00'] // Green for Izin
+                    ]
+                ]);
+
+            $sheet->getStyle("{$alphaColumn}{$tableStartRow}:{$alphaColumn}{$tableEndRow}")
+                ->applyFromArray([
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'color' => ['argb' => 'FF0000'] // Red for Alpha
+                    ]
+                ]);
         }
 
-        // Apply specific styling for the additional information rows
-        $highestRow = $sheet->getHighestRow();
-
-        $additionalInfoRows = range($highestRow - 13, $highestRow);
-        foreach ($additionalInfoRows as $row) {
-            $sheet->getStyle("A{$row}:{$this->highestColumn}{$row}")->applyFromArray([
-                'font' => [
-                    'italic' => true,
-                ],
-                'alignment' => [
-                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
-                ],
-            ]);
+        foreach ($this->tableStartRows as $index => $tableStartRow) {
+            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+            $drawing->setName('Logo');
+            $drawing->setDescription('Logo');
+            $drawing->setPath('public/assets/content/logo-excel.png'); // Path to your logo file
+            $drawing->setHeight(80);
+            $drawing->setCoordinates('A' . ($tableStartRow - 9)); // Adjust the position as needed
+            $drawing->setWorksheet($sheet);
         }
-
-        // Merge cells for the explanation and signatures
-        foreach ($additionalInfoRows as $row) {
-            $sheet->mergeCells("A{$row}:B{$row}");
-            $sheet->mergeCells("C{$row}:D{$row}");
-            $sheet->mergeCells("E{$row}:{$this->highestColumn}{$row}");
-        }
-
-        // Adjust the width for the merged cells to be equal
-        foreach (range('A', 'D') as $columnID) {
-            $sheet->getColumnDimension($columnID)->setWidth(20);
-        }
-
-        $sheet->getColumnDimension('E')->setWidth(30);
     }
 
     private function getAbsencePoints()
@@ -240,8 +262,6 @@ class TypeClassSheetAttendanceExport implements FromCollection, WithHeadings, Wi
         $totalSakit = 0;
         $totalAlpha = 0;
         $totalPoints = 0;
-        $totalSickOccurrences = 0;
-        $totalPermissionOccurrences = 0;
 
         foreach ($dateRange as $date) {
             $dailySummary = $this->aggregateDailyAttendance($date->format('Y-m-d'), $studentId, $absencePoints);
@@ -251,24 +271,19 @@ class TypeClassSheetAttendanceExport implements FromCollection, WithHeadings, Wi
             $totalSakit += $dailySummary['summary']['sick'];
             $totalAlpha += $dailySummary['summary']['alpha'];
             $totalPoints += $dailySummary['points'];
-
-            if ($dailySummary['summary']['sick'] > 0) {
-                $totalSickOccurrences++;
-            }
-
-            if ($dailySummary['summary']['permission'] > 0) {
-                $totalPermissionOccurrences++;
-            }
         }
 
-        // Additional points if sick or permission occurrences reach 8
-        if ($totalSickOccurrences >= 8) {
+
+        if ($totalSakit >= 8) {
             $totalPoints += 0.5;
         }
 
-        if ($totalPermissionOccurrences >= 8) {
+        if ($totalIzin >= 8) {
             $totalPoints += 0.5;
         }
+
+
+        $totalPoints += ($totalAlpha * 0.1);
 
         return [
             'summary' => $summary,
@@ -276,8 +291,7 @@ class TypeClassSheetAttendanceExport implements FromCollection, WithHeadings, Wi
             'total_izin' => $totalIzin,
             'total_sakit' => $totalSakit,
             'total_alpha' => $totalAlpha,
-            'total_points' => $totalPoints,
-            'warning' => $totalPoints > 2.9 ? 'Parent Call' : ($totalPoints > 1.9 ? 'Student Call' : 'None')
+            'total_points' => $totalAlpha * 7,
         ];
     }
 
@@ -293,7 +307,6 @@ class TypeClassSheetAttendanceExport implements FromCollection, WithHeadings, Wi
             'sick' => 0,
             'alpha' => 0,
         ];
-        $times = [];
         $points = 0;
 
         foreach ($attendances as $attendance) {
@@ -306,21 +319,22 @@ class TypeClassSheetAttendanceExport implements FromCollection, WithHeadings, Wi
             if ($status !== 'present' && isset($absencePoints[$attendance->hours])) {
                 $points += $absencePoints[$attendance->hours];
             }
-
-            $times[$status][] = $attendance->id;
         }
 
         $summaryString = '';
-        foreach ($summary as $status => $hours) {
-            if ($hours > 0) {
-                $statusShort = $this->convertStatusToShortForm($status);
-                $summaryString .= "{$hours}{$statusShort}";
+        if ($summary['present'] > 0 && $summary['permission'] == 0 && $summary['sick'] == 0 && $summary['alpha'] == 0) {
+            $summaryString = '';
+        } else {
+            foreach ($summary as $status => $hours) {
+                if ($hours > 0 && $status !== 'present') {
+                    $statusShort = $this->convertStatusToShortForm($status);
+                    $summaryString .= "{$hours}{$statusShort}";
+                }
             }
         }
 
         return [
             'status' => $summaryString,
-            'times' => $times,
             'summary' => $summary,
             'points' => $points
         ];

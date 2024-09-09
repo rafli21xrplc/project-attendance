@@ -21,6 +21,9 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 trait StudentTrait
 {
+        public function searchStudent($id){
+                return student::search($id);
+        }
 
         public function getScheduleStudent()
         {
@@ -175,7 +178,6 @@ trait StudentTrait
         {
                 $data =
                         [
-                                'nisn' => $data['username'],
                                 'name' => $data['name'],
                                 'gender' => $data['gender'],
                                 'classroom_id' => $data['classroom_id'],
@@ -189,7 +191,6 @@ trait StudentTrait
         private function responseUpdate(User $user, array $data): array
         {
                 return [
-                        'nisn' => $data['username'] ?? $user->username,
                         'name' => $data['name'] ?? $user->name,
                         'gender' => $data['gender'] ?? $user->gender,
                         'classroom_id' => $data['classroom_id'] ?? $user->classroom_id,

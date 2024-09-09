@@ -39,6 +39,11 @@ class StudentPaymentRepository extends BaseRepository implements StudentPaymentI
         return $this->getPayments();
     }
 
+    public function getTypePayment(): mixed
+    {
+        return $this->getTypePayments();
+    }
+
     public function get(): mixed
     {
         return student_payment::getStudentPayments();

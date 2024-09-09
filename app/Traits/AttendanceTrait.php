@@ -11,57 +11,124 @@ use App\Models\kbm_period;
 use App\Models\schedule;
 use App\Models\student;
 use App\Models\time_schedule;
+use App\Services\AttendanceHomeroomPdf;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use DateTime;
+use Illuminate\Support\Facades\DB;
+use ZipArchive;
 
 trait AttendanceTrait
 {
 
-    public function updateAttendanceStudent(array $attendances, $id)
+    private AttendanceHomeroomPdf $attendanceHomeroomPdf;
+
+    public function getStudents()
     {
+        return student::all();
+    }
+
+    public function generateAttendanceSummaryReport($classroom, $startDate, $endDate)
+    {
+        $attendanceSummary = [];
+
+        foreach ($classroom->students as $student) {
+            $attendanceSummary[$student->id] = $this->generateStudentAttendanceSummaryPdf($student->id, $startDate, $endDate, $this->getAbsencePoints());
+        }
+
+        return $attendanceSummary;
+    }
+
+    private function downloadZip($files, $month)
+    {
+        $zipFilename = 'attendance_reports_' . $month . '.zip';
+        $zip = new ZipArchive();
+        if ($zip->open(storage_path('app/public/' . $zipFilename), ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+            foreach ($files as $file) {
+                $zip->addFile($file, basename($file));
+            }
+            $zip->close();
+        }
+
+        // Hapus file PDF individual setelah dimasukkan ke ZIP (opsional)
+        foreach ($files as $file) {
+            unlink($file);
+        }
+
+        return response()->download(storage_path('app/public/' . $zipFilename))->deleteFileAfterSend(true);
+    }
+
+    public function updateAttendanceStudent(array $attendances)
+    {
+
         try {
-
-            $schedule = schedule::findOrFail($id);
-            $currentPeriod = kbm_period::getCurrentPeriod();
-
-            $startSchedule = time_schedule::findOrFail($schedule->start_time_schedule_id);
-            $endSchedule = time_schedule::findOrFail($schedule->end_time_schedule_id);
-
-            $hours = ($endSchedule->time_number - $startSchedule->time_number) + 1;
+            $updates = [];
 
             foreach ($attendances['attendance'] as $studentId => $status) {
-                $existingAttendance = attendance::where('student_id', $studentId)
-                    ->where('schedule_id', $id)
-                    ->first();
 
-                if ($existingAttendance) {
-                    $existingAttendance->update([
-                        'time' => now()->format('Y-m-d H:i:s'),
-                        'status' => $status,
-                        'hours' => $hours,
-                        'kbm_period_id' => $currentPeriod->id,
-                        'updated_at' => now(),
-                    ]);
+                $existingAttendance = attendance::find($studentId);
+
+                if (isset($existingAttendance)) {
+
+                    if ($existingAttendance->status !== $status) {
+                        $updates[] = [
+                            'id' => $existingAttendance->id,
+                            'status' => $status,
+                            'updated_at' => now(),
+                        ];
+                    }
                 }
+            }
+
+            foreach ($updates as $update) {
+                attendance::where('id', $update['id'])->update($update);
             }
 
             return redirect()->back();
         } catch (\Throwable $th) {
-            return false;
+            return $th->getMessage();
         }
     }
+
+    public function updateAttendanceStudentReport(array $attendances)
+    {
+
+        foreach ($attendances['attendance'] as $studentId => $status) {
+            $existingAttendance = DB::select("
+                SELECT * FROM attendance 
+                WHERE id = ?
+                LIMIT 1
+            ", [$studentId]);
+
+            if (!empty($existingAttendance) && $existingAttendance[0]->status !== $status) {
+                DB::update("
+                    UPDATE attendance 
+                    SET status = ?, updated_at = NOW() 
+                    WHERE id = ?
+                ", [$status, $existingAttendance[0]->id]);
+            }
+        }
+
+        try {
+
+
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+
 
 
     public function getSchedules(array $data)
     {
 
         $dayOfWeek = Carbon::parse($data['date'])->format('l');
-        
+
         $schedules = schedule::where('classroom_id', $data['classroom_id'])
-        ->with(['classroom.students', 'course', 'teacher', 'StartTimeSchedules', 'EndTimeSchedules', 'attendances'])
-        ->where('day_of_week', $dayOfWeek)
-        ->get();
+            ->with(['classroom.students', 'course', 'teacher', 'StartTimeSchedules', 'EndTimeSchedules', 'attendances'])
+            ->where('day_of_week', $dayOfWeek)
+            ->get();
 
         $attendanceBySchedule = [];
         foreach ($schedules as $schedule) {
@@ -140,18 +207,19 @@ trait AttendanceTrait
         ];
     }
 
-    public function searchAttendance($data)
+    public function AttendanceHomeroomReport($classroom_id, $month)
     {
-        $dates = explode("to", $data['range-date']);
-        $startDate = trim($dates[0]);
-        $endDate = trim($dates[1]);
+        $monthCarbon = Carbon::create(Carbon::now()->year, $month, 1);
+
+        $startDate = $monthCarbon->startOfMonth()->format('Y-m-d');
+        $endDate = $monthCarbon->endOfMonth()->format('Y-m-d');
 
         $startDateObj = new DateTime($startDate);
         $endDateObj = new DateTime($endDate);
 
-        $report = $this->generateClassMonthlyReport($data['states'], $startDateObj, $endDateObj);
+        $report = $this->generateClassMonthlyReport([$classroom_id], $startDateObj, $endDateObj);
 
-        $classrooms = Classroom::whereIn('id', $data['states'])->with('typeClass')->get();
+        $classrooms = Classroom::where('id', $classroom_id)->with('typeClass')->first();
 
         return [
             'report' => $report,
@@ -161,11 +229,109 @@ trait AttendanceTrait
         ];
     }
 
+    public function searchAttendance($data)
+    {
+
+        $startDate = trim($data['start-date']);
+        $endDate = trim($data['end-date']);
+
+        $startDateObj = new DateTime($startDate);
+        $endDateObj = new DateTime($endDate);
+
+        $classroomId = classRoom::whereIn('type_class_id', $data['states'])
+            ->orderByRaw("FIELD(name, 'METRO A', 'METRO B', 'ELIN A', 'ELIN B', 'RPL A', 'RPL B', 'RPL C', 'RPL D', 'TKJ A', 'TKJ B', 'TKJ C', 'TKJ D')")
+            ->pluck('id');
+
+        $report = $this->generateClassMonthlyReport($classroomId, $startDateObj, $endDateObj);
+
+        $classrooms = Classroom::whereIn('id', $classroomId)->with('typeClass')->orderByRaw("FIELD(name, 'METRO A', 'METRO B', 'ELIN A', 'ELIN B', 'RPL A', 'RPL B', 'RPL C', 'RPL D', 'TKJ A', 'TKJ B', 'TKJ C', 'TKJ D')")->get();
+
+
+        return [
+            'report' => $report,
+            'classroom' => $classrooms,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+        ];
+    }
+
+
     public function getAbsencePoints()
     {
         return absence_point::all()->keyBy('hours_absent')->map(function ($item) {
             return $item->points;
         });
+    }
+
+
+    public function aggregateDailyAttendanceStudent($date, $studentId, $absencePoints)
+    {
+        $attendances = attendance::whereDate('time', $date)
+            ->where('student_id', $studentId)
+            ->get();
+
+        $summary = [
+            'present' => 0,
+            'permission' => 0,
+            'sick' => 0,
+            'alpha' => 0,
+        ];
+
+        foreach ($attendances as $attendance) {
+            $status = $attendance->status;
+            if (!isset($summary[$status])) {
+                $summary[$status] = 0;
+            }
+            $summary[$status] += $attendance->hours;
+
+            if ($status === 'alpha' && isset($absencePoints[$attendance->hours])) {
+                $points = $absencePoints[$attendance->hours] * 7;
+            }
+
+            $times[$status][] = $attendance->id;
+        }
+
+        $statusString = '';
+        $messageString = '';
+        foreach ($summary as $status => $hours) {
+            if ($hours > 0 && $status !== 'present') {
+                $statusShort = $this->convertStatusToShortForm($status);
+                $statusString .= "{$hours}{$statusShort}, ";
+
+                $statusFull = $this->convertStatusToFullForm($status);
+                $messageString .= "{$hours} Jam Pelajaran {$statusFull}, ";
+            }
+        }
+
+        // Menghilangkan koma di akhir string
+        $statusString = rtrim($statusString, ', ');
+        $messageString = rtrim($messageString, ', ');
+
+        if ($statusString === '') {
+            $statusString = '10H';
+            $messageString = '10 Jam Pelajaran Hadir';
+        }
+
+        return [
+            'status' => $statusString,
+            'messages' => $messageString,
+        ];
+    }
+
+    private function convertStatusToFullForm($status)
+    {
+        switch ($status) {
+            case 'alpha':
+                return 'Alpha';
+            case 'present':
+                return 'Hadir';
+            case 'permission':
+                return 'Izin';
+            case 'sick':
+                return 'Sakit';
+            default:
+                return $status;
+        }
     }
 
 
@@ -191,9 +357,8 @@ trait AttendanceTrait
             }
             $summary[$status] += $attendance->hours;
 
-            // Calculate points based on absence points table
-            if ($status !== 'present' && isset($absencePoints[$attendance->hours])) {
-                $points += $absencePoints[$attendance->hours];
+            if ($status === 'alpha' && isset($absencePoints[$attendance->hours])) {
+                $points = ($attendance->hours * 0.1) * 7;
             }
 
             $times[$status][] = $attendance->id;
@@ -201,10 +366,14 @@ trait AttendanceTrait
 
         $summaryString = '';
         foreach ($summary as $status => $hours) {
-            if ($hours > 0) {
+            if ($hours > 0 && $status !== 'present') {
                 $statusShort = $this->convertStatusToShortForm($status);
-                $summaryString .= "{$hours}{$statusShort}";
+                $summaryString .= "{$statusShort}{$hours}";
             }
+        }
+
+        if ($summaryString === '') {
+            $summaryString = 'H10' === '' ? '' : $summaryString;
         }
 
         return [
@@ -214,6 +383,7 @@ trait AttendanceTrait
             'points' => $points
         ];
     }
+
 
     private function convertStatusToShortForm($status)
     {
@@ -231,9 +401,21 @@ trait AttendanceTrait
         }
     }
 
+    public function generateAttendanceStudent($studentId)
+    {
+        $absencePoints = $this->getAbsencePoints();
+        $attendanceSummary = $this->generateStudentAttendance($studentId, $absencePoints);
+        return [
+            'attendance' => $attendanceSummary['summary'],
+        ];
+    }
+
     public function generateClassMonthlyReport($classroomId, $startDate, $endDate)
     {
-        $students = Student::whereIn('classroom_id', $classroomId)->with('classroom.typeClass')->get();
+
+        $students = Student::whereIn('classroom_id', $classroomId)->with('classroom.typeClass')->orderBy('name', 'asc')->get();
+
+
         $absencePoints = $this->getAbsencePoints();
 
         $report = [];
@@ -253,12 +435,77 @@ trait AttendanceTrait
                 'total_izin' => $attendanceSummary['total_izin'],
                 'total_sakit' => $attendanceSummary['total_sakit'],
                 'total_alpha' => $attendanceSummary['total_alpha'],
-                'total_points' => $totalPoints,
+                'total_points' => $attendanceSummary['total_alpha'] * 7,
                 'warning' => $warning
             ];
         }
 
         return $report;
+    }
+
+    private function generateStudentAttendanceSummaryPdf($studentId, $startDate, $endDate, $absencePoints)
+    {
+        $dateRange = CarbonPeriod::create($startDate, $endDate);
+        $summary = [];
+        $totalHadir = 0;
+        $totalIzin = 0;
+        $totalSakit = 0;
+        $totalAlpha = 0;
+        $totalPoints = 0;
+        $totalSickOccurrences = 0;
+        $totalPermissionOccurrences = 0;
+
+        foreach ($dateRange as $date) {
+            $dailySummary = $this->aggregateDailyAttendance($date->format('Y-m-d'), $studentId, $absencePoints);
+            $summary[$date->format('Y-m-d')] = $dailySummary['status'];
+            $totalHadir += $dailySummary['summary']['present'];
+            $totalIzin += $dailySummary['summary']['permission'];
+            $totalSakit += $dailySummary['summary']['sick'];
+            $totalAlpha += $dailySummary['summary']['alpha'];
+            $totalPoints += $dailySummary['points'];
+
+            if ($dailySummary['summary']['sick'] > 0) {
+                $totalSickOccurrences++;
+            }
+
+            if ($dailySummary['summary']['permission'] > 0) {
+                $totalPermissionOccurrences++;
+            }
+        }
+
+        return [
+            'summary' => $summary,
+            'total_hadir' => $totalHadir,
+            'total_izin' => $totalIzin,
+            'total_sakit' => $totalSakit,
+            'total_alpha' => $totalAlpha,
+            'total_points' => $totalPoints,
+            'warning' => $totalPoints > 2.9 ? 'Parent Call' : ($totalPoints > 1.9 ? 'Student Call' : 'None')
+        ];
+    }
+
+    public function generateStudentAttendance($studentId, $absencePoints)
+    {
+        $attendances = attendance::where('student_id', $studentId)
+            ->orderBy('time', 'asc')
+            ->get();
+
+        $summary = [];
+
+
+        foreach ($attendances as $attendance) {
+            $date = Carbon::parse($attendance->time)->format('Y-m-d');
+            $dailySummary = $this->aggregateDailyAttendanceStudent($date, $studentId, $absencePoints);
+            $summary[$date] = [
+                'summary' => [
+                    $dailySummary['status'],
+                    $dailySummary['messages'],
+                ],
+            ];
+        }
+        return [
+            'summary' => $summary,
+        ];
     }
 
 
@@ -276,11 +523,17 @@ trait AttendanceTrait
 
         foreach ($dateRange as $date) {
             $dailySummary = $this->aggregateDailyAttendance($date->format('Y-m-d'), $studentId, $absencePoints);
-            $summary[$date->format('Y-m-d')] = $dailySummary;
+            $summary[$date->format('Y-m-d')] = [
+                'status' => $dailySummary['status'],
+                'times' => $dailySummary['times'],
+                'summary' => $dailySummary['summary'],
+                'points' => $dailySummary['points'],
+            ];
             $totalHadir += $dailySummary['summary']['present'];
             $totalIzin += $dailySummary['summary']['permission'];
             $totalSakit += $dailySummary['summary']['sick'];
             $totalAlpha += $dailySummary['summary']['alpha'];
+            $totalPoints = $dailySummary['points'];
 
             if ($dailySummary['summary']['sick'] > 0) {
                 $totalSickOccurrences++;
@@ -290,16 +543,6 @@ trait AttendanceTrait
                 $totalPermissionOccurrences++;
             }
         }
-
-        if ($totalSickOccurrences >= 8) {
-            $totalPoints += 0.5;
-        }
-
-        if ($totalPermissionOccurrences >= 8) {
-            $totalPoints += 0.5;
-        }
-
-        $totalPoints += ($totalAlpha * 0.1);
 
         return [
             'summary' => $summary,
@@ -318,7 +561,6 @@ trait AttendanceTrait
             ->get();
     }
 
-
     public function parseInput($input)
     {
         preg_match_all('/(\d+)(\w)/', $input, $matches, PREG_SET_ORDER);
@@ -334,217 +576,7 @@ trait AttendanceTrait
         return $statusCounts;
     }
 
-    public function determineChanges($existingData, $newStatusCounts)
-    {
-        $existingStatusCounts = [];
-        $recordsToUpdate = [];
-        $recordsToCreate = [];
-        $recordsToDelete = [];
-
-        foreach ($existingData as $record) {
-            $status = $record->status;
-            $hours = $record->hours;
-            if (!isset($existingStatusCounts[$status])) {
-                $existingStatusCounts[$status] = 0;
-            }
-            $existingStatusCounts[$status] += $hours;
-        }
-
-        foreach ($existingStatusCounts as $status => $hours) {
-            if (isset($newStatusCounts[$status])) {
-                if ($hours != $newStatusCounts[$status]) {
-                    $recordsToUpdate[$status] = [
-                        'old_hours' => $hours,
-                        'new_hours' => $newStatusCounts[$status]
-                    ];
-                }
-            } else {
-                $recordsToDelete[$status] = $hours;
-            }
-        }
-
-        foreach ($newStatusCounts as $status => $hours) {
-            if (!isset($existingStatusCounts[$status])) {
-                $recordsToCreate[$status] = $hours;
-            }
-        }
-
-        return [
-            'update' => $recordsToUpdate,
-            'create' => $recordsToCreate,
-            'delete' => $recordsToDelete
-        ];
-    }
-
-    public function applyChanges($studentId, $date, $changes)
-    {
-        $currentPeriod = kbm_period::getCurrentPeriod();
-
-        if (!$currentPeriod) {
-            return response()->json(['error' => 'No active KBM period found.'], 404);
-        }
-
-        foreach ($changes['update'] as $status => $data) {
-            $attendance = attendance::where('student_id', $studentId)
-                ->whereDate('time', $date)
-                ->where('status', $status)
-                ->first();
-            if ($attendance) {
-                $attendance->hours = $data['new_hours'];
-                $attendance->save();
-            }
-        }
-
-        foreach ($changes['create'] as $status => $hours) {
-            $originalAttendance = attendance::where('student_id', $studentId)
-                ->whereDate('time', $date)
-                ->first();
-
-            attendance::insert([
-                'id' => Str::uuid(),
-                'student_id' => $studentId,
-                'schedule_id' => $originalAttendance ? $originalAttendance->schedule_id : $this->getScheduleId($studentId, $date),
-                'kbm_period_id' => $currentPeriod->id,
-                'time' => $originalAttendance ? $originalAttendance->time : Carbon::parse($date)->format('Y-m-d'),
-                'status' => $status,
-                'hours' => $hours,
-                'created_at' => now(),
-            ]);
-        }
-
-        // Step 3: Delete records
-        foreach ($changes['delete'] as $status => $hours) {
-            attendance::where('student_id', $studentId)
-                ->whereDate('time', $date)
-                ->where('status', $status)
-                ->delete();
-        }
-
-        return response()->json(['success' => true]);
-    }
-
-
-
-    // public function determineChanges($existingData, $newInput)
-    // {
-    //     $totalHours = 0;
-    //     $statusCounts = [];
-    //     $recordsToUpdate = [];
-    //     $recordsToCreate = [];
-    //     $recordsToDelete = [];
-
-    //     foreach ($existingData as $record) {
-    //         $totalHours += $record->hours;
-    //         $status = $record->status;
-    //         if (!isset($statusCounts[$status])) {
-    //             $statusCounts[$status] = 0;
-    //         }
-    //         $statusCounts[$status] += $record->hours;
-    //     }
-
-    //     // Parse new input
-    //     preg_match_all('/(\d+)(\w)/', $newInput, $matches, PREG_SET_ORDER);
-    //     $newStatusCounts = [];
-    //     foreach ($matches as $match) {
-    //         $hours = (int)$match[1];
-    //         $status = $match[2];
-    //         if (!isset($newStatusCounts[$status])) {
-    //             $newStatusCounts[$status] = 0;
-    //         }
-    //         $newStatusCounts[$status] += $hours;
-    //     }
-
-    //     // Determine changes
-    //     foreach ($statusCounts as $status => $hours) {
-    //         if (isset($newStatusCounts[$status])) {
-    //             if ($hours != $newStatusCounts[$status]) {
-    //                 $recordsToUpdate[$status] = [
-    //                     'old_hours' => $hours,
-    //                     'new_hours' => $newStatusCounts[$status]
-    //                 ];
-    //             }
-    //         } else {
-    //             $recordsToDelete[$status] = $hours;
-    //         }
-    //     }
-
-    //     foreach ($newStatusCounts as $status => $hours) {
-    //         if (!isset($statusCounts[$status])) {
-    //             $recordsToCreate[$status] = $hours;
-    //         }
-    //     }
-
-    //     return [
-    //         'update' => $recordsToUpdate,
-    //         'create' => $recordsToCreate,
-    //         'delete' => $recordsToDelete
-    //     ];
-    // }
-
-    // public function updateAttendance($studentId, $date, $changes)
-    // {
-    //     $currentPeriod = kbm_period::getCurrentPeriod();
-
-    //     if (!$currentPeriod) {
-    //         return response()->json(['error' => 'No active KBM period found.'], 404);
-    //     }
-
-    //     // Step 1: Update existing records
-    //     foreach ($changes['update'] as $status => $data) {
-    //         $attendance = Attendance::where('student_id', $studentId)
-    //             ->whereDate('time', $date)
-    //             ->where('status', $status)
-    //             ->first();
-    //         if ($attendance) {
-    //             $attendance->hours = $data['new_hours'];
-    //             $attendance->save();
-    //         }
-    //     }
-
-    //     // Step 2: Create new records
-    //     foreach ($changes['create'] as $status => $hours) {
-    //         $originalAttendance = Attendance::where('student_id', $studentId)
-    //             ->whereDate('time', $date)
-    //             ->first();
-
-    //         Attendance::insert([
-    //             'id' => Str::uuid(),
-    //             'student_id' => $studentId,
-    //             'schedule_id' => $originalAttendance ? $originalAttendance->schedule_id : $this->getScheduleId($studentId, $date),
-    //             'kbm_period_id' => $currentPeriod->id,
-    //             'time' => $originalAttendance ? $originalAttendance->time : now()->format('Y-m-d H:i:s'),
-    //             'status' => $this->convertFormToShortStatus($status),
-    //             'hours' => $hours,
-    //             'created_at' => now(),
-    //         ]);
-    //     }
-
-    //     // Step 3: Delete records
-    //     foreach ($changes['delete'] as $status => $hours) {
-    //         attendance::where('student_id', $studentId)
-    //             ->whereDate('time', $date)
-    //             ->where('status', $status)
-    //             ->delete();
-    //         // if ($attendance) {
-    //         //     $attendance->delete();
-    //         // }
-    //     }
-
-    //     return response()->json(['success' => true]);
-    // }
-
-
-
-    private function getOriginalTime($studentId, $date)
-    {
-        $attendance = Attendance::where('student_id', $studentId)
-            ->whereDate('time', $date)
-            ->first();
-
-        return $attendance;
-    }
-
-    private function getScheduleId($studentId, $date)
+    private function getSchedule($studentId, $date)
     {
         $student = student::find($studentId);
         if (!$student) {
@@ -558,9 +590,10 @@ trait AttendanceTrait
 
         $schedule = schedule::where('classroom_id', $classroomId)
             ->where('day_of_week', $dayName)
-            ->first();
+            ->with(['StartTimeSchedules', 'EndTimeSchedules'])
+            ->get();
 
-        return $schedule ? $schedule->id : null;
+        return $schedule;
     }
 
     private function convertFormToShortStatus($status)

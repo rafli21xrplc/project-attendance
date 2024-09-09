@@ -17,6 +17,28 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row mt-4">
                 <div class="col-12">
+                    <form action="{{ route('admin.export.permission.pdf') }}" method="post">
+                        @csrf
+                        <div class="row justify-content-end align-items-center g-3">
+                            <div class="col-12 col-md-6">
+                                <div class="input-group">
+                                    <input type="date" class="form-control" placeholder="Start Date" name="start_date" />
+                                    <span class="input-group-text">-</span>
+                                    <input type="date" class="form-control" placeholder="End Date" name="end_date" />
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <span class="d-none d-sm-inline-block">Export</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
                     <div class="card">
                         <div class="card-header">
                             <h4>Data Izin dan Sakit Siswa</h4>

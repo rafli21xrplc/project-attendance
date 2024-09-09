@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('payment', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
+            $table->enum('category', ['utama', 'tambahan']);
             $table->decimal('amount', 10, 2)->default('0.00');
-            $table->date('tenggat');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->timestamps();
         });
     }

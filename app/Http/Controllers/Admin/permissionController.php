@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\permission\searchExportRequest;
+use App\Models\permission;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Traits\PermissionTrait;
 use Illuminate\Http\Request;
 
@@ -17,6 +20,18 @@ class permissionController extends Controller
     {
         $permissions = $this->getPermission();
         return view('admin.permission', compact('permissions'));
+    }
+
+    public function exportPdf(searchExportRequest $request)
+    {
+
+        $request->validated();
+
+        $permissions = permission::whereBetween('created_at', [$request->start_date, $request->end_date])->get();
+
+        $pdf = Pdf::loadView('exports.permissions', compact('permissions'));
+
+        return $pdf->download('permission_report.pdf');
     }
 
     /**

@@ -22,16 +22,17 @@ class TypeClassSheetAttendanceExportPdf
 
     public function collection()
     {
-        $data = collect();
+        $data = [];
         $absencePoints = $this->getAbsencePoints();
         $dateRange = CarbonPeriod::create($this->startDate, $this->endDate);
 
         foreach ($this->typeClass->classrooms as $classroom) {
-            $data->push(['Kelas:', $classroom->typeClass->category . ' ' . $classroom->name]);
-            $data->push(['Wali Kelas:', $classroom->teacher->name ?? 'N/A']);
-            $data->push(['Tanggal Rekap:', date('d M Y', strtotime($this->startDate)) . ' - ' . date('d M Y', strtotime($this->endDate))]);
+            $classroomData = [];
+            $classroomData[] = ['Kelas:', $classroom->typeClass->category . ' ' . $classroom->name];
+            $classroomData[] = ['Wali Kelas:', $classroom->teacher->name ?? 'N/A'];
+            $classroomData[] = ['Tanggal Rekap:', date('d M Y', strtotime($this->startDate)) . ' - ' . date('d M Y', strtotime($this->endDate))];
 
-            $data->push(['']);
+            $classroomData[] = [''];
 
             $header = ['NO', 'NISN', 'NAMA SISWA', 'L/P'];
             foreach ($dateRange as $date) {
@@ -43,7 +44,7 @@ class TypeClassSheetAttendanceExportPdf
             $header[] = 'POIN TATIB';
             $header[] = 'KET';
 
-            $data->push($header);
+            $classroomData[] = $header;
 
             $attendanceSummary = [];
             foreach ($classroom->students as $student) {
@@ -60,7 +61,13 @@ class TypeClassSheetAttendanceExportPdf
                 ];
 
                 foreach ($dateRange as $date) {
-                    $row[] = $attendanceSummary[$student->id]['summary'][$date->format('Y-m-d')] ?? '';
+                    $status = $attendanceSummary[$student->id]['summary'][$date->format('Y-m-d')] ?? '';
+                    // Leave column empty if student is present for all hours
+                    if ($status == 'H') {
+                        $row[] = '';
+                    } else {
+                        $row[] = $status;
+                    }
                 }
 
                 $row[] = number_format($attendanceSummary[$student->id]['total_sakit'] * 0.1, 1);
@@ -69,12 +76,12 @@ class TypeClassSheetAttendanceExportPdf
                 $row[] = number_format($attendanceSummary[$student->id]['total_points'], 1);
                 $row[] = $attendanceSummary[$student->id]['warning'];
 
-                $data->push($row);
+                $classroomData[] = $row;
             }
 
-            $data->push(['']);
-            $data->push(['']);
-            $data->push(['']);
+            $classroomData[] = [''];
+
+            $data[] = $classroomData; // Add the classroom data to the main data array
         }
 
         return $data;
@@ -137,7 +144,7 @@ class TypeClassSheetAttendanceExportPdf
             'total_sakit' => $totalSakit,
             'total_alpha' => $totalAlpha,
             'total_points' => $totalPoints,
-            'warning' => $totalPoints > 2.9 ? 'Parent Call' : ($totalPoints > 1.9 ? 'Student Call' : 'None')
+            'warning' => $totalPoints > 2.9 ? 'panggilan orang tua' : ($totalPoints > 1.9 ? 'pemanggilan siswa' : ' ')
         ];
     }
 
@@ -172,10 +179,15 @@ class TypeClassSheetAttendanceExportPdf
 
         $summaryString = '';
         foreach ($summary as $status => $hours) {
-            if ($hours > 0) {
+            if ($hours > 0 && $status !== 'present') {
                 $statusShort = $this->convertStatusToShortForm($status);
                 $summaryString .= "{$hours}{$statusShort}";
             }
+        }
+
+        // If the summary string is empty and there are hours present, set it to empty string
+        if ($summary['present'] > 0 && $summaryString === '') {
+            $summaryString = '';
         }
 
         return [

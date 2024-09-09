@@ -24,7 +24,9 @@ class StoreRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
-            'tenggat' => 'required|date',
+            'category' => 'required|in:utama,tambahan',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
         ];
     }
 
@@ -37,6 +39,11 @@ class StoreRequest extends FormRequest
             'amount.required' => 'The amount field is required.',
             'amount.numeric' => 'The amount must be a number.',
             'amount.min' => 'The amount must be at least 0.',
+            'installment.required' => 'The installment field is required.',
+            'installment.numeric' => 'The installment must be a number.',
+            'installment.min' => 'The installment must be at least 0.',
+            'category.required' => 'Kategori harus dipilih.',
+            'category.in' => 'Kategori tidak valid.',
         ];
     }
 }

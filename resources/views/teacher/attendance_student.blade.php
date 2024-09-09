@@ -1,21 +1,16 @@
 @extends('teacher.layouts.app')
 
 @section('link')
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/app-logistics-dashboard.css') }}" />
+     <link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/app-logistics-dashboard.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/flatpickr/flatpickr.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-rowgroup-bs5/rowgroup.bootstrap5.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/%40form-validation/umd/styles/index.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/animate-css/animate.css') }}">
 
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/flatpickr/flatpickr.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.css') }}" />
-    <link rel="stylesheet"
-        href="{{ asset('assets/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/jquery-timepicker/jquery-timepicker.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/pickr/pickr-themes.css') }}" />
 
     <style>
         #table-content {
@@ -116,6 +111,16 @@
         .table-custom tbody tr:nth-child(even) {
             background-color: #ffffff;
         }
+         #saveButton {
+        background-color: #28a745; /* Stronger green color */
+        border-color: #28a745; /* Match border color to background */
+        color: #fff; /* White text color for better contrast */
+    }
+
+    #saveButton:hover {
+        background-color: #218838; /* Slightly darker green on hover */
+        border-color: #1e7e34; /* Darker border on hover */
+    }
     </style>
 @endsection
 
@@ -124,11 +129,6 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row">
                 <div class="col-12 order-5">
-                    <div class="d-flex justify-content-end mb-4">
-                        <button id="saveButton" type="button" class="btn btn-label-success">
-                            <span class="d-none d-sm-inline-block">Simpan</span>
-                        </button>
-                    </div>
                     @isset($classroom)
                         <div class="card">
                             <div class="card-datatable table-responsive px-4">
@@ -140,9 +140,8 @@
                                         </div>
                                     </div>
                                     <div class="table-responsive text-nowrap custom-border">
-                                        @if ($student->isNotEmpty())
                                             <form id="attendanceForm"
-                                                action="{{ route('teacher.attendance.store', $schedule->id) }}" method="post">
+                                                action="{{ route('teacher.attendance.update.history', $schedule->id) }}" method="post">
                                                 @csrf
                                                 @method('POST')
                                                 <table class="table table-custom" id="table-content">
@@ -154,27 +153,35 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @forelse ($student as $index => $item)
+                                                        @foreach ($attendance as $index => $item)
                                                             <tr>
-                                                                <td class="text-center">{{ $item->student_id }}</td>
-                                                                <td>{{ $item->name }}</td>
+                                                                <td class="text-center">{{ $index + 1 }}</td>
+                                                                <td>{{ $item->student_name }}</td>
                                                                 <td>
                                                                     <div
                                                                         class="col-md d-flex align-items-center flex-wrap gap-2 justify-content-center">
                                                                         <input type="hidden"
-                                                                            name="attendance[{{ $item->id }}]"
+                                                                            name="attendance[{{ $item->id }}]" 
                                                                             value="present">
+                                                                        <div class="form-check form-check-success">
+                                                                            <input name="attendance[{{ $item->id }}]"
+                                                                                class="form-check-input" type="radio" {{ $item->status == 'present' ? 'checked' : '' }}
+                                                                                value="present" 
+                                                                                id="present_{{ $item->id }}" />
+                                                                            <label class="form-check-label"
+                                                                                for="present_{{ $item->id }}"> Hadir </label>
+                                                                        </div>
                                                                         <div class="form-check form-check-danger">
                                                                             <input name="attendance[{{ $item->id }}]"
-                                                                                class="form-check-input" type="radio"
-                                                                                value="alpha"
+                                                                                class="form-check-input" type="radio" {{ $item->status == 'alpha' ? 'checked' : '' }}
+                                                                                value="alpha" 
                                                                                 id="alpha_{{ $item->id }}" />
                                                                             <label class="form-check-label"
                                                                                 for="alpha_{{ $item->id }}"> Alpha </label>
                                                                         </div>
                                                                         <div class="form-check form-check-warning">
                                                                             <input name="attendance[{{ $item->id }}]"
-                                                                                class="form-check-input" type="radio"
+                                                                                class="form-check-input" type="radio" {{ $item->status == 'permission' ? 'checked' : '' }}
                                                                                 value="permission"
                                                                                 id="izin_{{ $item->id }}" />
                                                                             <label class="form-check-label"
@@ -182,7 +189,7 @@
                                                                         </div>
                                                                         <div class="form-check form-check-alpha">
                                                                             <input name="attendance[{{ $item->id }}]"
-                                                                                class="form-check-input" type="radio"
+                                                                                class="form-check-input" type="radio" {{ $item->status == 'sick' ? 'checked' : '' }}
                                                                                 value="sick"
                                                                                 id="sakit_{{ $item->id }}" />
                                                                             <label class="form-check-label"
@@ -191,21 +198,10 @@
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                        @empty
-                                                            <div class="d-flex justify-content-center align-items-center my-5">
-                                                                <img src="{{ asset('assets/content/empty.svg') }}"
-                                                                    width="300" alt="No Data Available">
-                                                            </div>
-                                                        @endforelse
+                                                        @endforeach
                                                     </tbody>
                                                 </table>
                                             </form>
-                                        @else
-                                            <div class="d-flex justify-content-center align-items-center my-5">
-                                                <img src="{{ asset('assets/content/empty.svg') }}" width="300"
-                                                    alt="No Data Available">
-                                            </div>
-                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -215,6 +211,11 @@
                             <img src="{{ asset('assets/content/empty.svg') }}" width="300" alt="No Data Available">
                         </div>
                     @endisset
+                    <div class="d-flex justify-content-end mt-4">
+                        <button id="saveButton" type="button" class="btn btn-label-success">
+                           Simpan
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -223,19 +224,29 @@
 @endsection
 
 @section('js')
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.js"></script>
     <script>
-        document.getElementById('saveButton').addEventListener('click', function() {
-            document.getElementById('attendanceForm').submit();
-        });
+        document.addEventListener('DOMContentLoaded', function() {
+        const saveButton = document.getElementById('saveButton');
+        const classroomElement = @json(isset($classroom));
+        
+        if (classroomElement && document.querySelectorAll('#attendanceForm tbody tr').length > 0) {
+            saveButton.classList.remove('d-none');
+        } else {
+            saveButton.classList.add('d-none');
+        }
+    });
+
+    document.getElementById('saveButton').addEventListener('click', function() {
+        document.getElementById('attendanceForm').submit();
+    });
     </script>
-    <script src="{{ asset('assets/vendor/libs/moment/moment.js') }}"></script>
+   <script src="{{ asset('assets/vendor/libs/moment/moment.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/%40form-validation/umd/bundle/popular.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/%40form-validation/umd/plugin-bootstrap5/index.min.js') }}"></script>
     <script src="{{ asset('assets/vendor/libs/%40form-validation/umd/plugin-auto-focus/index.min.js') }}"></script>
+    <script src="{{ asset('assets/js/mainf696.js?id=8bd0165c1c4340f4d4a66add0761ae8a') }}"></script>
     <script src="{{ asset('assets/js/ui-modals.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/flatpickr/flatpickr.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/bootstrap-daterangepicker/bootstrap-daterangepicker.js') }}"></script>
-    <script src="{{ asset('assets/vendor/libs/pickr/pickr.js') }}"></script>
-    <script src="{{ asset('assets/js/forms-pickers.js') }}"></script>
 @endsection

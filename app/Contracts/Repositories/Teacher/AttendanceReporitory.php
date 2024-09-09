@@ -21,4 +21,9 @@ class AttendanceReporitory extends BaseRepository implements AttendanceInterface
     {
         return $this->getScheduleClassroom();
     }
+
+    public function getSchedule(): mixed
+    {
+        return $this->getScheduleTeacher();
+    }
 }

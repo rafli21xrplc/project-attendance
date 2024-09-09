@@ -17,8 +17,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->call(function () {
-            $this->checkAndMarkAutomaticAttendance();
-            $this->deletePermissionSchedule();
+            $this->markAttendance();
         })->everyMinute();
     }
 

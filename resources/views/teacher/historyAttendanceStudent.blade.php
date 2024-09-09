@@ -165,7 +165,6 @@
                                                             ? Storage::url($attendance->permission->file)
                                                             : null;
                                                 @endphp
-
                                                 <tr>
                                                     <td class="text-center">{{ $item->student_id }}</td>
                                                     <td>{{ $item->name }}</td>

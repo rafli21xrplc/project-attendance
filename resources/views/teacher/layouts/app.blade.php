@@ -99,6 +99,14 @@
                 transform: scale(1);
             }
         }
+
+        .menu-sub {
+            display: none;
+        }
+
+        .menu-item.active .menu-sub {
+            display: block;
+        }
     </style>
     <link rel="preload" href="{{ asset('assets/content/icon-load.png') }}" as="image">
 </head>
@@ -152,30 +160,10 @@
                             <div>Absensi Siswa</div>
                         </a>
                     </li>
-                    <li class="menu-item">
-                        <a href="{{ route('teacher.history_attendance.index') }}" class="menu-link">
-                            <div class="menu-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="icon icon-tabler icon-tabler-presentation-analytics">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <path d="M9 12v-4"></path>
-                                    <path d="M15 12v-2"></path>
-                                    <path d="M12 12v-1"></path>
-                                    <path d="M3 4h18"></path>
-                                    <path d="M4 4v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-10"></path>
-                                    <path d="M12 16v4"></path>
-                                    <path d="M9 20h6"></path>
-                                </svg>
-                            </div>
-                            <div>History Absensi Siswa</div>
-                        </a>
-                    </li>
                     @empty(!Auth::user()->teacher->classroom)
                         <li class="menu-item">
-                            <a href="{{ route('teacher.attendance_homeroom.index') }}" class="menu-link">
-                                <div class="menu-icon">
+                            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                                <div>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                                         stroke-linecap="round" stroke-linejoin="round"
@@ -190,8 +178,21 @@
                                         <path d="M9 20h6"></path>
                                     </svg>
                                 </div>
-                                <div>Laporan Absensi Siswa</div>
+                                <div>Management Wali Kelas</div>
                             </a>
+
+                            <ul class="menu-sub">
+                                <li class="menu-item">
+                                    <a href="{{ route('teacher.attendance_homeroom.index') }}" class="menu-link">
+                                        <div>Laporan Absensi Siswa</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="{{ route('teacher.attendance_spesial_day.index') }}" class="menu-link">
+                                        <div>Absensi Hari Khusus</div>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     @endempty
                 </ul>
@@ -241,10 +242,10 @@
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="change-password-modal" data-bs-toggle="modal"
-                                            data-bs-target="#change-password-modal">
+                                        <a class="dropdown-item" href="change-profile-modal" data-bs-toggle="modal"
+                                            data-bs-target="#change-profile-modal">
                                             <i class="ti ti-settings me-2 ti-sm"></i>
-                                            <span class="align-middle">change password</span>
+                                            <span class="align-middle">change profile</span>
                                         </a>
                                     </li>
                                     <li>
@@ -283,16 +284,21 @@
         <div class="drag-target"></div>
     </div>
 
-    <div class="modal fade" id="change-password-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="change-profile-modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">Change Password</h5>
+                    <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">Change Profile</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('change.password') }}" method="POST">
+                <form action="{{ route('change.profile') }}" method="POST">
                     @csrf
                     <div class="modal-body row py-0">
+                        <div class="mb-3">
+                            <label class="form-label" for="current-username">Current Username</label>
+                            <input type="text" class="form-control" id="current-username" name="username"
+                                placeholder="Enter current username" required>
+                        </div>
                         <div class="mb-3">
                             <label class="form-label" for="current-password">Current Password</label>
                             <input type="password" class="form-control" id="current-password"
@@ -319,14 +325,23 @@
     </div>
 
 
+    <script src="{{ asset('assets/vendor/libs/jquery/jquery1e84.js?id=0f7eb1f3a93e3e19e8505fd8c175925a') }}"></script>
     <script>
         window.addEventListener('load', function() {
             const loader = document.getElementById('loader');
             loader.style.display = 'none';
         });
+
+        $(document).ready(function() {
+            $('.menu-toggle').on('click', function(e) {
+                e.preventDefault();
+                var $parent = $(this).closest('.menu-item');
+                $parent.toggleClass('active');
+                $parent.find('.menu-sub').slideToggle();
+            });
+        });
     </script>
 
-    <script src="{{ asset('assets/vendor/libs/jquery/jquery1e84.js?id=0f7eb1f3a93e3e19e8505fd8c175925a') }}"></script>
     <script src="{{ asset('assets/vendor/libs/popper/popper0a73.js?id=baf82d96b7771efbcc05c3b77135d24c') }}"></script>
     <script src="{{ asset('assets/vendor/js/bootstraped84.js?id=9a6c701557297a042348b5aea69e9b76') }}"></script>
     <script src="{{ asset('assets/vendor/libs/node-waves/node-waves259f.js?id=4fae469a3ded69fb59fce3dcc14cd638') }}">

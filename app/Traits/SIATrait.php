@@ -19,7 +19,7 @@ trait SIATrait
 
         $currentPeriod = kbm_period::getCurrentPeriod();
         if (!$currentPeriod) {
-            return response()->json(['message' => 'No active KBM period found.'], 404);
+            return null;
         }
 
         $startDate = Carbon::parse($currentPeriod->start_date);
@@ -86,42 +86,26 @@ trait SIATrait
 
 
 
-    public function getSIALaporanExcel(array $classroomIds)
-    {
-        if (empty($classroomIds)) {
-            $classroomIds = [classRoom::first()->id];
-        }
+   public function getSIALaporanExcel(array $classroomIds, $periodId, $months)
+{
+    if (empty($classroomIds)) {
+        $classroomIds = [classRoom::first()->id];
+    }
 
-        $currentPeriod = kbm_period::getCurrentPeriod();
-        if (!$currentPeriod) {
-            return response()->json(['message' => 'No active KBM period found.'], 404);
-        }
+    $report = [];
+    $query = Attendance::where('kbm_period_id', $periodId)
+        ->whereHas('student.classroom', function ($query) use ($classroomIds) {
+            $query->whereIn('id', $classroomIds);
+        })
+        ->orderBy('student_id')
+        ->orderBy('time');
 
-        $startDate = Carbon::parse($currentPeriod->start_date);
-        $endDate = Carbon::parse($currentPeriod->end_date);
-        $months = [];
-
-        while ($startDate->lte($endDate)) {
-            $months[] = $startDate->format('Y-m');
-            $startDate->addMonth();
-        }
-
-        $report = [];
-
-        $attendances = Attendance::where('kbm_period_id', $currentPeriod->id)
-            ->whereHas('student.classroom', function ($query) use ($classroomIds) {
-                $query->whereIn('id', $classroomIds);
-            })
-            ->orderBy('student_id')
-            ->orderBy('time')
-            ->get();
-
+    $query->chunk(1000, function ($attendances) use (&$report, $months) {
         foreach ($attendances as $attendance) {
             $month = Carbon::parse($attendance->time)->format('Y-m');
-
-            $classType = $attendance->student->classroom->typeClass->category; // Assuming typeClass relationship
+            $classType = $attendance->student->classroom->typeClass->category;
             $className = $attendance->student->classroom->name;
-            $teacherName = $attendance->student->classroom->teacher->name; // Assuming relationship is defined
+            $teacherName = $attendance->student->classroom->teacher->name;
             $studentId = $attendance->student->id;
 
             if (!isset($report[$classType])) {
@@ -154,34 +138,27 @@ trait SIATrait
                 $report[$classType]['students'][$studentId]['months'][$month]['points'] += $tatibPoints;
             }
         }
+    });
 
-        foreach ($report as &$classTypes) {
-            foreach ($classTypes['students'] as &$student) {
-                foreach ($student['months'] as $month => $statuses) {
-                    $student['total_tatib_points'] += $statuses['points'];
-                }
+    foreach ($report as &$classTypes) {
+        foreach ($classTypes['students'] as &$student) {
+            foreach ($student['months'] as $month => $statuses) {
+                $student['total_tatib_points'] += $statuses['points'];
+            }
 
-                // Determine if a warning is needed
-                if ($student['total_tatib_points'] > 2.9) {
-                    $student['warning'] = 'konfirmasi';
-                } elseif ($student['total_tatib_points'] > 1.9) {
-                    $student['warning'] = 'panggilan walimurid';
-                }
+            if ($student['total_tatib_points'] > 2.9) {
+                $student['warning'] = 'konfirmasi';
+            } elseif ($student['total_tatib_points'] > 1.9) {
+                $student['warning'] = 'panggilan walimurid';
             }
         }
-
-        return [
-            'period' => [
-                'name' => $currentPeriod->name,
-                'start_date' => $currentPeriod->start_date,
-                'end_date' => $currentPeriod->end_date,
-            ],
-            'report' => $report,
-            'months' => $months,
-        ];
     }
 
-    private function calculateTatibPoints($status, $hours)
+    return $report;
+}
+
+
+    private function calculateTatibPoints($status)
     {
         $pointsPerHour = [
             'sick' => 0,
@@ -190,7 +167,7 @@ trait SIATrait
         ];
 
         if (array_key_exists($status, $pointsPerHour)) {
-            return $pointsPerHour[$status] * $hours;
+            return $pointsPerHour[$status] * 7;
         }
 
         return 0;
@@ -253,8 +230,7 @@ trait SIATrait
             }
 
             if (in_array($attendance->status, ['sick', 'permission', 'alpha'])) {
-                $hours = $attendance->hours;
-                $tatibPoints = $this->calculateTatibPoints($attendance->status, $hours);
+                $tatibPoints = $this->calculateTatibPoints($attendance->status);
 
                 $report[$className][$studentId]['months'][$month][$attendance->status]++;
                 $report[$className][$studentId]['months'][$month]['points'] += $tatibPoints;

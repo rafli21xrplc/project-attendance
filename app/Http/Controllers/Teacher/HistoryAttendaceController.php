@@ -3,8 +3,13 @@
 namespace App\Http\Controllers\teacher;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\attendance\SearchAttendanceStudentRequest;
+use App\Models\attendance;
+use App\Models\schedule;
 use App\Traits\HistoryAttendanceTrait;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HistoryAttendaceController extends Controller
 {
@@ -16,7 +21,9 @@ class HistoryAttendaceController extends Controller
     public function index()
     {
         $schedule = $this->getScheduleClassroomHistory();
-        return view('teacher.historyAttendance', compact('schedule'));
+        $courses = $this->getCourseTeacher();
+        $classrooms = $this->getClassroomTeacher();
+        return view('teacher.historyAttendance', compact('schedule', 'courses', 'classrooms'));
     }
 
     /**
@@ -66,4 +73,6 @@ class HistoryAttendaceController extends Controller
     {
         //
     }
+
+    
 }

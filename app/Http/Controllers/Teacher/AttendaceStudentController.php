@@ -6,8 +6,15 @@ use App\Contracts\Interfaces\ShowAttendanceStudentInterface;
 use App\Contracts\Interfaces\Teacher\StudentAttendanceInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\attendance\attendanceRequest;
+use App\Http\Requests\attendance\SearchAttendanceStudentRequest;
+use App\Models\attendance;
+use App\Models\schedule;
+use App\Models\student;
+use App\Models\teacher;
 use App\Traits\AttendanceTrait;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AttendaceStudentController extends Controller
 {
@@ -28,7 +35,8 @@ class AttendaceStudentController extends Controller
         $schedule = $this->StudentAttendanceInterface->getSchedule($schedule_id);
         $student = $this->StudentAttendanceInterface->getAttendance($classroom_id);
         $classroom = $this->StudentAttendanceInterface->getClassroomById($classroom_id);
-        return view('teacher.attendance_student', compact('student', 'classroom', 'schedule'));
+        $attendance = $this->StudentAttendanceInterface->storeAttendance($student, $schedule->id);
+        return view('teacher.attendance_student', compact('student', 'classroom', 'schedule', 'attendance'));
     }
 
     /**
@@ -50,7 +58,7 @@ class AttendaceStudentController extends Controller
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'failed attendance');
         }
-        return redirect()->route('teacher.attendance_teacher.index')->with('error', 'success attendance');
+        return redirect()->route('teacher.attendance_teacher.index')->with('success', 'success attendance');
     }
 
     /**
@@ -72,10 +80,10 @@ class AttendaceStudentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
         try {
-            $this->updateAttendanceStudent($request->all(), $id);
+            $this->updateAttendanceStudent($request->all());
         } catch (\Throwable $th) {
             return redirect()->route('admin.attendance.results')->with('error', 'Attendance updated successfully.');
         }

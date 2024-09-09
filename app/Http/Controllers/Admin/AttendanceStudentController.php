@@ -63,7 +63,7 @@ class AttendanceStudentController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $this->updateAttendanceStudent($request->all(), $id);
+            $this->updateAttendanceStudent($request->all());
         } catch (\Throwable $th) {
             return redirect()->route('admin.attendance.results')->with('error', 'Attendance updated successfully.');
         }
@@ -82,8 +82,7 @@ class AttendanceStudentController extends Controller
     {
 
         $classroom = $this->getClassrooms();
-        // $schedules = $this->getSchedules($request->validated());
-        $schedules = schedule::getSchedules($request->validated());
+        $schedules = $this->getSchedules($request->validated());
 
         $attendanceBySchedule = [];
 

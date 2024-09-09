@@ -108,30 +108,30 @@
                                         ];
                                     @endphp
                                     @foreach ($schedule as $index => $item)
-                                        <tr>
-                                            <td>{{ $index + 1 }}</td>
-                                            <td>{{ $days[$item->day_of_week] ?? $item->day_of_week }}</td>
-                                            <td>{{ $item->classroom->typeClass->category }} {{ $item->classroom->name }}
-                                            </td>
-                                            <td>{{ $item->startTimeSchedules->time_number ?? '-' }}</td>
-                                            <td>{{ $item->endTimeSchedules->time_number ?? '-' }}</td>
-                                            <td>{{ $item->course->name ?? '-' }}</td>
-                                            <td>{{ $item->teacher->name }}</td>
-                                            <td>
-                                                <button data-id="{{ $item->id }}"
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                          <td>{{ $days[$item->day_of_week] ?? $item->day_of_week }}</td>
+                                        <td>{{ $item->type_class_category }} {{ $item->classroom_name }}</td>
+                                        <td>{{ $item->start_time_number ?? '-' }}</td>
+                                        <td>{{ $item->end_time_number ?? '-' }}</td>
+                                        <td>{{ $item->course_name ?? '-' }}</td>
+                                        <td>{{ $item->teacher_name }}</td>
+                                          <td>
+                                            <button data-id="{{ $item->id }}"
                                                     data-day_of_week="{{ $item->day_of_week }}"
-                                                    data-classroom="{{ $item->classroom->id }}"
-                                                    data-start_time_schedule_id="{{ optional($item->startTimeSchedules)->id }}"
-                                                    data-end_time_schedule_id="{{ optional($item->EndTimeSchedules)->id }}"
-                                                    data-course="{{ optional($item->course)->id }}"
-                                                    data-teacher="{{ $item->teacher->id }}" type="button"
-                                                    class="btn btn-label-warning btn-update"><i
-                                                        class="fa-solid fa-pen"></i></button>
-                                                <button data-id="{{ $item->id }}" type="button"
-                                                    class="btn btn-label-danger btn-delete"><i
-                                                        class="fa-solid fa-trash"></i></button>
-                                            </td>
-                                        </tr>
+                                                    data-classroom="{{ $item->classroom_id }}"
+                                                    data-start_time_schedule_id="{{ $item->start_time_schedule_id }}"
+                                                    data-end_time_schedule_id="{{ $item->end_time_schedule_id }}"
+                                                    data-course="{{ $item->course_id }}"
+                                                    data-teacher="{{ $item->teacher_id }}" 
+                                                    type="button" class="btn btn-label-warning btn-update">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </button>
+                                            <button data-id="{{ $item->id }}" type="button" class="btn btn-label-danger btn-delete">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -174,7 +174,7 @@
                                 @foreach ($time_schedule as $item)
                                     <option value="{{ $item->id }}"
                                         {{ old('start_time_schedule_id') == $item->id ? 'selected' : '' }}>
-                                        {{ Carbon\Carbon::parse($item->start_time_schedule)->format('H:i') }}
+                                        {{ Carbon\Carbon::parse($item->start_time_schedule)->format('H:i') }} - {{ $item->time_number }}
                                     </option>
                                 @endforeach
                             </select>
@@ -187,7 +187,7 @@
                                 @foreach ($time_schedule as $item)
                                     <option value="{{ $item->id }}"
                                         {{ old('end_time_schedule_id') == $item->id ? 'selected' : '' }}>
-                                        {{ Carbon\Carbon::parse($item->end_time_schedule)->format('H:i') }}</option>
+                                        {{ Carbon\Carbon::parse($item->end_time_schedule)->format('H:i') }} - {{ $item->time_number }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -211,7 +211,7 @@
                                 @foreach ($classroom as $item)
                                     <option value="{{ $item->id }}"
                                         {{ old('classroom') == $item->id ? 'selected' : '' }}>
-                                        {{ $item->typeClass->category }} {{ $item->name }}</option>
+                                        {{ $item->type_class_category }} {{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -267,7 +267,7 @@
                                 @foreach ($time_schedule as $item)
                                     <option value="{{ $item->id }}"
                                         {{ old('start_time_schedule_id') == $item->id ? 'selected' : '' }}>
-                                        {{ Carbon\Carbon::parse($item->start_time_schedule)->format('H:i') }}
+                                        {{ Carbon\Carbon::parse($item->start_time_schedule)->format('H:i') }} - {{ $item->time_number }}
                                     </option>
                                 @endforeach
                             </select>
@@ -280,7 +280,7 @@
                                 @foreach ($time_schedule as $item)
                                     <option value="{{ $item->id }}"
                                         {{ old('end_time_schedule_id') == $item->id ? 'selected' : '' }}>
-                                        {{ Carbon\Carbon::parse($item->end_time_schedule)->format('H:i') }}</option>
+                                        {{ Carbon\Carbon::parse($item->end_time_schedule)->format('H:i') }} - {{ $item->time_number }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -304,7 +304,7 @@
                                 @foreach ($classroom as $item)
                                     <option value="{{ $item->id }}"
                                         {{ old('classroom') == $item->id ? 'selected' : '' }}>
-                                        {{ $item->typeClass->category }} {{ $item->name }}</option>
+                                        {{ $item->type_class_category }} {{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>

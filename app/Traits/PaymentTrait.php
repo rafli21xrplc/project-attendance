@@ -9,10 +9,21 @@ use App\Models\PaymentInstallment;
 use App\Models\student;
 use App\Models\student_payment;
 use App\Models\type_class;
+use App\Models\type_payment;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 trait PaymentTrait
 {
+        public function getPayment()
+        {
+                return payment::all();
+        }
+        public function getTypePayments()
+        {
+                return type_payment::all();
+        }
         public function getTypeClassrooms()
         {
                 return type_class::with('classrooms')->get();
@@ -56,5 +67,27 @@ trait PaymentTrait
         public function getTagihanSiswa()
         {
                 return student_payment::getStudentPaymentsInstallments();
+        }
+
+        public function importPayment(array $excel)
+        {
+                $data = Excel::toArray([], $excel['file']);
+                DB::transaction(function () use ($data) {
+                        foreach ($data[0] as $row) {
+                                $this->processRow($row);
+                        }
+                });
+
+                return back();
+        }
+
+        public function processRow($row)
+        {
+                return payment::created([
+                        'id' => Str::uuid(),
+                        'name' => $row[0],
+                        'amount' => $row[1],
+                        'tenggat' => $row[2],
+                ]);
         }
 }

@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Class Attendance Report</title>
     <style>
-        body {
+         body {
             font-family: Arial, sans-serif;
             font-size: 10px;
         }
@@ -24,29 +26,46 @@
     </style>
 </head>
 <body>
-    @foreach ($attendanceExport->sheets() as $sheet)
-        <h2>{{ $sheet->title() }}</h2>
-        @foreach ($sheet->collection() as $row)
-            @if ($loop->first || $row[0] === '')
-                @if (!$loop->first)
-                    </table>
-                @endif
-                <table>
+    <h2>Class Attendance Report</h2>
+    <p>Kelas: {{ $classroom->typeClass->category }} {{ $classroom->name }}</p>
+    <p>Wali Kelas: {{ $classroom->teacher->name ?? 'N/A' }}</p>
+    <p>Tanggal Rekap: {{ date('d M Y', strtotime($startDate)) }} - {{ date('d M Y', strtotime($endDate)) }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>NO</th>
+                <th>NISN</th>
+                <th>NAMA SISWA</th>
+                <th>L/P</th>
+                @foreach ($dateRange as $date)
+                    <th>{{ $date->format('d') }}</th>
+                @endforeach
+                <th>S</th>
+                <th>I</th>
+                <th>A</th>
+                <th>POIN TATIB</th>
+                <th>KET</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($classroom->students as $index => $student)
                 <tr>
-                    @foreach ($row as $cell)
-                        <th>{{ $cell }}</th>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $student->student_id }}</td>
+                    <td>{{ $student->name }}</td>
+                    <td>{{ $student->gender }}</td>
+                    @foreach ($dateRange as $date)
+                        <td>{{ $attendanceSummary[$student->id]['summary'][$date->format('Y-m-d')] ?? '' }}</td>
                     @endforeach
+                    <td>{{ number_format($attendanceSummary[$student->id]['total_sakit'] * 0.1, 1) }}</td>
+                    <td>{{ number_format($attendanceSummary[$student->id]['total_izin'] * 0.1, 1) }}</td>
+                    <td>{{ number_format($attendanceSummary[$student->id]['total_alpha'] * 0.1, 1) }}</td>
+                    <td>{{ number_format($attendanceSummary[$student->id]['total_points'], 1) }}</td>
+                    <td>{{ $attendanceSummary[$student->id]['warning'] }}</td>
                 </tr>
-            @else
-                <tr>
-                    @foreach ($row as $cell)
-                        <td>{{ $cell }}</td>
-                    @endforeach
-                </tr>
-            @endif
-        @endforeach
-        </table>
-        <div style="page-break-after: always;"></div>
-    @endforeach
+            @endforeach
+        </tbody>
+    </table>
 </body>
 </html>

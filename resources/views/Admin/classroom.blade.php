@@ -108,13 +108,13 @@
                                             <td>{{ $item->type_class_category }} {{ $item->name }}</td>
                                             <td>{{ $item->teacher_name }} </td>
                                             <td>
-                                                <button data-id="{{ $item->classroom_id }}" data-name="{{ $item->name }}"
+                                                <button data-id="{{ $item->id }}" data-name="{{ $item->name }}"
                                                     data-teacher_id="{{ $item->teacher_id }}"
                                                     data-type_class_id="{{ $item->type_class_id }}"
-                                                    data-class_id="{{ $item->classroom_id }}" type="button"
+                                                    data-class_id="{{ $item->id }}" type="button"
                                                     class="btn btn-label-warning btn-update"><i
                                                         class="fa-solid fa-pen"></i></button>
-                                                <button data-id="{{ $item->classroom_id }}" type="button"
+                                                <button data-id="{{ $item->id }}" type="button"
                                                     class="btn btn-label-danger btn-delete"><i
                                                         class="fa-solid fa-trash"></i></button>
                                             </td>

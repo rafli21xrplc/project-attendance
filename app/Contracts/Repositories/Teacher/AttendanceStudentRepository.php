@@ -24,7 +24,7 @@ class AttendanceStudentRepository extends BaseRepository implements StudentAtten
         return $this->getStudents($id);
     }
 
-    public function storeAttendance(array $attendances, $id): mixed
+    public function storeAttendance($attendances, $id): mixed
     {
         return $this->storeAttendanceStudent($attendances, $id);
     }

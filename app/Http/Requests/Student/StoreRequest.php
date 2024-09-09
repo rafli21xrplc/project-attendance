@@ -63,7 +63,6 @@ class StoreRequest extends FormRequest
             'password.required' => 'Password is required',
             'password.string' => 'Password must be a string',   
             'password.min' => 'Password must be at least :min characters',
-            // 'religi.in' => 'Agama yang dipilih tidak valid',
         ];
     }
 }

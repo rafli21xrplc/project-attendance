@@ -23,13 +23,25 @@ trait HistoryAttendanceTrait
                 return schedule::findOrFail($schedule_id);
         }
 
+        public function getCourseTeacher()
+        {
+                $teacherId = Auth::user()->teacher->id;
+                return schedule::where('teacher_id', $teacherId)->with(['course', 'classroom'])->get()->unique('course_id');
+        }
+
+        public function getClassroomTeacher()
+        {
+                $teacherId = Auth::user()->teacher->id;
+                return schedule::where('teacher_id', $teacherId)->with(['course', 'classroom'])->get()->unique('classroom_id');
+        }
+
         public function getAttendaence($classroom_id, $schedule_id)
         {
                 $classroom = $this->getClassroom($classroom_id);
                 $schedule = $this->getSchedule($schedule_id);
                 $student = $classroom->students;
                 $attendanceData = attendance::where('schedule_id', $schedule_id)
-                ->with(['student', 'schedule', 'permission']) 
+                        ->with(['student', 'schedule', 'permission'])
                         ->whereIn('student_id', $student->pluck('id'))
                         ->get()
                         ->keyBy('student_id');

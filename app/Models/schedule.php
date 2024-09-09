@@ -87,6 +87,41 @@ class schedule extends Model
                 s.day_of_week = ?', [$teacher_id, $currentDay]);
     }
 
+    public static function getStudentSchedule($student_id, $currentDay)
+    {
+        return DB::select('
+        SELECT 
+            s.id AS schedule_id,
+            s.day_of_week,
+            c.name AS course_name,
+            ts_start.time_number AS start_time_number,
+            ts_start.start_time_schedule AS start_time,
+            ts_end.time_number AS end_time_number,
+            ts_end.end_time_schedule AS end_time,
+            t.name AS teacher_name,
+            cr.name AS classroom_name,
+            tc.category AS type_class_category
+        FROM 
+            schedule s
+        JOIN 
+            course c ON s.course_id = c.id
+        JOIN 
+            time_schedules ts_start ON s.start_time_schedule_id = ts_start.id
+        JOIN 
+            time_schedules ts_end ON s.end_time_schedule_id = ts_end.id
+        JOIN 
+            teacher t ON s.teacher_id = t.id
+        JOIN 
+            class_room cr ON s.classroom_id = cr.id
+        JOIN 
+            type_class tc ON cr.type_class_id = tc.id
+        JOIN 
+            student st ON st.classroom_id = cr.id
+        WHERE 
+            st.id = ? AND 
+            s.day_of_week = ?', [$student_id, $currentDay]);
+    }
+
     public static function get(): mixed
     {
         return DB::table('schedule')

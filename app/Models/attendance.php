@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class attendance extends Model
 {
@@ -16,8 +17,8 @@ class attendance extends Model
         'schedule_id`',
         'kbm_period_id',
         'hours',
-        'note',
-        'time',
+        'is_spesialDay',
+        'time', // timestamps
         'status',
     ];
 
@@ -37,5 +38,18 @@ class attendance extends Model
     public function schedule()
     {
         return $this->belongsTo(schedule::class, 'schedule_id', 'id');
+    }
+
+    public static function getAttendanceStudent($studentId)
+    {
+        return DB::table('attendances')
+            ->join('schedules', 'attendances.schedule_id', '=', 'schedules.id')
+            ->select(
+                'attendances.id AS attendance_id',
+                'attendances.time AS attendance_time',
+                'schedules.day_of_week AS schedule_day_of_week'
+            )
+            ->where('attendances.student_id', $studentId)
+            ->get();
     }
 }
