@@ -120,10 +120,10 @@
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
-                                        <label for="tanggal" class="form-label">Libur mingguan pertama</label>
+                                        <label for="tanggal" class="form-label">Tanggal Pemadatan</label>
                                         <input type="date" id="tanggal" class="form-control" value="{{ $SubtractionTime->tanggal ?? '' }}" name="tanggal" />
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <div class="col-md-6 mb-3"> 
                                         <label for="start_time" class="form-label">Jam Awal</label>
                                         <input type="number" id="start_time" class="form-control" placeholder="{{ $SubtractionTime->start_time ?? '' }}" name="start_time" min="1" />
                                     </div>

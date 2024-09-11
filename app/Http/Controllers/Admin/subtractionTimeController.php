@@ -31,8 +31,8 @@ class subtractionTimeController extends Controller
      */
     public function store(storeRequest $request)
     {
+        $this->storeOrUpdate($request->validated());
         try {
-            $this->storeOrUpdate($request->validated());
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'failed created');
         }

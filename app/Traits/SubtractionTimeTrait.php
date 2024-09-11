@@ -15,12 +15,23 @@ trait SubtractionTimeTrait
 
                 $existingData = subtractionTime::first();
 
-                return $existingData->update(
-                        [
-                                'tanggal' => $data['tanggal'],
-                                'start_time' => $data['start_time'],
-                                'end_time' => $data['end_time'],
-                        ]
-                );
+                if (isset($existingData)) {
+                        return $existingData->update(
+                                [
+                                        'tanggal' => $data['tanggal'],
+                                        'start_time' => $data['start_time'],
+                                        'end_time' => $data['end_time'],
+                                ]
+                        );
+                } else {
+                        return subtractionTime::create(
+                                [
+                                        'id' => Str::uuid(),
+                                        'tanggal' => $data['tanggal'],
+                                        'start_time' => $data['start_time'],
+                                        'end_time' => $data['end_time'],
+                                ]
+                        );
+                }
         }
 }
