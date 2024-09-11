@@ -415,7 +415,6 @@ trait AttendanceTrait
 
         $students = Student::whereIn('classroom_id', $classroomId)->with('classroom.typeClass')->orderBy('name', 'asc')->get();
 
-
         $absencePoints = $this->getAbsencePoints();
 
         $report = [];

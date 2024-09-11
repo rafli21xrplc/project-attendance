@@ -77,6 +77,15 @@ class ClassPaymentSheet implements FromCollection, WithHeadings, WithTitle, With
 
             $monthlyPayments = [];
             $studentPayments = $student->studentPayments->where('payment_id', $this->payment->id);
+
+            if ($studentPayments->isEmpty()) {
+                $studentPayments = student_payment::where('student_id', $student->id)->where('payment_id', $this->payment->id)->get();
+            }
+
+            if ($studentPayments->isEmpty()) {
+                $studentPaymentsData[] = $paymentData;
+                continue;
+            }
             $totalDues = 0;
 
             foreach ($studentPayments as $studentPayment) {

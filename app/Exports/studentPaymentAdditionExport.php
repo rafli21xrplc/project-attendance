@@ -54,122 +54,101 @@ class ClassPaymentSheet implements FromCollection, WithHeadings, WithTitle, With
     public function collection()
     {
         $data = collect();
-
         $rowNumber = 1;
         $totalTunggakan = 0;
         $totalDibayarkanBulanIni = 0;
         $totalDibayarkan = 0;
 
         $dynamicHeaders = ['NO', 'NISN', 'NAMA SISWA', 'WAKTU TUNGGAKAN', 'TUNGGAKAN', 'DIBAYARKAN BULAN ' . strtoupper($this->month), 'TOTAL DIBAYARKAN'];
-        $monthHeaders = [];
-        $maxMonths = 0;
         $studentPaymentsData = [];
 
         foreach ($this->classroom->students as $student) {
             $paymentData = [
                 'no' => $rowNumber++,
-                'nisn' => $student->nisn,
-                'nama_siswa' => $student->name,
-                'waktu_tunggakan' => 0,
+                'nisn' => $student->nisn ?? 'Tidak Ada NISN',
+                'nama_siswa' => $student->name ?? 'Tidak Ada Nama',
+                'waktu_tunggakan' => 'N/A',
                 'tunggakan' => 0,
-                'dibayarkan_bulan_ini' => 0, // Initialize as 0
-                'total_dibayarkan' => 0, // Initialize as 0
+                'dibayarkan_bulan_ini' => 0,
+                'total_dibayarkan' => 0,
             ];
 
-            $monthlyPayments = [];
             $studentPayments = $student->studentPayments->where('payment_id', $this->payment->id);
+
+            if ($studentPayments->isEmpty()) {
+                $studentPayments = student_payment::where('student_id', $student->id)->where('payment_id', $this->payment->id)->get();
+            }
+
+            if ($studentPayments->isEmpty()) {
+                $studentPaymentsData[] = $paymentData;
+                continue;
+            }
+
             $totalDues = 0;
 
             foreach ($studentPayments as $studentPayment) {
-                // Use a manual query to retrieve the payment amount using SQL JOIN
                 $paymentDataDb = DB::table('student_payment')
                     ->join('payment', 'student_payment.payment_id', '=', 'payment.id')
                     ->where('student_payment.id', $studentPayment->id)
                     ->select('payment.amount', 'payment.start_date', 'payment.end_date')
                     ->first();
 
-                // Ensure we have valid data before proceeding
                 if ($paymentDataDb) {
-                    // Add the amount to the total dues
-                    $totalDues += $paymentDataDb->amount;
+                    $totalDues += $paymentDataDb->amount ?? 0;
 
-                    // Parse the start and end months from the payment data
                     $startMonth = Carbon::parse($paymentDataDb->start_date)->startOfMonth();
                     $endMonth = Carbon::parse($paymentDataDb->end_date)->endOfMonth();
+                    $paymentPeriod = $startMonth->format('F Y') . ' - ' . $endMonth->format('F Y');
+                    $paymentData['waktu_tunggakan'] = $paymentPeriod ?? 'N/A';
 
-                    // Format the 'waktu_tunggakan' (time period of dues)
-                    $paymentPeriod = Carbon::parse($startMonth)->format('F Y') . ' - ' . Carbon::parse($endMonth)->format('F Y');
-                    $paymentData['waktu_tunggakan'] = $paymentPeriod;
-
-                    // Iterate through the months to calculate amounts paid during each month
                     $months = CarbonPeriod::create($startMonth, '1 month', $endMonth);
                     foreach ($months as $month) {
                         $formattedMonthLower = strtolower($month->translatedFormat('F'));
 
-                        // Calculate the total paid amount for each month
                         $paidAmount = $studentPayment->paymentInstallments()
                             ->selectRaw('SUM(amount) as total')
                             ->whereRaw('LOWER(DATE_FORMAT(created_at, "%M")) = ?', [$formattedMonthLower])
-                            ->value('total');
+                            ->value('total') ?? 0;
 
-                        // Ensure the keys are initialized before incrementing
-                        if (!isset($paymentData['dibayarkan_bulan_ini'])) {
-                            $paymentData['dibayarkan_bulan_ini'] = 0;
+                        if ($formattedMonthLower == strtolower($this->month)) {
+                            $paymentData['dibayarkan_bulan_ini'] += $paidAmount ?? 0;
                         }
 
-                        if (!isset($paymentData['total_dibayarkan'])) {
-                            $paymentData['total_dibayarkan'] = 0;
-                        }
-
-                        // Track payments made in the current month
-                        if ($formattedMonthLower == $this->month) {
-                            $paymentData['dibayarkan_bulan_ini'] += $paidAmount;
-                        }
-
-                        // Add the total paid amount for each month
-                        $paymentData['total_dibayarkan'] += $paidAmount;
+                        $paymentData['total_dibayarkan'] += $paidAmount ?? 0;
                     }
                 } else {
-                    // Handle cases where no payment data is found (e.g., log a warning or assign default values)
                     $paymentData['waktu_tunggakan'] = 'N/A';
-                    $paymentData['total_dibayarkan'] = 0;
-                    $paymentData['dibayarkan_bulan_ini'] = 0;
                 }
             }
 
-            // Calculate tunggakan as total dues minus total dibayarkan
             $paymentData['tunggakan'] = $totalDues - $paymentData['total_dibayarkan'];
-
-            // Tambahkan penjumlahan sebelum formatting
-            $totalDibayarkanBulanIni += $paymentData['dibayarkan_bulan_ini'];
-            $totalDibayarkan += $paymentData['total_dibayarkan'];
-            $totalTunggakan += $paymentData['tunggakan'];
-
-            // Format nilai setelah penjumlahan
-            $paymentData['dibayarkan_bulan_ini'] = number_format($paymentData['dibayarkan_bulan_ini'], 2);
-            $paymentData['total_dibayarkan'] = number_format($paymentData['total_dibayarkan'], 2);
 
             if ($paymentData['tunggakan'] <= 0) {
                 $paymentData['tunggakan'] = "LUNAS";
             } else {
-                $paymentData['tunggakan'] = number_format($paymentData['tunggakan'], 2);
+                $paymentData['tunggakan'] = $paymentData['tunggakan'];
             }
 
-            // Merge the monthly payments into the main data array
-            $paymentData = array_merge($paymentData, $monthlyPayments);
+            // Accumulate the raw numeric values
+            $totalTunggakan += ($paymentData['tunggakan'] !== "LUNAS") ? floatval($paymentData['tunggakan']) : 0;
+            $totalDibayarkanBulanIni += $paymentData['dibayarkan_bulan_ini'];
+            $totalDibayarkan += $paymentData['total_dibayarkan'];
+
+            // Format numbers for display
+            $paymentData['dibayarkan_bulan_ini'] = number_format($paymentData['dibayarkan_bulan_ini'], 2);
+            $paymentData['total_dibayarkan'] = number_format($paymentData['total_dibayarkan'], 2);
+            $paymentData['tunggakan'] = ($paymentData['tunggakan'] !== "LUNAS") ? number_format($paymentData['tunggakan'], 2) : "LUNAS";
 
             $studentPaymentsData[] = $paymentData;
         }
 
-        // Push headers
-        $data->push(array_merge($dynamicHeaders, array_keys($monthHeaders)));
+        $data->push($dynamicHeaders);
 
-        // Push student data
         foreach ($studentPaymentsData as $paymentData) {
             $data->push($paymentData);
         }
 
-        // Add totals row
+        // Total row with formatted values
         $totalRowData = [
             'no' => '',
             'nisn' => '',
@@ -179,8 +158,7 @@ class ClassPaymentSheet implements FromCollection, WithHeadings, WithTitle, With
             'dibayarkan_bulan_ini' => number_format($totalDibayarkanBulanIni, 2),
             'total_dibayarkan' => number_format($totalDibayarkan, 2),
         ];
-
-        $data->push(array_merge($totalRowData, array_fill(0, count($monthHeaders), '')));
+        $data->push($totalRowData);
 
         return $data;
     }
@@ -188,11 +166,11 @@ class ClassPaymentSheet implements FromCollection, WithHeadings, WithTitle, With
     public function styles(Worksheet $sheet)
     {
         $studentCount = count($this->classroom->students);
-        $totalRow = $studentCount + 3;  // Adjust this based on where the total row lands
+        $totalRow = $studentCount + 3;
 
-        $headerRange = 'A2:' . $sheet->getHighestColumn() . '2';  // Adjust based on the highest column dynamically
-        $dataRange = 'A3:' . $sheet->getHighestColumn() . ($studentCount + 3);  // Covers all student data rows
-        $totalRange = 'A' . $totalRow . ':' . $sheet->getHighestColumn() . $totalRow;  // Covers the total row
+        $headerRange = 'A2:' . $sheet->getHighestColumn() . '2';
+        $dataRange = 'A3:' . $sheet->getHighestColumn() . ($studentCount + 3);
+        $totalRange = 'A' . $totalRow . ':' . $sheet->getHighestColumn() . $totalRow;
 
         // Merge title cell
         $sheet->mergeCells("A1:" . $sheet->getHighestColumn() . "1");

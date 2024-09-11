@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\PaymentInstallment;
+use App\Models\student_payment;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -58,11 +59,20 @@ class ClassPaymentSheet implements FromCollection, WithHeadings, WithTitle, With
                 'nama_siswa' => $student->name,
             ];
 
-            $installments = $student->studentPayments
-                ->where('payment_id', $this->payment->id)
-                ->flatMap(function ($studentPayment) {
-                    return $studentPayment->paymentInstallments;
-                });
+            $studentPayments = $student->studentPayments->where('payment_id', $this->payment->id);
+
+            if ($studentPayments->isEmpty()) {
+                // If no student payments are found, retrieve them from the database
+                $studentPayments = student_payment::where('student_id', $student->id)
+                    ->where('payment_id', $this->payment->id)
+                    ->get();
+            }
+
+            // Now, flatMap to get the installments from the student payments
+            $installments = $studentPayments->flatMap(function ($studentPayment) {
+                return $studentPayment->paymentInstallments;
+            });
+
 
             // Add installment amounts to the paymentData array
             $installmentCounter = 1;

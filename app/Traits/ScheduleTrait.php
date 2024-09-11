@@ -123,7 +123,6 @@ trait ScheduleTrait
                 Log::info('DELETE ATTENDANCE DURING SPECIAL DAY.');
 
                 try {
-                        // Fetch the special day settings
                         $setting = Setting::where('key', 'spesial_day')->value('value');
                         $specialDays = $setting ? json_decode($setting, true) : [];
 
@@ -132,7 +131,6 @@ trait ScheduleTrait
                                         $startDate = Carbon::parse($specialDay['start_date']);
                                         $endDate = Carbon::parse($specialDay['end_date']);
 
-                                        // Delete attendance records where is_spesialDay is false and time is between the start and end date
                                         Attendance::whereBetween('time', [$startDate, $endDate])
                                                 ->where('is_spesialDay', false)
                                                 ->delete();
@@ -200,16 +198,14 @@ trait ScheduleTrait
                 Log::info('CLEAN UP ATTENDANCE LATE.');
 
                 try {
-                        // Step 1: Find the IDs of the rows to keep (i.e., the minimum ID for each schedule_id and day)
                         $idsToKeep = DB::table('attendance_lates as al1')
                                 ->select(DB::raw('MIN(al1.id) as id'))
                                 ->groupBy('al1.schedule_id', DB::raw('DATE(al1.created_at)'))
                                 ->pluck('id')
-                                ->toArray(); // Convert the result to an array of IDs
+                                ->toArray();
 
-                        // Step 2: Delete records that do not have the `MIN(id)` (i.e., duplicate records)
                         DB::table('attendance_lates')
-                                ->whereNotIn('id', $idsToKeep) // Only delete records whose ID is not in the array of IDs to keep
+                                ->whereNotIn('id', $idsToKeep)
                                 ->delete();
 
                         Log::info('CLEAN UP ATTENDANCE LATE COMPLETED.');
@@ -477,7 +473,6 @@ trait ScheduleTrait
         {
                 $holidays = setting::whereIn('key', ['first-holiday', 'second-holiday'])->pluck('value')->toArray();
 
-                // Define all days of the week
                 $daysOfWeek = [
                         'Monday' => 'Senin',
                         'Tuesday' => 'Selasa',
@@ -488,7 +483,6 @@ trait ScheduleTrait
                         'Sunday' => 'Minggu'
                 ];
 
-                // Filter days of the week excluding holidays
                 $availableDays = array_diff_key($daysOfWeek, array_flip($holidays));
 
                 return $availableDays;
