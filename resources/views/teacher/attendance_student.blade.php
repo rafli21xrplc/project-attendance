@@ -135,8 +135,7 @@
                                 <div class="my-4">
                                     <div class="my-4 d-flex flex-wrap justify-content-between gap-3">
                                         <div class="card-title mb-0">
-                                            <h5 class="mb-1">{{ $classroom->name }}</h5>
-                                            <p class="text-muted mb-0">Total 6 course you have purchased</p>
+                                            <h5 class="mb-1">{{ $classroom->typeClass->category }} {{ $classroom->name }}</h5>
                                         </div>
                                     </div>
                                     <div class="table-responsive text-nowrap custom-border">
@@ -156,7 +155,7 @@
                                                         @foreach ($attendance as $index => $item)
                                                             <tr>
                                                                 <td class="text-center">{{ $index + 1 }}</td>
-                                                                <td>{{ $item->student_name }}</td>
+                                                                <td class="{{ $item->tardy_status == 'telat' ? 'text-danger' : '' }} {{ $item->tardy_status == null ? 'text-danger' : '' }}" style="color: ">{{ $item->student_name }}</td>
                                                                 <td>
                                                                     <div
                                                                         class="col-md d-flex align-items-center flex-wrap gap-2 justify-content-center">

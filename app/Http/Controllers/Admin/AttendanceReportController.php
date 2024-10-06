@@ -88,14 +88,89 @@ class AttendanceReportController extends Controller
         //
     }
 
+    // public function update(Request $request)
+    // {
+    //     return response()->json($request->all());
+
+    //     // $this->updateAttendanceStudentReport($request->all());
+
+    //     $this->updateAttendance($request->student_id, $request->date, $request->)
+
+    //     try {
+
+    //         return redirect()->back();
+    //     } catch (\Throwable $th) {
+    //         return redirect()->back();
+    //     }
+    // }
+
     public function update(Request $request)
     {
-        $this->updateAttendanceStudentReport($request->all());
-        try {
+        $studentId = $request->input('student_id');
+        $date = $request->input('date');
+        $input = $request->input('content');
+        
+        $statusCounts = $this->parseInput($input);
+        $schedules = $this->getSchedule($studentId, $date);
+        
+        
+        if ($schedules->isEmpty()) {
+            return response()->json(['message' => 'No schedule found for this student on the given date'], 404);
+        }
 
-            return redirect()->back();
+        DB::beginTransaction();
+
+        try {
+            $updates = [];
+            
+            foreach ($statusCounts as $status => $hours) {
+                foreach ($schedules as $item) {
+                    $schedule = $this->getScheduleById($item->id);
+
+                    $startSchedule = $schedule->StartTimeSchedules->time_number;
+                    $endSchedule = $schedule->EndTimeSchedules->time_number;
+                    $hour = ($endSchedule - $startSchedule) + 1;
+                    
+                    $updateData = $this->updateAttendance($studentId, $date, $status, $hour, $item->id);
+
+                    if ($updateData) {
+                        $updates[] = $updateData;
+                    }
+                }
+            }
+
+            foreach ($updates as $update) {
+                Attendance::where('id', $update['id'])->update($update);
+            }
+
+            DB::commit();
+
+            return response()->json(['message' => 'Attendance updated successfully'], 200);
         } catch (\Throwable $th) {
-            return redirect()->back();
+            DB::rollBack(); 
+            return response()->json(['message' => 'Error updating attendance: ' . $th->getMessage()], 500);
+        }
+    }
+
+
+    private function updateAttendance($studentId, $date, $status, $hour, $scheduleId)
+    {
+        try {
+            $attendance = Attendance::whereRaw('DATE(time) = ?', [$date])
+            ->where('student_id', $studentId)
+            ->where('schedule_id', $scheduleId)
+            ->first();
+
+            if ($attendance) {
+                return [
+                    'id' => $attendance->id,
+                    'status' => $status,
+                ];
+            }
+
+            return null;
+        } catch (\Throwable $th) {
+            throw $th;
         }
     }
 
@@ -121,26 +196,26 @@ class AttendanceReportController extends Controller
         return response()->json(['data' => $data]);
     }
 
-    private function updateAttendance($studentId, $date, $scheduleId)
-    {
-        $attendance = DB::select("
-            SELECT a.*, s.name as student_name 
-            FROM attendance a
-            JOIN student s ON a.student_id = s.id
-            WHERE DATE(a.time) = ?
-            AND a.student_id = ?
-            AND a.schedule_id = ?
-            LIMIT 1
-        ", [$date, $studentId, $scheduleId]);
+    // private function updateAttendance($studentId, $date, $scheduleId)
+    // {
+    //     $attendance = DB::select("
+    //         SELECT a.*, s.name as student_name 
+    //         FROM attendance a
+    //         JOIN student s ON a.student_id = s.id
+    //         WHERE DATE(a.time) = ?
+    //         AND a.student_id = ?
+    //         AND a.schedule_id = ?
+    //         LIMIT 1
+    //     ", [$date, $studentId, $scheduleId]);
 
-        try {
+    //     try {
 
 
-            return !empty($attendance) ? $attendance[0] : null;
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-    }
+    //         return !empty($attendance) ? $attendance[0] : null;
+    //     } catch (\Throwable $th) {
+    //         throw $th;
+    //     }
+    // }
 
     private function insertAttendance($studentId, $date, $currentPeriod, $schedule, $startSchedule, $endSchedule, $hour)
     {

@@ -103,7 +103,6 @@
                                         <th>NO</th>
                                         <th>NAMA</th>
                                         <th>GENDER</th>
-                                        <th>TANGGAL LAHIR</th>
                                         <th>STATUS</th>
                                         <th>ACTION</th>
                                     </tr>
@@ -114,8 +113,6 @@
                                         <td>{{ $index + 1 }}</td>
                                         <td>{{ $item->student_name }}</td>
                                         <td>{{ $item->gender }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($item->day_of_birth)->formatLocalized('%d %B %Y') ?? '-' }}
-                                        </td>
                                         <td>
                                             @if ($item->graduated)
                                                 <span class="badge bg-success">Lulus</span>

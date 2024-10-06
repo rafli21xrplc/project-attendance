@@ -39,7 +39,7 @@ trait TeacherTrait
 
         public function getClassroomStudent($id)
         {
-                return classRoom::findOrFail($id);
+                return classRoom::with('typeClass')->findOrFail($id);
         }
 
         public function importTeachers(array $data)
@@ -83,7 +83,7 @@ trait TeacherTrait
                                 $hours = ($endSchedule->time_number - $startSchedule->time_number) + 1;
                         }
 
-                        
+
                         $attendanceExists = $this->checkAttendance($schedule);
                         $data = [];
                         foreach ($students as $student) {
@@ -135,22 +135,27 @@ trait TeacherTrait
                 if ($schedule) {
                         return DB::table('attendance')
                                 ->join('student', 'attendance.student_id', '=', 'student.id')
+                                ->leftJoin('log_student', function ($join) use ($today) {
+                                        $join->on('log_student.student_id', '=', 'student.id')
+                                                ->whereDate('log_student.created_at', $today);
+                                })
                                 ->where('attendance.schedule_id', $schedule->id)
                                 ->whereDate('attendance.created_at', $today)
                                 ->select(
                                         'attendance.*',
                                         'student.name as student_name',
                                         'student.nisn as student_nisn',
-                                        'student.classroom_id as student_classroom_id'
+                                        'student.classroom_id as student_classroom_id',
+                                        'log_student.log as tardy_status', 
+                                        'log_student.time as tardy_time'
                                 )
                                 ->orderBy('student.name', 'asc')
                                 ->get();
                 }
 
-                return $schedule;
-
                 return null;
         }
+
 
         public function responseStore(User $user, array $data): mixed
         {

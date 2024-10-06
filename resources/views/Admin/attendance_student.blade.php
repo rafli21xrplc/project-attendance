@@ -180,14 +180,14 @@
                                                     </div>
                                                 @else
                                                     <div class="d-flex justify-content-center align-items-center my-5">
-                                                        <img src="{{ asset('public/assets/content/empty.svg') }}" width="300"
+                                                        <img src="{{ asset('assets/content/empty.svg') }}" width="300"
                                                             alt="No Data Available">
                                                     </div>
                                                 @endif
                                             </div>
                                         @empty
                                             <div class="d-flex justify-content-center align-items-center my-5">
-                                                <img src="{{ asset('public/assets/content/empty.svg') }}" width="300"
+                                                <img src="{{ asset('assets/content/empty.svg') }}" width="300"
                                                     alt="No Data Available">
                                             </div>
                                         @endforelse
@@ -198,7 +198,7 @@
                     </div>
                 @else
                     <div class="d-flex justify-content-center align-items-center my-5">
-                        <img src="{{ asset('public/assets/content/empty.svg') }}" width="300" alt="No Data Available">
+                        <img src="{{ asset('assets/content/empty.svg') }}" width="300" alt="No Data Available">
                     </div>
                 @endif
 

@@ -42,8 +42,6 @@
     <script src="{{ asset('assets/js/config.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
     <style>
         * {
             font-size: 12px;
@@ -55,23 +53,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: whitesmoke;
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-        }
-
-        .loader {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100px;
-            height: 100px;
-            border: 10px solid rgba(255, 255, 255, 0.1);
-            border-top: 10px solid #ffffff;
-            border-radius: 50%;
-            animation: spin 1.5s linear infinite;
         }
 
         .logo {
@@ -105,6 +91,14 @@
             100% {
                 transform: scale(1);
             }
+        }
+
+        .menu-sub {
+            display: none;
+        }
+
+        .menu-item.active .menu-sub {
+            display: block;
         }
     </style>
     <link rel="preload" href="{{ asset('assets/content/icon-load.png') }}" as="image">
@@ -293,9 +287,14 @@
                     <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">Change Password</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('change.password') }}" method="POST">
+                <form action="{{ route('change.profile') }}" method="POST">
                     @csrf
                     <div class="modal-body row py-0">
+                        <div class="mb-3">
+                            <label class="form-label" for="current-username">Current Username</label>
+                            <input type="text" class="form-control" id="current-username" name="username"
+                                placeholder="Enter current username" required>
+                        </div>
                         <div class="mb-3">
                             <label class="form-label" for="current-password">Current Password</label>
                             <input type="password" class="form-control" id="current-password"

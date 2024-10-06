@@ -64,6 +64,11 @@ class student extends Model
         return $this->hasMany(student_payment::class, 'student_id', 'id');
     }
 
+    public function logStudents()
+    {
+        return $this->hasMany(logStudent::class, 'student_id', 'id');
+    }
+
     public static function get(): mixed
     {
         return DB::table('student')

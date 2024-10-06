@@ -257,7 +257,7 @@
                                     </div>
                                 @else
                                     <div class="d-flex justify-content-center align-items-center my-5">
-                                        <img src="{{ asset('public/assets/content/empty.svg') }}" width="300"
+                                        <img src="{{ asset('assets/content/empty.svg') }}" width="300"
                                             alt="No Data Available">
                                     </div>
                                 @endif
@@ -307,7 +307,6 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <!-- Attendance data will be inserted here -->
                                         </tbody>
                                     </table>
                                 </div>
@@ -431,7 +430,6 @@
                             var originalContent = currentElement.text();
                             var studentId = currentElement.data('student-id');
                             var date = currentElement.data('date');
-                            // var attendances = currentElement.data('times');
 
                             var input = $('<input>', {
                                 type: 'text',
@@ -450,6 +448,7 @@
                         });
 
                         function saveChanges(studentId, date, content) {
+                            console.log('testing');
                             console.log(studentId);
                             console.log(date);
                             console.log(content);
@@ -457,13 +456,11 @@
                                     student_id: studentId,
                                     date: date,
                                     content: content,
-                                    // attendances: attendances,
                                     _token: '{{ csrf_token() }}'
                                 })
                                 .then(function(response) {
                                     console.log('Response:', response);
                                     console.log('Response:', response.data);
-                                    location.reload();
                                     if (response.data.success) {
                                         console.log('Response:', response);
                                         alert('Kehadiran berhasil diperbarui!');

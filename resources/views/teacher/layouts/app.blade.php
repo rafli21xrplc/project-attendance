@@ -55,18 +55,6 @@
             z-index: 9999;
         }
 
-        .loader {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100px;
-            height: 100px;
-            border: 10px solid rgba(255, 255, 255, 0.1);
-            border-top: 10px solid #ffffff;
-            border-radius: 50%;
-            animation: spin 1.5s linear infinite;
-        }
-
         .logo {
             position: absolute;
             width: 120px;

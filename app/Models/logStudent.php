@@ -19,4 +19,9 @@ class logStudent extends Model
 
     protected $primaryKey = 'id';
     public $incrementing = false;
+
+    public function student()
+    {
+        return $this->belongsTo(student::class, 'student_id', 'id');
+    }
 }

@@ -211,8 +211,8 @@ trait StudentTrait
                         $examLogin = ExamLogin::where('student_id', $student->id)->first();
 
                         $qrContent = json_encode([
-                                'username' => $examLogin->username,
-                                'password' => $examLogin->password
+                                'username' => $examLogin->username ?? '',
+                                'password' => $examLogin->password ?? ''
                         ]);
 
                         $qrCode = QrCode::size(200)->generate(

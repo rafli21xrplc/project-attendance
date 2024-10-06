@@ -205,7 +205,7 @@
                 @empty
                     <div class="col-12">
                         <div class="d-flex justify-content-center align-items-center my-5 flex-column">
-                            <img src="{{ asset('public/assets/content/empty.svg') }}" width="300" alt="No Data Available">
+                            <img src="{{ asset('assets/content/empty.svg') }}" width="300" alt="No Data Available">
                             <small>Tidak ada jadwal pelajaran hari ini.</small>
                         </div>
                     </div>

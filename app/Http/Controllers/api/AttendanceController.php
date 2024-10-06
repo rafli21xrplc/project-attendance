@@ -57,18 +57,22 @@ class AttendanceController extends Controller
         if ($schedule) {
 
             $todayDate = Carbon::now()->format('Y-m-d');
-            $startTime = Carbon::parse($todayDate . ' ' . $schedule->startTimeSchedules->start_time_schedule)->format('Y-m-d H:i:s');
-            $endTime = Carbon::parse($todayDate . ' ' . $schedule->endTimeSchedules->end_time_schedule)->format('Y-m-d H:i:s');
 
             $attendance = DB::table('attendance')
                 ->join('student', 'attendance.student_id', '=', 'student.id')
+                ->leftJoin('log_student', function ($join) use ($todayDate) {
+                    $join->on('log_student.student_id', '=', 'student.id')
+                        ->whereDate('log_student.created_at', '=', $todayDate);
+                })
                 ->where('attendance.schedule_id', $schedule->id)
-                ->whereDate('attendance.created_at', $todayDate)
+                ->whereDate('attendance.created_at', '=', $todayDate)
                 ->select(
                     'attendance.*',
                     'student.name as student_name',
                     'student.nisn as student_nisn',
-                    'student.classroom_id as student_classroom_id'
+                    'student.classroom_id as student_classroom_id',
+                    'log_student.log as tardy_status',
+                    'log_student.time as tardy_time'
                 )
                 ->orderBy('student.name', 'asc')
                 ->get();
@@ -76,7 +80,7 @@ class AttendanceController extends Controller
 
         if ($schedule && $attendance->isEmpty()) {
             $classroom = $schedule->classroom;
-            $students = $classroom->students;
+            $students = $classroom->students()->with('logStudents')->get();
 
             return response()->json([
                 'classroom' => $classroom,
@@ -85,9 +89,11 @@ class AttendanceController extends Controller
                 'attendance' => [],
             ]);
         } else {
+            $classroom = $schedule->classroom;
+            $students = $classroom->students()->with('logStudents')->get();
             return response()->json([
                 'classroom' => $schedule ? $schedule->classroom : null,
-                'student' => $schedule ? $schedule->classroom->students : null,
+                'student' => $schedule ? $students : null,
                 'schedule' => $schedule,
                 'attendance' => $attendance,
             ]);

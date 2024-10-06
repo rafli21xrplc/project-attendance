@@ -26,20 +26,19 @@ class StudentController extends Controller
         return $attendance;
     }
 
-    public function storePermission(Request $request)
+    public function storePermission(Request $request, $id)
     {
 
         $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'file' => 'required|file|mimes:jpg,jpeg,png|max:12048',
+            'description' => 'required|string'
         ]);
 
-        $file = $request->file('file');
-        $user_id = $request->user_id;
+        $file = $validatedData['file'];
 
         $today = Carbon::today();
 
-        $student = Student::where('user_id', $user_id)->firstOrFail();
+        $student = Student::where('user_id', $id)->firstOrFail();
 
         try {
             $existingPermission = Permission::where('student_id', $student->id)
@@ -47,7 +46,7 @@ class StudentController extends Controller
                 ->first();
 
             if ($existingPermission) {
-                throw new \Exception('Surat izin untuk hari ini sudah diajukan.');
+                throw new \Exception('Surat izin untuk hari ini sudah diajukan');
             }
 
             if (isset($file)) {
@@ -60,6 +59,7 @@ class StudentController extends Controller
                 'id' => Str::uuid(),
                 'student_id' => $student->id,
                 'file' => $filePath,
+                'description' => $validatedData['description']
             ]);
 
             return response()->json([

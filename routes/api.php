@@ -38,11 +38,11 @@ Route::put('update-attendance/specialDay', [AttendanceController::class, 'update
 // student
 Route::get('permission-student/{id}', [StudentController::class, 'getPermission']);
 Route::get('schedule-student', [StudentController::class, 'schedule']);
-Route::post('permission', [StudentController::class, 'storePermission']);
-Route::post('log-in', [StudentController::class, 'in']);
-Route::post('log-out', [StudentController::class, 'out']);
+Route::post('permission/{id}', [StudentController::class, 'storePermission']);
+Route::get('log-in/{id}', [StudentController::class, 'in']);
+Route::get('log-out/{id}', [StudentController::class, 'out']);
 
 // parent
 Route::get('installment/{id}', [paymentController::class, 'getInstallment']);
 Route::get('payment/{id}', [paymentController::class, 'getPayment']);
-Route::get('attendance/{id}', [StudentController::class, 'getAttendance']);
+Route::get('attendance-student/{id}', [StudentController::class, 'getAttendanceStudent']);

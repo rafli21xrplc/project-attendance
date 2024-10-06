@@ -147,9 +147,6 @@
                     <div class="card-header d-flex flex-wrap justify-content-between gap-3">
                         <div class="card-title mb-0 me-1">
                             <h5 class="mb-1">My Classroom</h5>
-                            <p class="text-muted mb-0">
-                                Total 6 course you have purchased
-                            </p>
                         </div>
                     </div>
                     <div class="card-body">
@@ -171,14 +168,7 @@
                                                         Siswa</span>
                                                 </h6>
                                             </div>
-                                            <a href="course-details.html" class="h5">{{ $item->classroom->name }}</a>
-                                            <p class="mt-2">
-                                                Introductory course for Angular and framework
-                                                basics in web development.
-                                            </p>
-                                            <p class="d-flex align-items-center">
-                                                <i class="ti ti-clock me-2 mt-n1"></i>30 minutes
-                                            </p>
+                                            <a href="course-details.html" class="h5">{{ $item->classroom->typeClass->category }} {{ $item->classroom->name }}</a>
                                             <div class="d-flex flex-column flex-md-row text-nowrap justify-content-end">
                                                 <a class="btn btn-label-primary d-flex align-items-center"
                                                     href="{{ route('teacher.attendance', ['classroomid' => $item->classroom->id, 'scheduleId' => $item->id]) }}">

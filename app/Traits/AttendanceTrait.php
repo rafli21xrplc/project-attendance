@@ -93,6 +93,8 @@ trait AttendanceTrait
     public function updateAttendanceStudentReport(array $attendances)
     {
 
+        return response()->json('data');
+
         foreach ($attendances['attendance'] as $studentId => $status) {
             $existingAttendance = DB::select("
                 SELECT * FROM attendance 
@@ -110,7 +112,6 @@ trait AttendanceTrait
         }
 
         try {
-
 
             return redirect()->back();
         } catch (\Throwable $th) {
