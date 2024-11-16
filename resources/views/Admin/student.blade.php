@@ -120,11 +120,11 @@
                                                 <span class="badge bg-primary">Siswa Aktif</span>
                                             @endif
                                         </td>
-                                        
+
                                         <td>
                                             <button data-id="{{ $item->student_id }}"
-                                                data-type_class_id="{{ $item->type_class_id }}" 
-                                                data-classroom_id="{{ $item->classroom_id }}" 
+                                                data-type_class_id="{{ $item->type_class_id }}"
+                                                data-classroom_id="{{ $item->classroom_id }}"
                                                 type="button"
                                                 class="btn btn-label-primary btn-class"><i
                                                     class="fa-solid fa-circle-exclamation"></i></button>
@@ -190,7 +190,7 @@
             </div>
         </div>
     </div>
-    
+
         {{-- modal --}}
         <div class="modal fade" id="modal-cari" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">

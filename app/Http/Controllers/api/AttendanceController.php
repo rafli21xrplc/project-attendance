@@ -22,7 +22,7 @@ use Illuminate\Support\Str;
 class AttendanceController extends Controller
 {
 
-    use AttendanceTrait;
+//    use AttendanceTrait;
 
     public function getSchedule(Request $request)
     {

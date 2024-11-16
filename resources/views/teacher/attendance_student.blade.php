@@ -160,12 +160,12 @@
                                                                     <div
                                                                         class="col-md d-flex align-items-center flex-wrap gap-2 justify-content-center">
                                                                         <input type="hidden"
-                                                                            name="attendance[{{ $item->id }}]" 
+                                                                            name="attendance[{{ $item->id }}]"
                                                                             value="present">
                                                                         <div class="form-check form-check-success">
                                                                             <input name="attendance[{{ $item->id }}]"
                                                                                 class="form-check-input" type="radio" {{ $item->status == 'present' ? 'checked' : '' }}
-                                                                                value="present" 
+                                                                                value="present"
                                                                                 id="present_{{ $item->id }}" />
                                                                             <label class="form-check-label"
                                                                                 for="present_{{ $item->id }}"> Hadir </label>
@@ -173,7 +173,7 @@
                                                                         <div class="form-check form-check-danger">
                                                                             <input name="attendance[{{ $item->id }}]"
                                                                                 class="form-check-input" type="radio" {{ $item->status == 'alpha' ? 'checked' : '' }}
-                                                                                value="alpha" 
+                                                                                value="alpha"
                                                                                 id="alpha_{{ $item->id }}" />
                                                                             <label class="form-check-label"
                                                                                 for="alpha_{{ $item->id }}"> Alpha </label>
@@ -229,7 +229,7 @@
         document.addEventListener('DOMContentLoaded', function() {
         const saveButton = document.getElementById('saveButton');
         const classroomElement = @json(isset($classroom));
-        
+
         if (classroomElement && document.querySelectorAll('#attendanceForm tbody tr').length > 0) {
             saveButton.classList.remove('d-none');
         } else {

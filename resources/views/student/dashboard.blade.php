@@ -78,7 +78,7 @@
                                                             <h4 class="mb-0">{{ now()->format('d') }}</h4>
                                                         </div>
                                                         @if ($schedule->course != null && $schedule->classroom != null && $schedule->teacher != null)
-                                                            
+
                                                         <div class="flex-grow-1 schedule-details ms-3">
                                                             <h5 class="card-title mb-1">{{ $schedule->course->name }}</h5>
                                                             <p class="card-text text-muted">

@@ -123,7 +123,7 @@
                                                     data-start_time_schedule_id="{{ $item->start_time_schedule_id }}"
                                                     data-end_time_schedule_id="{{ $item->end_time_schedule_id }}"
                                                     data-course="{{ $item->course_id }}"
-                                                    data-teacher="{{ $item->teacher_id }}" 
+                                                    data-teacher="{{ $item->teacher_id }}"
                                                     type="button" class="btn btn-label-warning btn-update">
                                                 <i class="fa-solid fa-pen"></i>
                                             </button>

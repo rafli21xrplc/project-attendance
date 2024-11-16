@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/%40form-validation/umd/styles/index.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/animate-css/animate.css') }}">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.css">
-    
+
      <style>
         #table-content {
             border-collapse: collapse;
@@ -147,7 +147,7 @@
                                             'Friday' => 'Jumat',
                                             'Saturday' => 'Sabtu',
                                             'Sunday' => 'Minggu'
-                                        ][$item->day] ?? $item->day }}</td> 
+                                        ][$item->day] ?? $item->day }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->created_at)->locale('id')->formatLocalized('%d %B %Y %H:%M') }}</td>
                                         <td>{{ $item->teacher_name }}</td>
                                         <td>{{ $item->type_class_category }} {{ $item->class_name }}</td>

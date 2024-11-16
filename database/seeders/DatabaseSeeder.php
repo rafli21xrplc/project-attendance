@@ -28,10 +28,12 @@ class DatabaseSeeder extends Seeder
         'teacher',
         'student',
         'studentship',
+        'treasurer',
     ];
 
     private $permissions = [
         'manage sistem',
+        'manage payment',
         'manage report',
         'manage attendance',
     ];
@@ -51,17 +53,29 @@ class DatabaseSeeder extends Seeder
             Permission::create(['name' => $permission]);
         }
 
-        $role = Role::where('name', 'admin')->first();
-        $permission = Permission::where('name', 'manage sistem')->first();
+        $rolePayment = Role::where('name', 'treasurer')->first();
+        $permissionPayment = Permission::where('name', 'manage payment')->first();
 
-        $role->givePermissionTo($permission);
-        $permission->assignRole($role);
+        $rolePayment->givePermissionTo($permissionPayment);
+        $permissionPayment->assignRole($rolePayment);
+
+        $roleAdmin = Role::where('name', 'admin')->first();
+        $permissionAdmin = Permission::where('name', 'manage sistem')->first();
+
+        $roleAdmin->givePermissionTo($permissionAdmin);
+        $permissionAdmin->assignRole($roleAdmin);
 
         User::create([
             'uuid' => Str::uuid(),
             'username' => '1234567899',
             'password' => Hash::make('password')
         ])->assignRole('admin');
+
+        User::create([
+            'uuid' => Str::uuid(),
+            'username' => '12345678999',
+            'password' => Hash::make('password')
+        ])->assignRole('treasurer');
 
         // User::create([
         //     'uuid' => Str::uuid(),

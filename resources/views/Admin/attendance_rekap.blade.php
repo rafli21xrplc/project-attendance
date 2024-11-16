@@ -122,7 +122,7 @@
                                     {{-- <div class="container">
                                         <h1>Monthly Attendance Report for Class: {{ $classroom->name }}</h1>
                                         <p>From: {{ $startDate }} To: {{ $endDate }}</p>
-                                        
+
                                         <table class="table table-bordered">
                                             <thead>
                                                 <tr>
