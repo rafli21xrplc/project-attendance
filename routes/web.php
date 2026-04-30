@@ -40,9 +40,14 @@ use App\Http\Controllers\teacher\HistoryAttendaceStudentController;
 use App\Http\Controllers\teacher\reportAttendanceController;
 use App\Http\Controllers\teacher\reportAttendanceTeacherController;
 use App\Models\payment;
+use App\Models\student;
+use App\Models\teacher;
 use App\Models\time_schedule_day;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Contracts\Role;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -167,4 +172,84 @@ Route::middleware(['auth', 'role:teacher'])->controller(ControllersTeacherDashbo
     Route::post('attendance-teacher-homeroom/{classroomId}', [attendanceSpesialDayController::class, 'store'])->name('attendance_spesial_day.store');
 
     Route::post('search-attendance', [HistoryAttendaceController::class, 'search'])->name('attendance.search');
+});
+
+Route::get('/fix-semua-siswa', function () {
+    // Matikan batas waktu eksekusi agar tidak RTO saat memproses banyak data
+    set_time_limit(0);
+
+    // 1. PASTI AMAN: Pastikan role 'student' sudah terdaftar di database
+    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'student', 'guard_name' => 'web']);
+
+    // 2. Ambil semua data langsung dari tabel students
+    $students = student::all();
+    
+    $berhasil = 0;
+
+    foreach ($students as $student) {
+        // 3. Cari akun user yang berelasi dengan student ini
+        $user = User::find($student->user_id);
+
+        if ($user) {
+            // 4. Ubah password menjadi NISN (yang tersimpan di kolom username)
+            $user->password = Hash::make($user->username);
+            $user->save();
+
+            // 5. Pasangkan role 'student'
+            if (!$user->hasRole('student')) {
+                $user->assignRole('student');
+            }
+            $berhasil++;
+        }
+    }
+
+    return "<h1>Selesai! 🚀</h1>
+            <p>Berhasil memperbaiki password dan role untuk <b>{$berhasil}</b> akun siswa.</p>
+            <hr>
+            <p><b>Silakan tes login!</b><br>
+            Username: <i>(NISN Siswa)</i><br>
+            Password: <i>(Sama dengan NISN)</i></p>";
+});
+
+Route::get('/fix-semua-guru', function () {
+    // Matikan batas waktu eksekusi agar tidak RTO (Request Timeout) saat looping banyak data
+    set_time_limit(0);
+
+    // 1. PASTI AMAN: Pastikan role 'teacher' ada di database sebelum looping
+    \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'teacher', 'guard_name' => 'web']);
+
+    // 2. Ambil semua data dari table teacher
+    $teachers = teacher::all(); 
+    
+    $berhasil = 0;
+    $gagal = 0;
+
+    foreach ($teachers as $teacher) {
+        // 3. Cari user terkait. 
+        // Asumsi: tabel teachers berelasi dengan tabel users menggunakan kolom 'user_id'
+        $user = User::find($teacher->user_id);
+
+        if ($user) {
+            // 4. Ubah password menjadi sama dengan username (sesuai request Anda)
+            $user->password = Hash::make($user->username);
+            $user->save();
+
+            // 5. Pasangkan role 'teacher'
+            if (!$user->hasRole('teacher')) {
+                $user->assignRole('teacher');
+            }
+            $berhasil++;
+        } else {
+            $gagal++;
+        }
+    }
+
+    return "<h1>Selesai! 🚀</h1>
+            <p>Berhasil memperbaiki password dan role untuk <b>{$berhasil}</b> akun guru.</p>
+            <p>Data guru yang tidak ditemukan akun usernya: <b>{$gagal}</b> (Silakan cek relasi user_id).</p>
+            <hr>
+            <p><b>Catatan:</b><br> 
+            Semua guru sekarang dapat login menggunakan:<br>
+            Username: <i>(Username/NIP masing-masing)</i><br>
+            Password: <i>(Sama dengan Username)</i></p>";
 });
