@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -24,9 +25,26 @@ class LoginController extends Controller
     /**
      * Where to redirect users after login.
      *
-     * @var string
+     * @return string
      */
-    protected $redirectTo = '/dashboard';
+    public function redirectTo()
+    {
+        // Memberikan hint ke Intelephense bahwa ini adalah App\Models\User
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // Cek role menggunakan fungsi dari Spatie
+        if ($user->hasRole('admin')) {
+            return '/dashboard-admin';
+        } elseif ($user->hasRole('teacher')) {
+            return '/dashboard-teacher';
+        } elseif ($user->hasRole('student')) {
+            return '/dashboard-student';
+        }
+
+        // Default redirect jika user tidak punya role di atas
+        return '/home'; 
+    }
 
     /**
      * Create a new controller instance.
