@@ -30,13 +30,13 @@ class AttendanceTeacherController extends Controller
     public function index()
     {
         $teacher = $this->attendanceLate();
-        return view('admin.attendanceTeacher', compact('teacher'));
+        return view('Admin.attendanceTeacher', compact('teacher'));
     }
 
     public function search(Request $request)
     {
         $teacher = attendanceLate::attendanceLateByDate($request->start_date, $request->end_date);
-        return view('admin.attendanceTeacher', compact('teacher'));
+        return view('Admin.attendanceTeacher', compact('teacher'));
     }
 
     public function exportPdf()

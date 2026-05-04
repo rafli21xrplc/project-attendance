@@ -30,7 +30,7 @@ class settingController extends Controller
         }
 
         $SubtractionTime = $this->getSubtractionTime();
-        return view('admin.setting', compact('setting', 'SubtractionTime', 'startDate', 'endDate'));
+        return view('Admin.setting', compact('setting', 'SubtractionTime', 'startDate', 'endDate'));
     }
 
     /**

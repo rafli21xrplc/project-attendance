@@ -43,7 +43,7 @@ class teacherController extends Controller
     {
         $teacher = $this->teacher->get();
         $religi = $this->teacher->getReligi();
-        return view('admin.teacher', compact('teacher', 'religi'));
+        return view('Admin.teacher', compact('teacher', 'religi'));
     }
 
     /**

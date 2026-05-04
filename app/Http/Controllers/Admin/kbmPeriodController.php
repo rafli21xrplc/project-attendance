@@ -23,7 +23,7 @@ class kbmPeriodController extends Controller
     public function index()
     {
         $kbm_period = $this->kbmPeriodInterface->get();
-        return view('admin.kbm_period', compact('kbm_period'));
+        return view('Admin.kbm_period', compact('kbm_period'));
     }
 
     /**

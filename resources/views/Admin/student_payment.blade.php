@@ -96,7 +96,7 @@
                 </div>
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
 
-                    <form action="{{ route('admin.export.payment_bbpp.excel') }}" method="POST">
+                    <form action="{{ route('Admin.export.payment_bbpp.excel') }}" method="POST">
                         @csrf
                         <div class="row g-3 align-items-center">
                             <div class="col-12 col-md-6">
@@ -195,7 +195,7 @@
                     <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">Pembayaran</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('admin.student_payment.store') }}" method="POST">
+                <form action="{{ route('Admin.student_payment.store') }}" method="POST">
                     @csrf
                     <div class="modal-body row py-0">
                         <div class="col-md-6 mb-4">
@@ -491,7 +491,7 @@
                     formData.append('type_payment_id', type_payment_id);
                     formData.append('description', description);
 
-                    axios.post('{{ route('admin.installments.api') }}', formData, {
+                    axios.post('{{ route('Admin.installments.api') }}', formData, {
                             headers: {
                                 'Content-Type': 'multipart/form-data'
                             }
@@ -687,7 +687,7 @@
 
             $('#classroom_id').on('change', function() {
                 const classroomId = $(this).val();
-                axios.get(`{{ route('admin.studentPayment.get') }}?classroom_id=${classroomId}`)
+                axios.get(`{{ route('Admin.studentPayment.get') }}?classroom_id=${classroomId}`)
                     .then(response => {
                         const students = response.data;
                         const studentTableBody = document.getElementById('student-table-body');

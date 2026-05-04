@@ -35,7 +35,7 @@ class PaymentController extends Controller
     {
         $payment = $this->payment->get();
         $typePayment = $this->getTypePayments();
-        return view('admin.payment', compact('payment', 'typePayment'));
+        return view('Admin.payment', compact('payment', 'typePayment'));
     }
 
     public function import(importRequest $request)

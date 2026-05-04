@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('Admin.layouts.app')
 
 
 @section('link')
@@ -83,7 +83,7 @@
                             <div class="row mt-4">
                                 <div class="col-12">
                                     <!-- Form untuk pencarian berdasarkan tanggal dan tipe kelas -->
-                                    <form action="{{ route('admin.report.attendance_student.search') }}" method="get">
+                                    <form action="{{ route('Admin.report.attendance_student.search') }}" method="get">
                                         <div class="row g-3 align-items-center">
                                             <!-- Kolom untuk input tanggal mulai dan tanggal akhir -->
                                             <div class="col-12 col-md-6 col-lg-4">
@@ -116,7 +116,7 @@
                                     </form>
 
                                     <!-- Form untuk ekspor laporan berdasarkan bulan -->
-                                    <form action="{{ route('admin.export.attendance_report.month') }}" method="POST"
+                                    <form action="{{ route('Admin.export.attendance_report.month') }}" method="POST"
                                         class="mt-4">
                                         @csrf
                                         <div class="row g-3 align-items-center">
@@ -148,7 +148,7 @@
 
                                     <!-- Form untuk update laporan kehadiran -->
                                     <form id="form-update" method="POST"
-                                        action="{{ route('admin.update.attendance.student.report') }}">
+                                        action="{{ route('Admin.update.attendance.student.report') }}">
                                         @csrf
                                         <div class="row g-3 align-items-center modal-body py-0" id="div-update">
                                             <!-- Pilihan Siswa -->
@@ -279,7 +279,7 @@
                                     aria-label="Close"></button>
                             </div>
                             <form id="form-update" method="POST"
-                                action="{{ route('admin.update.attendance.student.report') }}">
+                                action="{{ route('Admin.update.attendance.student.report') }}">
                                 @csrf
                                 <div class="modal-body row py-0" id="div-update">
                                     <div class="mb-1">
@@ -338,7 +338,7 @@
 
                             // Only trigger the request if both fields have values
                             if (studentId && date) {
-                                axios.get('{{ route('admin.attendance.student.report') }}', {
+                                axios.get('{{ route('Admin.attendance.student.report') }}', {
                                         params: {
                                             student_id: studentId,
                                             payment_date: date
@@ -452,7 +452,7 @@
                             console.log(studentId);
                             console.log(date);
                             console.log(content);
-                            axios.post("{{ route('admin.report.attendance_student.update') }}", {
+                            axios.post("{{ route('Admin.report.attendance_student.update') }}", {
                                     student_id: studentId,
                                     date: date,
                                     content: content,

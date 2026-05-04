@@ -23,7 +23,7 @@ class courseController extends Controller
     public function index()
     {
         $course = $this->course->get();
-        return view('admin.course', compact('course'));
+        return view('Admin.course', compact('course'));
     }
 
     /**

@@ -135,7 +135,7 @@
                     <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">KBM</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('admin.kbm_period.store') }}" method="POST">
+                <form action="{{ route('Admin.kbm_period.store') }}" method="POST">
                     @csrf
                     <div class="modal-body row py-0">
                         <div class="mb-1">

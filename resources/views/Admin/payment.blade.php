@@ -26,12 +26,12 @@
                     <button data-bs-toggle="modal" data-bs-target="#modal-payment" type="button"
                         class="btn btn-label-success"><i class="ti ti-credit-card me-sm-1"></i> <span
                             class="d-none d-sm-inline-block">Record Type Pembayaran</span></button>
-                    <a href="{{ route('admin.export.payment.rekapitulasi') }}" class="btn btn-label-primary me-2"
+                    <a href="{{ route('Admin.export.payment.rekapitulasi') }}" class="btn btn-label-primary me-2"
                         style="color: blue">
                         <i class="fa-solid fa-file-export me-1"></i> <span class="d-none d-sm-inline-block">Export
                             Rekapitulasi</span>
                     </a>
-                    <form id="importForm" action="{{ route('admin.payment.import') }}" method="POST"
+                    <form id="importForm" action="{{ route('Admin.payment.import') }}" method="POST"
                         enctype="multipart/form-data" class="d-flex align-items-center mb-2 mb-md-0">
                         @csrf
                         <input type="file" name="file" id="fileInput" class="form-control d-none" required>
@@ -72,12 +72,12 @@
                                             <td>{{ \Carbon\Carbon::parse($item->end_date)->formatLocalized('%d %B %Y') ?? '-' }}
                                             <td>
                                                 <a class="btn btn-label-success"
-                                                    href="{{ route('admin.export.payment', $item->id) }}"
+                                                    href="{{ route('Admin.export.payment', $item->id) }}"
                                                     onclick="event.preventDefault(); document.getElementById('export-form-{{ $item->id }}').submit();">
                                                     <i class="fa-solid fa-file-export"></i>
                                                 </a>
                                                 <form id="export-form-{{ $item->id }}"
-                                                    action="{{ route('admin.export.payment', $item->id) }}" method="GET"
+                                                    action="{{ route('Admin.export.payment', $item->id) }}" method="GET"
                                                     class="d-none">
                                                     @csrf
                                                 </form>
@@ -117,7 +117,7 @@
                     <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">Pembayaran</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('admin.payment.store') }}" method="POST">
+                <form action="{{ route('Admin.payment.store') }}" method="POST">
                     @csrf
                     <div class="modal-body row py-0">
                         <div class="mb-1">
@@ -218,7 +218,7 @@
                     <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">Tipe Pembayaran</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('admin.type_payment.store') }}" method="POST">
+                <form action="{{ route('Admin.type_payment.store') }}" method="POST">
                     @csrf
                     <div class="modal-body row py-0">
                         <div class="mb-1">

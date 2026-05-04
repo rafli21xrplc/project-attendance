@@ -22,7 +22,7 @@ class AttendanceStudentController extends Controller
         $classroom = $this->getClassrooms();
         $schedules = null;
 
-        return view('admin.attendance_student', compact('attendance', 'classroom', 'schedules'));
+        return view('Admin.attendance_student', compact('attendance', 'classroom', 'schedules'));
     }
 
     /**
@@ -65,9 +65,9 @@ class AttendanceStudentController extends Controller
         try {
             $this->updateAttendanceStudent($request->all());
         } catch (\Throwable $th) {
-            return redirect()->route('admin.attendance.results')->with('error', 'Attendance updated successfully.');
+            return redirect()->route('Admin.attendance.results')->with('error', 'Attendance updated successfully.');
         }
-        return redirect()->route('admin.attendance.results')->with('success', 'Attendance updated successfully.');
+        return redirect()->route('Admin.attendance.results')->with('success', 'Attendance updated successfully.');
     }
 
     /**
@@ -102,7 +102,7 @@ class AttendanceStudentController extends Controller
             }
         }
 
-        return view('admin.attendance_student', compact('schedules', 'classroom', 'attendanceBySchedule'));
+        return view('Admin.attendance_student', compact('schedules', 'classroom', 'attendanceBySchedule'));
     }
 
     public function showResults()
@@ -111,7 +111,7 @@ class AttendanceStudentController extends Controller
             $schedules = session('schedules');
             $classroom = session('classroom');
             $attendanceBySchedule = session('attendanceBySchedule');
-            return view('admin.attendance_student', compact('schedules', 'classroom', 'attendanceBySchedule'));
+            return view('Admin.attendance_student', compact('schedules', 'classroom', 'attendanceBySchedule'));
         }
 
         return redirect()->back()->with('error', 'No search results found.');

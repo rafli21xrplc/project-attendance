@@ -12,7 +12,7 @@ class AttendanceClassroomController extends Controller
      */
     public function index()
     {
-        return view('admin.attendance_classroom');
+        return view('Admin.attendance_classroom');
     }
 
     /**

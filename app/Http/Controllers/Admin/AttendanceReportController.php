@@ -45,7 +45,7 @@ class AttendanceReportController extends Controller
         $type = type_class::with('classrooms')->get();
         $students = $this->attendanceRekapInterface->getStudent();
         $classrooms = $this->attendanceRekapInterface->getClassroom();
-        return view('admin.attendance_report', [
+        return view('Admin.attendance_report', [
             'report' => null,
             'classroom' => null,
             'startDate' => null,
@@ -301,7 +301,7 @@ class AttendanceReportController extends Controller
         $type = type_class::with('classrooms')->get();
         $students = $this->attendanceRekapInterface->getStudent();
 
-        return view('admin.attendance_report', [
+        return view('Admin.attendance_report', [
             'report' => $report['report'],
             'classroom' => $report['classroom'],
             'startDate' => $report['startDate'],

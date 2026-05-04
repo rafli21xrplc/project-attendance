@@ -26,7 +26,7 @@ class TypeClassController extends Controller
     public function index()
     {
         $type = $this->type_class->get();
-        return view('admin.type_class', compact('type'));
+        return view('Admin.type_class', compact('type'));
     }
 
     /**

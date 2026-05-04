@@ -71,9 +71,9 @@
                 <div class="d-flex justify-content-between align-items-center flex-wrap">
                     <h3>Biodata Siswa</h3>
                     <div class="d-flex align-items-center gap-2">
-                        <a href="{{ route('admin.promoted_student') }}" class="btn btn-primary mb-2 mb-md-0">Promote All
+                        <a href="{{ route('Admin.promoted_student') }}" class="btn btn-primary mb-2 mb-md-0">Promote All
                             Students</a>
-                        <form id="importForm" action="{{ route('admin.student.import') }}" method="POST"
+                        <form id="importForm" action="{{ route('Admin.student.import') }}" method="POST"
                             enctype="multipart/form-data" class="d-flex align-items-center mb-2 mb-md-0">
                             @csrf
                             <input type="file" name="file" id="fileInput" class="form-control d-none" required>
@@ -162,7 +162,7 @@
                     <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">NAIK KELAS</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('admin.promoted_student.update') }}" method="POST">
+                <form action="{{ route('Admin.promoted_student.update') }}" method="POST">
                     @csrf
                     <div class="modal-body row py-0" id="div-update">
                         <input type="hidden" id="classroom_id" name="classroom_id">
@@ -199,7 +199,7 @@
                         <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">Pencarian</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form action="{{ route('admin.student.search') }}" method="GET">
+                    <form action="{{ route('Admin.student.search') }}" method="GET">
                         <div class="modal-body row py-0">
                             <div class="col-12 col-md-12 mb-2">
                                 <label class="form-label" for="classroom_id">Kelas</label>

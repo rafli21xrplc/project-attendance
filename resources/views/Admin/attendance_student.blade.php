@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('Admin.layouts.app')
 
 
 @section('link')
@@ -74,7 +74,7 @@
             <div class="container">
                 <div class="row justify-content-end">
                     <div class="col-md-6">
-                        <form action="{{ route('admin.attendance_student.search.report') }}" method="GET" class="d-flex gap-3">
+                        <form action="{{ route('Admin.attendance_student.search.report') }}" method="GET" class="d-flex gap-3">
                             <div class="flex-grow-1">
                                 <input class="form-control" type="date" id="html5-date-input"
                                     name="date" />
@@ -130,7 +130,7 @@
                                                         id="form-tabs-{{ $item->id }}" role="tabpanel">
                                                         <div class="row g-4">
                                                             <form id="attendanceForm-{{ $item->id }}"
-                                                                action="{{ route('admin.attendance_student.update', $item->id) }}"
+                                                                action="{{ route('Admin.attendance_student.update', $item->id) }}"
                                                                 method="POST">
                                                                 @csrf
                                                                 @method('PUT')

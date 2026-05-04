@@ -27,7 +27,7 @@ class installmentsPaymentController extends Controller
         $installments = $this->PaymentInstallment->get();
         $tagihan = $this->getTagihanSiswa();
         $payment = $this->getPayment();
-        return view('admin.installments_payment', compact('installments', 'tagihan', 'payment'));
+        return view('Admin.installments_payment', compact('installments', 'tagihan', 'payment'));
     }
 
     /**

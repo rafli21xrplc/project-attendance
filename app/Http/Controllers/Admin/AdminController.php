@@ -26,7 +26,7 @@ class AdminController extends Controller
     public function index()
     {
         $user = $this->admin->get();
-        return view('admin.admin', compact('user'));
+        return view('Admin.admin', compact('user'));
     }
 
     /**

@@ -17,7 +17,7 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row mt-4">
                 <div class="col-12">
-                    <form action="{{ route('admin.export.permission.pdf') }}" method="post">
+                    <form action="{{ route('Admin.export.permission.pdf') }}" method="post">
                         @csrf
                         <div class="row justify-content-end align-items-center g-3">
                             <div class="col-12 col-md-6">

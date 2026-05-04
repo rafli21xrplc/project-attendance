@@ -42,7 +42,7 @@
 
                 <div class="row my-2">
                     <div class="col-12">
-                        <form action="{{ route('admin.report.attendance_student.search') }}" method="get">
+                        <form action="{{ route('Admin.report.attendance_student.search') }}" method="get">
                             <div class="row justify-content-end align-items-center g-3">
                                 <div class="col-12 col-md-4">
                                     <div class="input-group">

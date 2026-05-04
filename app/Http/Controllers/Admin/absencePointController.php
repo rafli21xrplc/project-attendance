@@ -24,7 +24,7 @@ class absencePointController extends Controller
     public function index()
     {
         $absence_point = $this->AbsencePointInterface->get();
-        return view('admin.absence_point', compact('absence_point'));
+        return view('Admin.absence_point', compact('absence_point'));
     }
 
     /**

@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('Admin.layouts.app')
 
 
 @section('link')
@@ -70,7 +70,7 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row my-4">
                 <div class="col-12">
-                    <form action="{{ route('admin.report.attendance_teacher_late.search') }}" method="get">
+                    <form action="{{ route('Admin.report.attendance_teacher_late.search') }}" method="get">
                         <div class="row g-3 align-items-center">
                             <div class="col-12 col-md-3">
                                 <div class="input-group">
@@ -87,7 +87,7 @@
                         </div>
                     </form>
 
-                    <form action="{{ route('admin.export.attendance_report_teacher.date') }}" method="POST" class="mt-4">
+                    <form action="{{ route('Admin.export.attendance_report_teacher.date') }}" method="POST" class="mt-4">
                         @csrf
                         <div class="row g-3 align-items-center">
                             <!-- Month Picker -->

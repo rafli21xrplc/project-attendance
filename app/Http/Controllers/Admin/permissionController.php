@@ -19,7 +19,7 @@ class permissionController extends Controller
     public function index()
     {
         $permissions = $this->getPermission();
-        return view('admin.permission', compact('permissions'));
+        return view('Admin.permission', compact('permissions'));
     }
 
     public function exportPdf(searchExportRequest $request)

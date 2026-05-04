@@ -22,7 +22,7 @@ class TimescheduleController extends Controller
     public function index()
     {
         $time = $this->timeScheduleInterface->get();
-        return view('admin.time_schedule', compact('time'));
+        return view('Admin.time_schedule', compact('time'));
     }
 
     /**

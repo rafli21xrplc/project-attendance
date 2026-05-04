@@ -30,7 +30,7 @@ class scheduleController extends Controller
         $teacher = $this->schedule->getTeacher();
         $time_schedule = $this->schedule->getTimeSchedule();
         $holiday = $this->schedule->getHoliday();
-        return view('admin.schedule', compact('schedule', 'classroom', 'course', 'teacher', 'time_schedule', 'holiday'));
+        return view('Admin.schedule', compact('schedule', 'classroom', 'course', 'teacher', 'time_schedule', 'holiday'));
     }
 
     /**

@@ -21,7 +21,7 @@
                     <div class="card mb-4">
                         <h6 class="card-header">Setting Tanggal Libur</h6>
                         <div class="card-body">
-                            <form action="{{ route('admin.setting.update') }}" method="post">
+                            <form action="{{ route('Admin.setting.update') }}" method="post">
                                 @csrf
                                 @method('PUT')
                                 <div class="row">
@@ -90,7 +90,7 @@
                     <div class="card mb-4">
                         <h6 class="card-header">Setting Hari Khusus</h6>
                         <div class="card-body">
-                            <form action="{{ route('admin.setting.spesialDay') }}" method="post">
+                            <form action="{{ route('Admin.setting.spesialDay') }}" method="post">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
@@ -116,7 +116,7 @@
                     <div class="card mb-4">
                         <h6 class="card-header">Setting Hari Pemdatan</h6>
                         <div class="card-body">
-                            <form action="{{ route('admin.subtraction.store') }}" method="post">
+                            <form action="{{ route('Admin.subtraction.store') }}" method="post">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-12 mb-3">

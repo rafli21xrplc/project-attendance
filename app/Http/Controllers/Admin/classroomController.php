@@ -41,7 +41,7 @@ class classroomController extends Controller
         $type_class = $this->class_room->getTypeClassroom();
         $classroom = $this->class_room->get();
         $teacher = $this->class_room->getTeacher();
-        return view('admin.classroom', compact('classroom', 'type_class', 'teacher'));
+        return view('Admin.classroom', compact('classroom', 'type_class', 'teacher'));
     }
 
 

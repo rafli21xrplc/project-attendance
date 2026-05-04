@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('Admin.layouts.app')
 
 
 @section('link')
@@ -67,10 +67,10 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="row mt-4">
                 <div class="col-12 order-5">
-                    <form action="{{ route('admin.SIA.search') }}" method="get">
+                    <form action="{{ route('Admin.SIA.search') }}" method="get">
                         <div class="row justify-content-end">
                             <div class="col-md-2">
-                                <a href="{{ route('admin.SIA.export') }}" class="btn btn-primary w-100">
+                                <a href="{{ route('Admin.SIA.export') }}" class="btn btn-primary w-100">
                                     <span class="d-none d-sm-inline-block">Export</span>
                                 </a>
                             </div>

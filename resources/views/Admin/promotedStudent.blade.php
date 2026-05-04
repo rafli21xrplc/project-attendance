@@ -72,7 +72,7 @@
                     <h3>Biodata Siswa</h3>
                 </div>
                 <div style="display: flex; align-items: center;">
-                    <a href="{{ route('admin.promoted_student') }}" class="btn btn-primary">Promote All Students</a>
+                    <a href="{{ route('Admin.promoted_student') }}" class="btn btn-primary">Promote All Students</a>
                 </div>
             </div>
 
@@ -128,7 +128,7 @@
                         SISWA</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="form-update" method="POST" action="{{ route('admin.promoted_student.update') }}">
+                <form id="form-update" method="POST" action="{{ route('Admin.promoted_student.update') }}">
                     @csrf
                     <div class="modal-body row py-0" id="div-update">
                         <div class="col-12 col-md-4 mb-2">

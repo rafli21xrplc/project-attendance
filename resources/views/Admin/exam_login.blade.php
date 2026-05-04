@@ -76,7 +76,7 @@
                 <div class="d-flex justify-content-between align-items-center flex-wrap">
                     <h3>Biodata Siswa</h3>
                     <div class="d-flex align-items-center gap-2">
-                        <form id="importForm" action="{{ route('admin.examLogin.import') }}" method="POST"
+                        <form id="importForm" action="{{ route('Admin.examLogin.import') }}" method="POST"
                             enctype="multipart/form-data" class="d-flex align-items-center mb-2 mb-md-0">
                             @csrf
                             <input type="file" name="file" id="fileInput" class="form-control d-none" required>
@@ -149,7 +149,7 @@
                         SISWA UJIAN</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('admin.examLogin.store') }}" method="POST">
+                <form action="{{ route('Admin.examLogin.store') }}" method="POST">
                     @csrf
                     <div class="modal-body row py-0">
                         <div class="col-md-12 mb-4">

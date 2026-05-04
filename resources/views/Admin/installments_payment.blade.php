@@ -101,7 +101,7 @@
                     <h3>Pembayaran Siswa</h3>
                 </div>
                 <div class="d-flex align-items-center gap-2">
-                    <form action="{{ route('admin.export.payment.installment') }}" method="post">
+                    <form action="{{ route('Admin.export.payment.installment') }}" method="post">
                         @csrf
                         <div class="row g-3 align-items-center">
                             <div class="col-12 col-md-6">
@@ -229,7 +229,7 @@
                     <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">Pembayaran</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('admin.installment.store') }}" method="POST">
+                <form action="{{ route('Admin.installment.store') }}" method="POST">
                     @csrf
                     <div class="modal-body row py-0">
                         <div class="col-md-6 mb-4">

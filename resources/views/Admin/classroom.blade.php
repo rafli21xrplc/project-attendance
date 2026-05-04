@@ -72,7 +72,7 @@
                     <h3>KELAS</h3>
                 </div>
                 <div style="display: flex; align-items: center;">
-                    <form id="importForm" action="{{ route('admin.classroom.import') }}" method="POST"
+                    <form id="importForm" action="{{ route('Admin.classroom.import') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="form-group d-none">
@@ -213,7 +213,7 @@
                     <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">KELAS</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('admin.class_room.store') }}" method="POST">
+                <form action="{{ route('Admin.class_room.store') }}" method="POST">
                     @csrf
                     <div class="modal-body row py-0">
                         <div class="col-12 col-md-4 mb-1">

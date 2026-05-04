@@ -39,7 +39,7 @@ class ExamLoginController extends Controller
     {
         $exam = $this->ExamLogin->get();
         $student = $this->ExamLogin->getStudent();
-        return view('admin.exam_login', compact('exam', 'student'));
+        return view('Admin.exam_login', compact('exam', 'student'));
     }
 
     /**

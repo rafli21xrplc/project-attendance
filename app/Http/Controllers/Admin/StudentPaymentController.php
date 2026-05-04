@@ -49,7 +49,7 @@ class StudentPaymentController extends Controller
         $studentPayment = $this->studentPayment->get();
         $typePayment = $this->studentPayment->getTypePayment();
 
-        return view('admin.student_payment', compact('studentPayment', 'student', 'payment', 'classroom', 'type', 'typePayment'));
+        return view('Admin.student_payment', compact('studentPayment', 'student', 'payment', 'classroom', 'type', 'typePayment'));
     }
 
     public function getStudentsByClassroom(Request $request)

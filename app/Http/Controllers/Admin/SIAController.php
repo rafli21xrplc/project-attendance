@@ -25,7 +25,7 @@ class SIAController extends Controller
         $classroom = $this->getClassroom();
         $type = type_class::with('classrooms')->get();
         $report = $this->getSIALaporan(['7b994382-55d3-3f0b-8adb-93624cf2c12c', 'c5723342-334e-3fc1-bc4d-a9c680029f25']);
-        return view('admin.SIAreport')->with([
+        return view('Admin.SIAreport')->with([
             'period' => $report['period'] ?? null,
             'report' => $report['report'] ?? null,
             'months' => $report['months'] ?? null,
@@ -89,7 +89,7 @@ class SIAController extends Controller
         $type = type_class::with('classrooms')->get();
         $classroom = $this->getClassroom();
         $report = $this->getSIALaporanBySearch($request->states);
-        return view('admin.SIAreport')->with([
+        return view('Admin.SIAreport')->with([
             'period' => $report['period'],
             'report' => $report['report'],
             'months' => $report['months'],

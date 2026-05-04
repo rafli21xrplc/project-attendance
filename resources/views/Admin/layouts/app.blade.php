@@ -137,13 +137,13 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ route('admin.dashboard_admin') }}" class="menu-link">
+                        <a href="{{ route('Admin.dashboard_admin') }}" class="menu-link">
                             <i class="menu-icon tf-icons ti ti-smart-home"></i>
                             <div>Dashboard</div>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('admin.teacher.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.teacher.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="#949494" stroke-width="2"
@@ -158,13 +158,13 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('admin.student.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.student.index') }}" class="menu-link">
                             <i class="menu-icon tf-icons ti ti-users"></i>
                             <div>Siswa</div>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('admin.class_room.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.class_room.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -180,7 +180,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('admin.type_class.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.type_class.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -196,7 +196,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('admin.course.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.course.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -214,7 +214,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('admin.schedule.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.schedule.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -230,7 +230,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('admin.time_schedule.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.time_schedule.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -246,7 +246,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('admin.kbm_period.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.kbm_period.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -262,7 +262,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="{{ route('admin.absence_point.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.absence_point.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -283,7 +283,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ route('admin.report_attendance_teacher.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.report_attendance_teacher.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -300,7 +300,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ route('admin.permission.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.permission.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -317,7 +317,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ route('admin.SIA.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.SIA.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -338,7 +338,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ route('admin.attendance_student.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.attendance_student.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -359,7 +359,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ route('admin.attendance_report.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.attendance_report.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -385,7 +385,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ route('admin.payment.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.payment.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -407,7 +407,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ route('admin.student_payment.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.student_payment.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -429,7 +429,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ route('admin.installment.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.installment.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -455,7 +455,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ route('admin.setting.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.setting.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -477,7 +477,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a href="{{ route('admin.examLogin.index') }}" class="menu-link">
+                        <a href="{{ route('Admin.examLogin.index') }}" class="menu-link">
                             <div class="menu-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"

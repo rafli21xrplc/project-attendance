@@ -29,7 +29,7 @@ class promotedStudentController extends Controller
     {
         $student = $this->get();
         $classroom = $this->getClassroom();
-        return view('admin.promotedStudent', compact(['student', 'classroom']));
+        return view('Admin.promotedStudent', compact(['student', 'classroom']));
     }
 
     /**

@@ -59,7 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::post('change-profile', [authController::class, 'UpdateProfile'])->name('change.profile');
 });
 
-Route::middleware(['auth', 'role:admin'])->controller(dashboardController::class)->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->controller(dashboardController::class)->name('Admin.')->group(function () {
     Route::get('dashboard-admin', 'index')->name('dashboard_admin');
 
     Route::resources([
@@ -134,7 +134,7 @@ Route::middleware(['auth', 'role:admin'])->controller(dashboardController::class
     Route::post('api-installments', [installmentsPaymentController::class, 'api'])->name('installments.api');
 
     Route::put('setting-update', [settingController::class, 'update'])->name('setting.update');
-    Route::put('attendance_student/{id}', [AttendanceStudentController::class, 'update'])->name('admin.attendance_student.update');
+    Route::put('attendance_student/{id}', [AttendanceStudentController::class, 'update'])->name('Admin.attendance_student.update');
 });
 
 Route::middleware(['auth', 'role:studentShip'])->controller(StudentShipDashboardController::class)->name('studentShip.')->group(function () {

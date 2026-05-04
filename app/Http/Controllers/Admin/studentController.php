@@ -33,7 +33,7 @@ class studentController extends Controller
         $type_class = $this->student->getTypeClassroom();
         $religi = $this->student->getReligi();
         $class_room = $this->student->getClassroom();
-        return view('admin.student', compact('student', 'religi', 'class_room', 'type_class'));
+        return view('Admin.student', compact('student', 'religi', 'class_room', 'type_class'));
     }
 
     public function import(importRequest $request)
@@ -52,7 +52,7 @@ class studentController extends Controller
         $type_class = $this->student->getTypeClassroom();
         $religi = $this->student->getReligi();
         $class_room = $this->student->getClassroom();
-        return view('admin.student', compact('student', 'religi', 'class_room', 'type_class'));
+        return view('Admin.student', compact('student', 'religi', 'class_room', 'type_class'));
     }
 
     /**

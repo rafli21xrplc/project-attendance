@@ -72,7 +72,7 @@
                     <h3>Biodata Guru</h3>
                 </div>
                 <div style="display: flex; align-items: center;">
-                    <form id="importForm" action="{{ route('admin.teacher.import') }}" method="POST"
+                    <form id="importForm" action="{{ route('Admin.teacher.import') }}" method="POST"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="form-group d-none">
@@ -142,7 +142,7 @@
                     <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">BIODATA GURU</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('admin.teacher.store') }}" method="POST">
+                <form action="{{ route('Admin.teacher.store') }}" method="POST">
                     @csrf
                     <div class="modal-body row py-0">
                         <div class="col-12 col-md-6 mb-1">

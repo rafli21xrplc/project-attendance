@@ -81,7 +81,7 @@
                         <span class="d-none d-sm-inline-block">Simpan</span>
                     </button>
                     <div class="col-md-6">
-                        <form action="{{ route('admin.attendance_student.search') }}" method="POST" class="d-flex gap-3">
+                        <form action="{{ route('Admin.attendance_student.search') }}" method="POST" class="d-flex gap-3">
                             @csrf
                             <div class="flex-grow-1">
                                 <input class="form-control" type="date" value="2021-06-18" id="html5-date-input"

@@ -85,9 +85,9 @@ class AttendaceStudentController extends Controller
         try {
             $this->updateAttendanceStudent($request->all());
         } catch (\Throwable $th) {
-            return redirect()->route('admin.attendance.results')->with('error', 'Attendance updated successfully.');
+            return redirect()->route('Admin.attendance.results')->with('error', 'Attendance updated successfully.');
         }
-        return redirect()->route('admin.attendance.results')->with('success', 'Attendance updated successfully.');
+        return redirect()->route('Admin.attendance.results')->with('success', 'Attendance updated successfully.');
     }
 
     /**

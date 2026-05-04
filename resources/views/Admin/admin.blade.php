@@ -152,7 +152,7 @@
                     <h5 class="modal-title mx-auto my-1" id="exampleModalLabel1">USER</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('admin.userAdmin.store') }}" method="POST">
+                <form action="{{ route('Admin.userAdmin.store') }}" method="POST">
                     @csrf
                     <div class="modal-body row py-0">
                         <div class="col-12 col-md-6 mb-2">

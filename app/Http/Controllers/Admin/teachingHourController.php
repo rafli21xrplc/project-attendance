@@ -27,7 +27,7 @@ class teachingHourController extends Controller
         $teacher = $this->teachingHour->getTeacher();
         $course = $this->teachingHour->getCourse();
         $classroom = $this->teachingHour->getClassroom();
-        return view('admin.teaching_hour', compact('teaching', 'course', 'teacher', 'classroom'));
+        return view('Admin.teaching_hour', compact('teaching', 'course', 'teacher', 'classroom'));
     }
 
     /**
