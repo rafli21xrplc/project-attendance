@@ -253,3 +253,5 @@ Route::get('/fix-semua-guru', function () {
             Username: <i>(Username/NIP masing-masing)</i><br>
             Password: <i>(Sama dengan Username)</i></p>";
 });
+
+Route::get('/test-users', [App\Http\Controllers\TestUserController::class, 'index'])->name('test.users');

@@ -71,9 +71,11 @@ trait TeacherTrait
 
         public function storeAttendanceStudent($students, $id)
         {
-                try {
+                // try {
                         $currentPeriod = kbm_period::getCurrentPeriod();
                         $schedule = Schedule::with(['teacher', 'StartTimeSchedules', 'EndTimeSchedules'])->findOrFail($id);
+
+                        // dd($currentPeriod);
 
                         $startSchedule = $schedule->StartTimeSchedules;
                         $endSchedule = $schedule->EndTimeSchedules;
@@ -105,11 +107,11 @@ trait TeacherTrait
                                 attendance::insert($data);
                                 return $this->getAttendanceStudent($schedule);
                         }
-                } catch (\Throwable $th) {
-                        // Log the error for debugging
-                        \Log::error('Error storing attendance: ' . $th->getMessage());
-                        return redirect(500)->back();
-                }
+                // } catch (\Throwable $th) {
+                //         \Log::error('Error storing attendance: ' . $th->getMessage());
+                //         session()->flash('error', 'An error occurred while storing attendance.');
+                //         return collect();
+                // }
         }
 
         public function checkAttendance($schedule)

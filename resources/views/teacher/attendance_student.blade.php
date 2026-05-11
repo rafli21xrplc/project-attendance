@@ -152,9 +152,10 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach ($attendance as $index => $item)
+                                                        @if(is_iterable($attendance))
+                                                        @foreach ($attendance as $item)
                                                             <tr>
-                                                                <td class="text-center">{{ $index + 1 }}</td>
+                                                                <td class="text-center">{{ $loop->iteration }}</td>
                                                                 <td class="{{ $item->tardy_status == 'telat' ? 'text-danger' : '' }} {{ $item->tardy_status == null ? 'text-danger' : '' }}" style="color: ">{{ $item->student_name }}</td>
                                                                 <td>
                                                                     <div
@@ -198,6 +199,7 @@
                                                                 </td>
                                                             </tr>
                                                         @endforeach
+                                                        @endif
                                                     </tbody>
                                                 </table>
                                             </form>

@@ -45,14 +45,24 @@ trait StudentTrait
 
         public function importStudents(array $excel)
         {
-                $data = Excel::toArray([], $excel['file']);
-                DB::transaction(function () use ($data) {
-                        foreach ($data[0] as $row) {
-                                $this->processRow($row);
-                        }
-                });
+            $data = Excel::toArray([], $excel['file']);
+            $rows = $data[0];
 
-                return back();
+            // Hapus baris pertama (header) agar tidak diproses
+            unset($rows[0]); 
+
+            DB::transaction(function () use ($rows) {
+                foreach ($rows as $row) {
+                    // Validasi tambahan: lewati jika baris kosong
+                    if (!isset($row[3]) || empty(trim($row[3]))) {
+                        continue; 
+                    }
+                    
+                    $this->processRow($row);
+                }
+            });
+
+            return back();
         }
 
         public function processRow($row)
